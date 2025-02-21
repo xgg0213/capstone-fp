@@ -1,28 +1,27 @@
 from flask.cli import AppGroup
-from .users import seed_users, undo_users
 
-from app.models.db import db, environment, SCHEMA
-
-# Creates a seed group to hold our commands
-# So we can type `flask seed --help`
+# Create the group first
 seed_commands = AppGroup('seed')
 
+# Import the individual seed functions
+from .users import seed_users, undo_users
+from .portfolios import seed_portfolios, undo_portfolios
+from .transactions import seed_transactions, undo_transactions
+from .orders import seed_orders, undo_orders
 
-# Creates the `flask seed all` command
+# Define the seed commands
 @seed_commands.command('all')
 def seed():
-    if environment == 'production':
-        # Before seeding in production, you want to run the seed undo 
-        # command, which will  truncate all tables prefixed with 
-        # the schema name (see comment in users.py undo_users function).
-        # Make sure to add all your other model's undo functions below
-        undo_users()
+    """Run all seed functions"""
     seed_users()
-    # Add other seed functions here
+    seed_portfolios()
+    seed_transactions()
+    seed_orders()
 
-
-# Creates the `flask seed undo` command
 @seed_commands.command('undo')
 def undo():
+    """Undo all seeds"""
+    undo_orders()
+    undo_transactions()
+    undo_portfolios()
     undo_users()
-    # Add other undo functions here

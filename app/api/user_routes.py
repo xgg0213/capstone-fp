@@ -1,25 +1,42 @@
-from flask import Blueprint, jsonify
-from flask_login import login_required
-from app.models import User
+from flask import Blueprint, jsonify, request
+from flask_login import login_required, current_user
+from app.models import User, Portfolio, Transaction
+from datetime import datetime
 
-user_routes = Blueprint('users', __name__)
-
+user_routes = Blueprint('account', __name__)
 
 @user_routes.route('/')
 @login_required
-def users():
+def get_account():
     """
-    Query for all users and returns them in a list of user dictionaries
+    Get current user's account overview
     """
-    users = User.query.all()
-    return {'users': [user.to_dict() for user in users]}
+    portfolio = Portfolio.query.filter_by(user_id=current_user.id).first()
+    
+    return {
+        'account_id': str(current_user.id),
+        'buying_power': float(portfolio.buying_power),
+        'cash_balance': float(portfolio.cash_balance),
+        'portfolio_value': float(portfolio.total_value),
+        'total_return': float(portfolio.total_return),
+        'total_return_percentage': float(portfolio.return_percentage)
+    }
 
-
-@user_routes.route('/<int:id>')
+@user_routes.route('/history')
 @login_required
-def user(id):
+def get_account_history():
     """
-    Query for a user by id and returns that user in a dictionary
+    Get account's portfolio value history
     """
-    user = User.query.get(id)
-    return user.to_dict()
+    interval = request.args.get('interval', '1D')
+    
+    # You'll need to implement the logic to get historical data
+    # based on the interval parameter
+    history = get_account_history(current_user.id, interval)
+    
+    return {
+        'data_points': [{
+            'timestamp': point.timestamp.isoformat(),
+            'portfolio_value': float(point.value)
+        } for point in history]
+    }

@@ -60,6 +60,15 @@ All API endpoints require JWT authentication token in the Authorization header:
   }
   ```
 
+#### Get CSRF Token
+- **GET** `/auth/csrf/restore`
+- **Response:** `200 OK`
+  ```json
+  {
+    "csrf_token": "string"
+  }
+  ```
+
 ### User Account
 #### Get Account Overview
 - **GET** `/account`

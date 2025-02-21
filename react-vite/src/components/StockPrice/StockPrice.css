@@ -1,0 +1,34 @@
+.stock-price {
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.stock-price .symbol {
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.stock-price .price {
+    font-size: 1.5rem;
+    margin: 0.5rem 0;
+}
+
+.stock-price .change {
+    font-weight: bold;
+}
+
+.stock-price .change.positive {
+    color: #22c55e;
+}
+
+.stock-price .change.negative {
+    color: #ef4444;
+}
+
+.stock-price .bid-ask {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #666;
+} 
