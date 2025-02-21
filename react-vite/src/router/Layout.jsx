@@ -1,24 +1,25 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { ModalProvider, Modal } from "../context/Modal";
+import { restoreCSRF } from "../redux/csrf";
 import { thunkAuthenticate } from "../redux/session";
 import Navigation from "../components/Navigation/Navigation";
 
 export default function Layout() {
   const dispatch = useDispatch();
-  const [isLoaded, setIsLoaded] = useState(false);
+
   useEffect(() => {
-    dispatch(thunkAuthenticate()).then(() => setIsLoaded(true));
+    // Restore CSRF token
+    restoreCSRF().then(() => {
+      // Then try to fetch the current user
+      dispatch(thunkAuthenticate());
+    });
   }, [dispatch]);
 
   return (
     <>
-      <ModalProvider>
-        <Navigation />
-        {isLoaded && <Outlet />}
-        <Modal />
-      </ModalProvider>
+      <Navigation />
+      <Outlet />
     </>
   );
 }
