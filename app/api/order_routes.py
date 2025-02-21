@@ -60,4 +60,64 @@ def cancel_order(id):
     order.status = 'cancelled'
     db.session.commit()
     
+    return order.to_dict()
+
+@order_routes.route('/<int:order_id>/process', methods=['POST'])
+@login_required
+def process_order(order_id):
+    """
+    Process a pending order (Demo version)
+    """
+    order = Order.query.get(order_id)
+    
+    if not order:
+        return {'errors': ['Order not found']}, 404
+        
+    if order.user_id != current_user.id:
+        return {'errors': ['Unauthorized']}, 403
+        
+    if order.status != 'pending':
+        return {'errors': ['Order is not pending']}, 400
+    
+    # For demo: use order price or default price
+    market_price = order.price or 100.00
+    
+    # Update order status
+    order.status = 'filled'
+    order.filled_price = market_price
+    order.filled_at = datetime.utcnow()
+    
+    # Update portfolio
+    portfolio = Portfolio.query.filter_by(
+        user_id=current_user.id,
+        symbol=order.symbol
+    ).first()
+    
+    if not portfolio:
+        portfolio = Portfolio(
+            user_id=current_user.id,
+            symbol=order.symbol,
+            shares=0
+        )
+        db.session.add(portfolio)
+    
+    # Update shares based on buy/sell
+    if order.side == 'buy':
+        portfolio.shares += order.shares
+    else:  # sell
+        portfolio.shares -= order.shares
+    
+    # Create transaction record
+    transaction = Transaction(
+        user_id=current_user.id,
+        order_id=order.id,
+        symbol=order.symbol,
+        shares=order.shares,
+        price=market_price,
+        type=order.side
+    )
+    
+    db.session.add(transaction)
+    db.session.commit()
+    
     return order.to_dict() 
