@@ -1,290 +1,199 @@
-# Trading Platform API Specification
-
-## Base URL
-`https://api.tradingplatform.com/v1`
+# API Documentation
 
 ## Authentication
-All API endpoints require JWT authentication token in the Authorization header:
 
-# Trading Platform API Specification
-
-## Base URL
-`https://api.tradingplatform.com/v1`
-
-## Authentication
-All API endpoints require JWT authentication token in the Authorization header:
-
-`Authorization: Bearer <jwt_token>`
-
-## Endpoints
-
-### Authentication
-#### Register New User
-- **POST** `/auth/register`
-- **Request Body:**
-  ```json
-  {
-    "email": "string",
-    "password": "string",
-    "first_name": "string",
-    "last_name": "string"
+### Get Current User
+- Endpoint: `GET /api/auth`
+- Authentication: Required
+- Response:
+```json
+{
+  "id": 1,
+  "username": "Demo",
+  "email": "demo@aa.io"
+}
+```
+- Error Response (401):
+```json
+{
+  "errors": {
+    "message": "Unauthorized"
   }
-  ```
-- **Response:** `201 Created`
-  ```json
-  {
-    "user_id": "string",
-    "token": "string"
-  }
-  ```
+}
+```
 
-#### Login
-- **POST** `/auth/login`
-- **Request Body:**
-  ```json
-  {
-    "email": "string",
-    "password": "string"
+### Login
+- Endpoint: `POST /api/auth/login`
+- Request Body:
+```json
+{
+  "email": "demo@aa.io",
+  "password": "password"
+}
+```
+- Success Response:
+```json
+{
+  "id": 1,
+  "username": "Demo",
+  "email": "demo@aa.io"
+}
+```
+- Error Response (401):
+```json
+{
+  "errors": ["Invalid credentials"]
+}
+```
+
+### Signup
+- Endpoint: `POST /api/auth/signup`
+- Request Body:
+```json
+{
+  "username": "newuser",
+  "email": "new@user.io",
+  "password": "password"
+}
+```
+- Success Response:
+```json
+{
+  "id": 2,
+  "username": "newuser",
+  "email": "new@user.io"
+}
+```
+- Error Response (400):
+```json
+{
+  "errors": {
+    "email": "Email already exists",
+    "username": "Username already exists"
   }
-  ```
-- **Response:** `200 OK`
-  ```json
-  {
-    "token": "string",
-    "user": {
-      "user_id": "string",
-      "email": "string",
-      "first_name": "string",
-      "last_name": "string"
+}
+```
+
+### Logout
+- Endpoint: `POST /api/auth/logout`
+- Authentication: Required
+- Response:
+```json
+{
+  "message": "User logged out"
+}
+``` 
+
+## Orders
+
+### Get User's Orders
+- Endpoint: `GET /api/orders`
+- Authentication: Required
+- Query Parameters:
+  - `status`: Filter orders by status (optional)
+- Response: List of orders
+```json
+{
+  "orders": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "symbol": "AAPL",
+      "order_type": "market",
+      "side": "buy",
+      "shares": 10.0,
+      "price": 175.50,
+      "status": "filled",
+      "filled_price": 175.50,
+      "filled_at": "2024-01-20T15:30:00Z",
+      "created_at": "2024-01-20T15:30:00Z",
+      "updated_at": "2024-01-20T15:30:00Z"
     }
-  }
-  ```
+  ]
+}
+```
 
-### User Account
-#### Get Account Overview
-- **GET** `/account`
-- **Response:** `200 OK`
-  ```json
-  {
-    "account_id": "string",
-    "buying_power": "number",
-    "cash_balance": "number",
-    "portfolio_value": "number",
-    "total_return": "number",
-    "total_return_percentage": "number"
-  }
-  ```
+### Place Order
+- Endpoint: `POST /api/orders`
+- Authentication: Required
+- Request Body:
+```json
+{
+  "symbol": "AAPL",
+  "order_type": "market",  // "market" or "limit"
+  "side": "buy",          // "buy" or "sell"
+  "shares": 10,
+  "price": 175.50        // Required for limit orders
+}
+```
+- Response: Created order object
 
-#### Get Account History
-- **GET** `/account/history`
-- **Query Parameters:**
-  - `interval`: string (1D, 1W, 1M, 3M, 1Y, ALL)
-- **Response:** `200 OK`
-  ```json
-  {
-    "data_points": [
-      {
-        "timestamp": "string",
-        "portfolio_value": "number"
-      }
-    ]
-  }
-  ```
+### Process Order (Demo)
+- Endpoint: `POST /api/orders/<order_id>/process`
+- Authentication: Required
+- Description: Processes a pending order, updates portfolio, creates transaction
+- Response: Updated order object
 
-### Stocks
-#### Search Stocks
-- **GET** `/stocks/search`
-- **Query Parameters:**
-  - `query`: string
-- **Response:** `200 OK`
-  ```json
-  {
-    "stocks": [
-      {
-        "symbol": "string",
-        "name": "string",
-        "current_price": "number",
-        "price_change": "number",
-        "price_change_percentage": "number"
-      }
-    ]
-  }
-  ```
+### Cancel Order
+- Endpoint: `POST /api/orders/<order_id>/cancel`
+- Authentication: Required
+- Description: Cancels a pending order
+- Response: Updated order object
 
-#### Get Stock Details
-- **GET** `/stocks/{symbol}`
-- **Response:** `200 OK`
-  ```json
-  {
-    "symbol": "string",
-    "name": "string",
-    "current_price": "number",
-    "price_change": "number",
-    "price_change_percentage": "number",
-    "market_cap": "number",
-    "pe_ratio": "number",
-    "dividend_yield": "number",
-    "about": "string",
-    "news": [
-      {
-        "title": "string",
-        "url": "string",
-        "source": "string",
-        "published_at": "string"
-      }
-    ]
-  }
-  ```
+## Watchlists
 
-#### Get Stock Price History
-- **GET** `/stocks/{symbol}/history`
-- **Query Parameters:**
-  - `interval`: string (1D, 1W, 1M, 3M, 1Y, 5Y)
-- **Response:** `200 OK`
-  ```json
-  {
-    "symbol": "string",
-    "data_points": [
-      {
-        "timestamp": "string",
-        "price": "number",
-        "volume": "number"
-      }
-    ]
-  }
-  ```
+### Get User's Watchlists
+- Endpoint: `GET /api/watchlists`
+- Authentication: Required
+- Response: List of watchlists
 
-### Trading
-#### Place Order
-- **POST** `/orders`
-- **Request Body:**
-  ```json
-  {
-    "symbol": "string",
-    "type": "string (market, limit)",
-    "side": "string (buy, sell)",
-    "quantity": "number",
-    "limit_price": "number (required for limit orders)"
-  }
-  ```
-- **Response:** `201 Created`
-  ```json
-  {
-    "order_id": "string",
-    "status": "string",
-    "created_at": "string"
-  }
-  ```
+### Create Watchlist
+- Endpoint: `POST /api/watchlists`
+- Authentication: Required
+- Request Body:
+```json
+{
+  "name": "Tech Stocks",
+  "symbols": "AAPL,GOOGL,MSFT"
+}
+```
 
-#### Get Orders
-- **GET** `/orders`
-- **Query Parameters:**
-  - `status`: string (open, closed)
-  - `limit`: number
-  - `offset`: number
-- **Response:** `200 OK`
-  ```json
-  {
-    "orders": [
-      {
-        "order_id": "string",
-        "symbol": "string",
-        "type": "string",
-        "side": "string",
-        "quantity": "number",
-        "status": "string",
-        "filled_quantity": "number",
-        "filled_price": "number",
-        "created_at": "string",
-        "updated_at": "string"
-      }
-    ]
-  }
-  ```
+### Update Watchlist
+- Endpoint: `PUT /api/watchlists/<int:id>`
+- Authentication: Required
+- Request Body: Same as create
 
-### Portfolio
-#### Get Portfolio Holdings
-- **GET** `/portfolio`
-- **Response:** `200 OK`
-  ```json
-  {
-    "holdings": [
-      {
-        "symbol": "string",
-        "shares": "number",
-        "average_cost": "number",
-        "current_price": "number",
-        "market_value": "number",
-        "total_return": "number",
-        "total_return_percentage": "number"
-      }
-    ]
-  }
-  ```
+### Delete Watchlist
+- Endpoint: `DELETE /api/watchlists/<int:id>`
+- Authentication: Required
 
-### Watchlist
-#### Get Watchlists
-- **GET** `/watchlists`
-- **Response:** `200 OK`
-  ```json
-  {
-    "watchlists": [
-      {
-        "id": "string",
-        "name": "string",
-        "stocks": [
-          {
-            "symbol": "string",
-            "name": "string",
-            "current_price": "number",
-            "price_change": "number",
-            "price_change_percentage": "number"
-          }
-        ]
-      }
-    ]
-  }
-  ```
+## Portfolio
 
-#### Create Watchlist
-- **POST** `/watchlists`
-- **Request Body:**
-  ```json
-  {
-    "name": "string",
-    "symbols": ["string"]
-  }
-  ```
-- **Response:** `201 Created`
-  ```json
-  {
-    "id": "string",
-    "name": "string"
-  }
-  ```
+### Get Portfolio
+- Endpoint: `GET /api/portfolio`
+- Authentication: Required
+- Response: List of portfolio positions
 
-#### Add to Watchlist
-- **POST** `/watchlists/{watchlist_id}/stocks`
-- **Request Body:**
-  ```json
-  {
-    "symbol": "string"
-  }
-  ```
-- **Response:** `200 OK`
+## Transactions
 
-#### Remove from Watchlist
-- **DELETE** `/watchlists/{watchlist_id}/stocks/{symbol}`
-- **Response:** `204 No Content`
+### Get User's Transactions
+- Endpoint: `GET /api/transactions`
+- Authentication: Required
+- Response:
+```json
+{
+  "transactions": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "order_id": 1,
+      "symbol": "AAPL",
+      "shares": 10.0,
+      "price": 175.50,
+      "type": "buy",
+      "created_at": "2024-01-20T15:30:00Z"
+    }
+  ]
+}
+```
 
-## Error Responses
-All endpoints may return the following errors:
-
-- `400 Bad Request`: Invalid request parameters
-- `401 Unauthorized`: Missing or invalid authentication token
-- `403 Forbidden`: Insufficient permissions
-- `404 Not Found`: Resource not found
-- `429 Too Many Requests`: Rate limit exceeded
-- `500 Internal Server Error`: Server error
-
-Error Response Format:
