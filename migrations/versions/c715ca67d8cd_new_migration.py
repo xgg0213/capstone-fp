@@ -1,8 +1,8 @@
-"""Create all tables
+"""new migration
 
-Revision ID: e9d63ed08242
+Revision ID: c715ca67d8cd
 Revises: 
-Create Date: 2025-02-20 19:33:47.323494
+Create Date: 2025-02-21 17:44:42.583300
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'e9d63ed08242'
+revision = 'c715ca67d8cd'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,10 +21,13 @@ def upgrade():
     op.create_table('users',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('username', sa.String(length=40), nullable=False),
+    sa.Column('first_name', sa.String(length=50), nullable=False),
+    sa.Column('last_name', sa.String(length=50), nullable=False),
     sa.Column('email', sa.String(length=255), nullable=False),
     sa.Column('hashed_password', sa.String(length=255), nullable=False),
     sa.Column('balance', sa.Float(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email'),
     sa.UniqueConstraint('username')
@@ -33,13 +36,13 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('symbol', sa.String(length=10), nullable=False),
-    sa.Column('order_type', sa.String(length=20), nullable=False),
+    sa.Column('order_type', sa.String(length=10), nullable=False),
     sa.Column('side', sa.String(length=4), nullable=False),
     sa.Column('shares', sa.Float(), nullable=False),
     sa.Column('price', sa.Float(), nullable=True),
-    sa.Column('status', sa.String(length=20), nullable=False),
-    sa.Column('filled_at', sa.DateTime(), nullable=True),
+    sa.Column('status', sa.String(length=10), nullable=False),
     sa.Column('filled_price', sa.Float(), nullable=True),
+    sa.Column('filled_at', sa.DateTime(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),

@@ -1,7 +1,7 @@
 from flask.cli import AppGroup
 from .users import seed_users, undo_users
-from .portfolios import seed_portfolios, undo_portfolios
 from .orders import seed_orders, undo_orders
+from .portfolios import seed_portfolios, undo_portfolios
 from .transactions import seed_transactions, undo_transactions
 from .watchlists import seed_watchlists, undo_watchlists
 from app.models.db import db, environment, SCHEMA
@@ -18,13 +18,13 @@ def seed():
         # Before seeding in production, truncate all tables
         undo_watchlists()
         undo_transactions()
-        undo_orders()
         undo_portfolios()
+        undo_orders()
         undo_users()
         
     seed_users()
-    seed_portfolios()
     seed_orders()
+    seed_portfolios()
     seed_transactions()
     seed_watchlists()
 
@@ -35,6 +35,6 @@ def undo():
     # Undo in reverse order of dependencies
     undo_watchlists()
     undo_transactions()
-    undo_orders()
     undo_portfolios()
+    undo_orders()
     undo_users()

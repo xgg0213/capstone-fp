@@ -3,6 +3,7 @@ from sqlalchemy.sql import text
 from datetime import datetime, timedelta
 
 def seed_orders():
+    # Create orders for existing users (user_id 1, 2, 3)
     orders = [
         Order(
             user_id=1,  # Demo user
@@ -15,7 +16,7 @@ def seed_orders():
             filled_at=datetime.utcnow() - timedelta(days=5)
         ),
         Order(
-            user_id=1,  # Demo user
+            user_id=2,  # Marnie
             symbol='GOOGL',
             order_type='limit',
             side='buy',
@@ -24,40 +25,24 @@ def seed_orders():
             status='pending'
         ),
         Order(
-            user_id=1,  # Demo user
+            user_id=3,  # Bobbie
             symbol='TSLA',
             order_type='market',
             side='buy',
             shares=15,
             status='pending'
-        ),
-        # Add some orders for other users
-        Order(
-            user_id=2,  # Marnie
-            symbol='MSFT',
-            order_type='market',
-            side='buy',
-            shares=8,
-            status='filled',
-            filled_price=280.50,
-            filled_at=datetime.utcnow() - timedelta(days=2)
-        ),
-        Order(
-            user_id=3,  # Bobbie
-            symbol='AMZN',
-            order_type='limit',
-            side='sell',
-            shares=3,
-            price=135.00,
-            status='pending'
         )
     ]
     
-    for order in orders:
-        db.session.add(order)
-        
-    db.session.commit()
-    print('Orders seeded successfully!')
+    try:
+        for order in orders:
+            db.session.add(order)
+        db.session.commit()
+        print('Orders seeded successfully!')
+    except Exception as e:
+        db.session.rollback()
+        print('Error seeding orders:', str(e))
+        raise e
 
 def undo_orders():
     if environment == "production":

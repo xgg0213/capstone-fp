@@ -10,39 +10,9 @@
 {
   "id": 1,
   "username": "Demo",
+  "first_name": "Demo",
+  "last_name": "User",
   "email": "demo@aa.io"
-}
-```
-- Error Response (401):
-```json
-{
-  "errors": {
-    "message": "Unauthorized"
-  }
-}
-```
-
-### Login
-- Endpoint: `POST /api/auth/login`
-- Request Body:
-```json
-{
-  "email": "demo@aa.io",
-  "password": "password"
-}
-```
-- Success Response:
-```json
-{
-  "id": 1,
-  "username": "Demo",
-  "email": "demo@aa.io"
-}
-```
-- Error Response (401):
-```json
-{
-  "errors": ["Invalid credentials"]
 }
 ```
 
@@ -52,6 +22,8 @@
 ```json
 {
   "username": "newuser",
+  "first_name": "New",
+  "last_name": "User",
   "email": "new@user.io",
   "password": "password"
 }
@@ -61,9 +33,18 @@
 {
   "id": 2,
   "username": "newuser",
+  "first_name": "New",
+  "last_name": "User",
   "email": "new@user.io"
 }
 ```
+- Error Response (401):
+```json
+{
+  "errors": ["Invalid credentials"]
+}
+```
+
 - Error Response (400):
 ```json
 {

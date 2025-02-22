@@ -4,30 +4,41 @@ from sqlalchemy.sql import text
 
 # Adds a demo user, you can add other users here if you want
 def seed_users():
-    demo = User(
-        username='Demo',
-        email='demo@aa.io',
-        password='password',
-        balance=100000.00  # Start with $100k
-    )
-    marnie = User(
-        username='marnie',
-        email='marnie@aa.io',
-        password='password',
-        balance=50000.00  # Start with $50k
-    )
-    bobbie = User(
-        username='bobbie',
-        email='bobbie@aa.io',
-        password='password',
-        balance=75000.00  # Start with $75k
-    )
+    try:
+        demo = User(
+            username='Demo',
+            first_name='Demo',
+            last_name='User',
+            email='demo@aa.io',
+            password='password',
+            balance=100000.00  # Start with $100k
+        )
+        marnie = User(
+            username='marnie',
+            first_name='Marnie',
+            last_name='Smith',
+            email='marnie@aa.io',
+            password='password',
+            balance=50000.00  # Start with $50k
+        )
+        bobbie = User(
+            username='bobbie',
+            first_name='Bobbie',
+            last_name='Johnson',
+            email='bobbie@aa.io',
+            password='password',
+            balance=75000.00  # Start with $75k
+        )
 
-    db.session.add(demo)
-    db.session.add(marnie)
-    db.session.add(bobbie)
-    db.session.commit()
-    print('Users seeded successfully!')
+        db.session.add(demo)
+        db.session.add(marnie)
+        db.session.add(bobbie)
+        db.session.commit()
+        print('Users seeded successfully!')
+    except Exception as e:
+        db.session.rollback()
+        print('Error seeding users:', str(e))
+        raise e
 
 
 # Uses a raw SQL query to TRUNCATE or DELETE the users table. SQLAlchemy doesn't
