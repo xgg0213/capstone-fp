@@ -1,12 +1,14 @@
 import { useEffect } from "react";
-import { Outlet } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { Outlet, useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { restoreCSRF } from "../redux/csrf";
 import { thunkAuthenticate } from "../redux/session";
 import Navigation from "../components/Navigation/Navigation";
 
 export default function Layout() {
   const dispatch = useDispatch();
+  const location = useLocation();
+  const user = useSelector(state => state.session.user);
 
   useEffect(() => {
     // Restore CSRF token
@@ -16,9 +18,12 @@ export default function Layout() {
     });
   }, [dispatch]);
 
+  // Don't show navigation on login/signup pages
+  const hideNav = ["/", "/login", "/signup"].includes(location.pathname);
+
   return (
     <>
-      <Navigation />
+      {!hideNav && <Navigation />}
       <Outlet />
     </>
   );

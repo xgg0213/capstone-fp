@@ -1,0 +1,259 @@
+.login-page {
+  display: grid;
+  grid-template-columns: 1fr 1px 1fr;
+  min-height: 110vh;
+  /* background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%); */
+  background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
+  padding: 2rem;
+  gap: 2rem;
+  align-items: center;
+  /* padding-top: 8vh; */
+}
+
+/* Update the divider styling */
+.login-divider {
+  height: 70%;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(255, 255, 255, 0.3) 10%,  /* Adjusted gradient start */
+    rgba(255, 255, 255, 0.3) 90%,  /* Adjusted gradient end */
+    transparent
+  );
+  justify-self: center;
+  align-self: center;
+  position: relative;
+}
+
+/* Add glowing dots at the ends */
+.login-divider::before,
+.login-divider::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #00C805;
+  transform: translateX(-50%);
+  box-shadow: 0 0 10px rgba(0, 200, 5, 0.5);
+}
+
+.login-divider::before {
+  top: -3px;
+}
+
+.login-divider::after {
+  bottom: -3px;
+}
+
+.login-left {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  /* background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%); */
+  border-radius: 12px;
+  height: 100%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.login-left h1 {
+  font-size: 1.8rem;
+  color: white;
+  margin-bottom: 2.5rem;
+}
+
+.login-content {
+  max-width: 400px;
+  width: 100%;
+}
+
+.login-content h1 {
+  font-size: 2rem;
+  color: white;
+  margin-bottom: 2.5rem;
+}
+
+/* .subtitle {
+  color: #666;
+  margin-bottom: 2rem;
+} */
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-weight: 500;
+  color: white;
+}
+
+.form-group input {
+  padding: 0.75rem;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s;
+  background: rgba(255,255,255,0.1);
+  color: white;
+}
+
+.form-group input::placeholder {
+  color: rgba(255,255,255,0.5);
+}
+
+.form-group input:focus {
+  border-color: #00C805;
+  box-shadow: 0 0 0 2px rgba(0,200,5,0.2);
+  background: rgba(255,255,255,0.15);
+}
+
+.login-button {
+  background-color: #00C805;
+  color: white;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.login-button:hover {
+  background-color: #00b300;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.demo-button {
+  background-color: rgba(255,255,255,0.1);
+  color: white;
+  padding: 0.75rem;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.demo-button:hover {
+  background-color: rgba(255,255,255,0.15);
+}
+
+.signup-prompt {
+  text-align: center;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255,255,255,0.2);
+  color: white;
+}
+
+.signup-link {
+  background: none;
+  border: none;
+  color: #00C805;
+  font-weight: 500;
+  cursor: pointer;
+  margin-left: 0.5rem;
+}
+
+.signup-link:hover {
+  text-decoration: underline;
+}
+
+.login-right {
+  /* background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%); */
+  padding: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  order: -1;
+  border-radius: 12px;
+  height: 100%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.feature-list {
+  max-width: 400px;
+}
+
+.feature-list h2 {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  color: #00C805;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.feature-item i {
+  font-size: 1.5rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.feature-item h3 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.feature-item p {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.6;
+  opacity: 0.9;
+  color: #ffffff;
+}
+
+.error-message {
+  background-color: #fff5f5;
+  color: #ff4444;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #ffe3e3;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .login-page {
+    grid-template-columns: 1fr;
+    padding: 0;
+    gap: 0;
+  }
+
+  .login-divider {
+    display: none;
+  }
+
+  .login-right {
+    display: none;
+  }
+
+  .login-left {
+    border-radius: 0;
+    height: auto;
+  }
+
+  .login-content {
+    padding: 1rem;
+  }
+} 
