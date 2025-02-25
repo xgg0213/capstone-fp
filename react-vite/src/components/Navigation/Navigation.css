@@ -187,3 +187,12 @@
 .profile-dropdown .logout-button:hover {
   background-color: #fff5f5;
 }
+
+.balance {
+  color: #00C805;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  background: rgba(0, 200, 5, 0.1);
+  border-radius: 4px;
+  margin-right: 1rem;
+}

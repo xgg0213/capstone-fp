@@ -1,0 +1,145 @@
+.portfolio-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: #1a1a1a;
+}
+
+.portfolio-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.summary-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.summary-card h3 {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  margin: 0 0 0.5rem 0;
+}
+
+.summary-card .value {
+  color: white;
+  font-size: 1.8rem;
+  font-weight: 500;
+}
+
+.portfolio-holdings {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.portfolio-holdings h2 {
+  color: white;
+  margin: 0 0 1.5rem 0;
+}
+
+.holdings-table {
+  overflow-x: auto;
+}
+
+.table-header {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr 0.8fr 1fr 1fr 1fr 1fr 1.2fr;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.position-row {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr 0.8fr 1fr 1fr 1fr 1fr 1.2fr;
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  align-items: center;
+}
+
+.position-row:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.symbol {
+  color: #00C805;
+  font-weight: 500;
+}
+
+.company-name {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.shares {
+  font-weight: 500;
+}
+
+.price, .market-value {
+  font-family: monospace;
+}
+
+.gain {
+  color: #00C805;
+}
+
+.loss {
+  color: #ff4444;
+}
+
+.return-value {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  margin-top: 0.25rem;
+}
+
+.no-positions {
+  text-align: center;
+  padding: 3rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.start-trading-btn {
+  background: #00C805;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  margin-top: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.start-trading-btn:hover {
+  background: #00b300;
+}
+
+.loading {
+  text-align: center;
+  padding: 3rem;
+  color: white;
+}
+
+@media (max-width: 1024px) {
+  .portfolio-summary {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .table-header,
+  .position-row {
+    grid-template-columns: 0.8fr 0.8fr 0.8fr 1fr;
+  }
+
+  .table-header div:nth-child(n+5),
+  .position-row div:nth-child(n+5) {
+    display: none;
+  }
+} 

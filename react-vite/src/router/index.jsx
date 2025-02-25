@@ -4,6 +4,7 @@ import LoginPage from '../components/LoginPage/LoginPage';
 import SignupFormPage from '../components/SignupFormPage/SignupFormPage';
 import Dashboard from '../components/Dashboard/Dashboard';
 import ProtectedRoute from './ProtectedRoute';
+import Portfolio from '../components/Portfolio/Portfolio';
 
 export const router = createBrowserRouter([
   {
@@ -23,6 +24,14 @@ export const router = createBrowserRouter([
           {
             path: "/dashboard",
             element: <Dashboard />,
+          },
+          {
+            path: '/portfolio',
+            element: (
+              <ProtectedRoute>
+                <Portfolio />
+              </ProtectedRoute>
+            )
           },
           // Add other protected routes here
         ],

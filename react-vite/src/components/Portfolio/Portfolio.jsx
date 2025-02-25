@@ -1,37 +1,103 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { csrfFetch } from '../../redux/csrf';
+import './Portfolio.css';
 
 function Portfolio() {
   const [positions, setPositions] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [totalValue, setTotalValue] = useState(0);
+  const user = useSelector(state => state.session.user);
 
   useEffect(() => {
-    async function fetchPortfolio() {
-      const response = await csrfFetch('/api/portfolio');
-      if (response.ok) {
-        const data = await response.json();
-        setPositions(data.positions);
-        setTotalValue(data.total_value);
+    const fetchPortfolio = async () => {
+      try {
+        const response = await csrfFetch('/api/portfolio/');
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Portfolio data:', data);
+          setPositions(data.positions);
+          // Calculate total portfolio value
+          const total = data.positions.reduce((sum, pos) => 
+            sum + (pos.shares * (pos.current_price || pos.average_price)), 0);
+          setTotalValue(total);
+        } else {
+          console.error('Error response:', await response.json());
+        }
+      } catch (error) {
+        console.error('Error fetching portfolio:', error);
+      } finally {
+        setIsLoading(false);
       }
-    }
+    };
+
     fetchPortfolio();
   }, []);
 
+  if (isLoading) return <div className="loading">Loading portfolio...</div>;
+
   return (
-    <div className="portfolio">
-      <h2>Portfolio (${totalValue.toLocaleString()})</h2>
-      <div className="positions-list">
-        {positions.map(position => (
-          <div key={position.symbol} className="position-item">
-            <div className="position-details">
-              <h3>{position.symbol}</h3>
-              <p>{position.shares} shares</p>
-            </div>
-            <div className="position-value">
-              ${(position.shares * position.current_price).toLocaleString()}
-            </div>
+    <div className="portfolio-container">
+      <div className="portfolio-summary">
+        <div className="summary-card">
+          <h3>Portfolio Value</h3>
+          <div className="value">${totalValue.toFixed(2)}</div>
+        </div>
+        <div className="summary-card">
+          <h3>Cash Balance</h3>
+          <div className="value">${user.balance?.toFixed(2)}</div>
+        </div>
+        <div className="summary-card">
+          <h3>Total Assets</h3>
+          <div className="value">${(totalValue + (user.balance || 0)).toFixed(2)}</div>
+        </div>
+      </div>
+
+      <div className="portfolio-holdings">
+        <h2>Stock Holdings</h2>
+        <div className="holdings-table">
+          <div className="table-header">
+            <div>Symbol</div>
+            {/* <div>Company</div> */}
+            <div>Shares</div>
+            <div>Avg Price</div>
+            <div>Current Price</div>
+            <div>Market Value</div>
+            <div>Day's Gain/Loss</div>
+            <div>Total Return</div>
           </div>
-        ))}
+
+          {positions.length === 0 ? (
+            <div className="no-positions">
+              <p>No positions in your portfolio yet.</p>
+              <button className="start-trading-btn">Start Trading</button>
+            </div>
+          ) : (
+            <div className="table-body">
+              {positions.map(position => (
+                <div key={position.id} className="position-row">
+                  <div className="symbol">{position.symbol}</div>
+                  {/* <div className="company-name">{position.company_name}</div> */}
+                  <div className="shares">{position.shares}</div>
+                  <div className="price">${position.average_price.toFixed(2)}</div>
+                  <div className="price">${position.current_price?.toFixed(2) || 'N/A'}</div>
+                  <div className="market-value">
+                    ${(position.shares * (position.current_price || position.average_price)).toFixed(2)}
+                  </div>
+                  {/* <div className={`day-change ${position.day_change >= 0 ? 'gain' : 'loss'}`}>
+                    {position.day_change >= 0 ? '+' : ''}{position.day_change?.toFixed(2)}%
+                  </div> */}
+                  <div className={`total-return ${position.total_return >= 0 ? 'gain' : 'loss'}`}>
+                    {position.total_return >= 0 ? '+' : ''}{position.total_return?.toFixed(2)}%
+                    <div className="return-value">
+                      ${(position.shares * (position.current_price - position.average_price)).toFixed(2)}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

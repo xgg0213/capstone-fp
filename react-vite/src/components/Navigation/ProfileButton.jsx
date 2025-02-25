@@ -51,7 +51,7 @@ function ProfileButton({ user }) {
               <div className="username">{user.username}</div>
               <div className="email">{user.email}</div>
             </li>
-            <li className="menu-item">
+            {/* <li className="menu-item">
               <NavLink to="/portfolio" onClick={closeMenu}>
                 Portfolio
               </NavLink>
@@ -60,7 +60,7 @@ function ProfileButton({ user }) {
               <NavLink to="/transactions" onClick={closeMenu}>
                 History
               </NavLink>
-            </li>
+            </li> */}
             <li className="menu-item">
               <NavLink to="/account" onClick={closeMenu}>
                 Account
