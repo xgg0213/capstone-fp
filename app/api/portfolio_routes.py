@@ -1,7 +1,8 @@
 from flask import Blueprint, jsonify, request
 from flask_login import login_required, current_user
-from app.models import db, Portfolio, Transaction
+from app.models import db, Portfolio, Transaction, User
 from datetime import datetime
+from decimal import Decimal
 
 portfolio_routes = Blueprint('portfolio', __name__)
 
@@ -34,4 +35,32 @@ def get_portfolio_history():
             'value': portfolio_value
         })
     
-    return {'history': history} 
+    return {'history': history}
+
+@portfolio_routes.route('', methods=['POST'])
+@login_required
+def update_balance():
+    """
+    Update user's balance
+    """
+    data = request.get_json()
+    
+    if 'amount' not in data:
+        return {'errors': {'amount': 'Amount is required'}}, 400
+        
+    try:
+        amount = Decimal(str(data['amount']))
+        if amount <= 0:
+            return {'errors': {'amount': 'Amount must be positive'}}, 400
+            
+        user = User.query.get(current_user.id)
+        user.balance = user.balance + amount
+        
+        db.session.commit()
+        return {'balance': float(user.balance)}
+        
+    except (ValueError, TypeError):
+        return {'errors': {'amount': 'Invalid amount format'}}, 400
+    except Exception as e:
+        db.session.rollback()
+        return {'errors': {'server': 'An error occurred'}}, 500 

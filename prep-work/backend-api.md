@@ -148,12 +148,121 @@
 - Endpoint: `DELETE /api/watchlists/<int:id>`
 - Authentication: Required
 
-## Portfolio
+## PORTFOLIO
 
-### Get Portfolio
-- Endpoint: `GET /api/portfolio`
-- Authentication: Required
-- Response: List of portfolio positions
+### Get User's Portfolio
+
+Returns the current user's portfolio positions.
+
+* Require Authentication: true
+* Request
+  * Method: GET
+  * URL: /api/portfolio
+  * Body: none
+
+* Successful Response
+  * Status Code: 200
+  * Headers:
+    * Content-Type: application/json
+  * Body:
+
+    ```json
+    {
+      "positions": [
+        {
+          "id": 1,
+          "symbol": "AAPL",
+          "shares": 10,
+          "average_price": 150.00
+        }
+      ]
+    }
+    ```
+
+### Update User's Balance
+
+Updates the current user's cash balance.
+
+* Require Authentication: true
+* Request
+  * Method: POST
+  * URL: /api/portfolio
+  * Headers:
+    * Content-Type: application/json
+  * Body:
+
+    ```json
+    {
+      "amount": 1000.00
+    }
+    ```
+
+* Successful Response
+  * Status Code: 200
+  * Headers:
+    * Content-Type: application/json
+  * Body:
+
+    ```json
+    {
+      "balance": 5000.00
+    }
+    ```
+
+* Error Response: Invalid amount
+  * Status Code: 400
+  * Headers:
+    * Content-Type: application/json
+  * Body:
+
+    ```json
+    {
+      "errors": {
+        "amount": "Amount must be positive"
+      }
+    }
+    ```
+
+* Error Response: Invalid format
+  * Status Code: 400
+  * Headers:
+    * Content-Type: application/json
+  * Body:
+
+    ```json
+    {
+      "errors": {
+        "amount": "Invalid amount format"
+      }
+    }
+    ```
+
+### Get Portfolio History
+
+Returns the history of portfolio value over time.
+
+* Require Authentication: true
+* Request
+  * Method: GET
+  * URL: /api/portfolio/history
+  * Body: none
+
+* Successful Response
+  * Status Code: 200
+  * Headers:
+    * Content-Type: application/json
+  * Body:
+
+    ```json
+    {
+      "history": [
+        {
+          "timestamp": "2023-01-01T12:00:00",
+          "value": 5000.00
+        }
+      ]
+    }
+    ```
 
 ## Transactions
 

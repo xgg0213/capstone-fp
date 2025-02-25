@@ -18,11 +18,11 @@ app = Flask(__name__, static_folder='../react-vite/dist', static_url_path='/')
 
 # Configure app first
 app.config.from_object(Config)
-app.config['WTF_CSRF_ENABLED'] = False  # Temporarily disable CSRF
 
 # Initialize extensions
 db.init_app(app)
 Migrate(app, db)
+# csrf = CSRFProtect(app)
 
 # Setup login manager
 login = LoginManager(app)
@@ -43,33 +43,7 @@ app.register_blueprint(order_routes, url_prefix='/api/orders')
 app.register_blueprint(watchlist_routes, url_prefix='/api/watchlists')
 app.register_blueprint(transaction_routes, url_prefix='/api/transactions')
 
-# Debug route to list all registered routes
-@app.route('/debug/routes')
-def debug_routes():
-    routes = []
-    for rule in app.url_map.iter_rules():
-        methods = ','.join(sorted(rule.methods))
-        routes.append(f"{rule.endpoint:50s} {methods:20s} {rule}")
-    return '<pre>' + '\n'.join(sorted(routes)) + '</pre>'
 
-# Application Security
-CORS(app, supports_credentials=True, origins=["http://localhost:5173"])
-
-# CSRF Protection
-@app.after_request
-def inject_csrf_token(response):
-    response.set_cookie(
-        'csrf_token',
-        generate_csrf(),
-        secure=True if os.environ.get('FLASK_ENV') == 'production' else False,
-        samesite='Strict' if os.environ.get('FLASK_ENV') == 'production' else None,
-        httponly=True)
-    return response
-
-# Test route to verify server is running
-@app.route('/api/test')
-def test_route():
-    return {'message': 'Server is running!'}
 
 # Since we are deploying with Docker and Flask,
 # we won't be using a buildpack when we deploy to Heroku.
