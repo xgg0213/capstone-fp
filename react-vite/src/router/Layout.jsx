@@ -4,8 +4,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { restoreCSRF } from "../redux/csrf";
 import { thunkAuthenticate } from "../redux/session";
 import Navigation from "../components/Navigation/Navigation";
+import { Modal } from '../context/Modal';
 
-export default function Layout() {
+function Layout() {
   const dispatch = useDispatch();
   const location = useLocation();
   const user = useSelector(state => state.session.user);
@@ -28,3 +29,5 @@ export default function Layout() {
     </>
   );
 }
+
+export default Layout;

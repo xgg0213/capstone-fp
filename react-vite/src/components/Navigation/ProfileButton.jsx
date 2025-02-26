@@ -61,12 +61,12 @@ function ProfileButton({ user }) {
                 History
               </NavLink>
             </li> */}
-            <li className="menu-item">
+            {/* <li className="menu-item">
               <NavLink to="/account" onClick={closeMenu}>
                 Account
               </NavLink>
-            </li>
-            <li className="menu-divider"></li>
+            </li> */}
+            {/* <li className="menu-divider"></li> */}
             <li className="menu-item">
               <button onClick={handleLogout} className="logout-button">
                 Log Out

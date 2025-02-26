@@ -12,13 +12,16 @@ function Dashboard() {
     <div className="dashboard">
       <div className="dashboard-left">
         <Portfolio />
-        <Watchlists onSelectStock={setSelectedStock} />
+        
       </div>
       <div className="dashboard-right">
+        <Watchlists onSelectStock={setSelectedStock} />
+      </div>
+      {/* <div className="dashboard-right">
         {selectedStock ? (
           <>
             <div className="stock-chart">
-              {/* Stock chart component will go here */}
+              
             </div>
             <OrderForm stock={selectedStock} />
           </>
@@ -27,7 +30,7 @@ function Dashboard() {
             Select a stock to trade
           </div>
         )}
-      </div>
+      </div> */}
     </div>
   );
 }

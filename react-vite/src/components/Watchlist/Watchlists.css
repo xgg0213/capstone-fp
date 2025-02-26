@@ -1,0 +1,155 @@
+.watchlists-container {
+  background: #1a1a1a;
+  border-radius: 12px;
+  padding: 1.5rem;
+  height: 100%;
+}
+
+.watchlists-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.watchlists-header h2 {
+  color: white;
+  margin: 0;
+}
+
+.watchlist-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 0.5rem;
+}
+
+.watchlist-tab {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.watchlist-tab:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+}
+
+.watchlist-tab.active {
+  background: rgba(0, 200, 5, 0.1);
+  color: #00C805;
+}
+
+.stock-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stock-info {
+  flex-grow: 1;
+  cursor: pointer;
+}
+
+.stock-symbol {
+  color: white;
+  font-weight: 500;
+}
+
+.stock-shares {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+}
+
+.stock-price {
+  text-align: right;
+}
+
+.current-price {
+  color: white;
+  font-weight: 500;
+}
+
+.price-change {
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+.gain {
+  color: #00C805;
+}
+
+.loss {
+  color: #ff4444;
+}
+
+.no-watchlists {
+  text-align: center;
+  padding: 2rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.create-watchlist-btn {
+  background: #00C805;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  margin-top: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.create-watchlist-btn:hover {
+  background: #00b300;
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: white;
+}
+
+.symbol-count {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  margin-left: 0.5rem;
+}
+
+.company-name {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.8rem;
+}
+
+.stock-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.remove-symbol-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.remove-symbol-btn:hover {
+  color: #ff4444;
+} 

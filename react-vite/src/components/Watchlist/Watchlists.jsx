@@ -1,67 +1,125 @@
 import { useState, useEffect } from 'react';
-import { csrfFetch } from '../../redux/csrf';
+import { useSelector, useDispatch } from 'react-redux';
+import { getWatchlists } from '../../redux/watchlist';
+import { FaTrash } from 'react-icons/fa';
+import OpenModalButton from '../OpenModalButton/OpenModalButton';
+import ConfirmModal from '../Modals/ConfirmModal';
+import './Watchlists.css';
 
 function Watchlists({ onSelectStock }) {
-  const [watchlists, setWatchlists] = useState([]);
-  const [newListName, setNewListName] = useState('');
+  const dispatch = useDispatch();
+  const watchlists = useSelector(state => state.watchlist.watchlists);
+  const [isLoading, setIsLoading] = useState(true);
+  const [activeWatchlist, setActiveWatchlist] = useState(null);
+  const [showMenu, setShowMenu] = useState(false);
 
   useEffect(() => {
-    fetchWatchlists();
-  }, []);
+    const loadWatchlists = async () => {
+      try {
+        await dispatch(getWatchlists());
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error loading watchlists:', error);
+        setIsLoading(false);
+      }
+    };
 
-  async function fetchWatchlists() {
-    const response = await csrfFetch('/api/watchlists');
-    if (response.ok) {
-      const data = await response.json();
-      setWatchlists(data.watchlists);
-    }
-  }
+    loadWatchlists();
+  }, [dispatch]);
 
-  const handleCreateList = async (e) => {
-    e.preventDefault();
-    const response = await csrfFetch('/api/watchlists', {
-      method: 'POST',
-      body: JSON.stringify({
-        name: newListName,
-        symbols: ''
-      })
-    });
-    if (response.ok) {
-      setNewListName('');
-      fetchWatchlists();
+  useEffect(() => {
+    if (watchlists.length > 0 && !activeWatchlist) {
+      setActiveWatchlist(watchlists[0].id);
     }
+  }, [watchlists, activeWatchlist]);
+
+  const closeMenu = () => setShowMenu(false);
+
+  const handleRemoveSymbol = async (watchlistId, symbol) => {
+    try {
+      const response = await fetch(`/api/watchlists/${watchlistId}/symbols/${symbol}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      if (response.ok) {
+        dispatch(getWatchlists());
+      }
+    } catch (error) {
+      console.error('Error removing symbol:', error);
+    }
+    closeMenu();
   };
 
-  return (
-    <div className="watchlists">
-      <h2>Watchlists</h2>
-      
-      <form onSubmit={handleCreateList} className="new-list-form">
-        <input
-          type="text"
-          value={newListName}
-          onChange={(e) => setNewListName(e.target.value)}
-          placeholder="New list name"
-        />
-        <button type="submit">Create</button>
-      </form>
+  if (isLoading) return <div className="loading">Loading watchlists...</div>;
 
-      {watchlists.map(list => (
-        <div key={list.id} className="watchlist">
-          <h3>{list.name}</h3>
-          <div className="stock-list">
-            {list.symbols.split(',').map(symbol => (
-              <div
-                key={symbol}
-                className="stock-item"
-                onClick={() => onSelectStock({ symbol })}
+  const activeList = watchlists.find(list => list.id === activeWatchlist);
+
+  return (
+    <div className="watchlists-container">
+      <div className="watchlists-header">
+        <h2>Watchlists</h2>
+      </div>
+
+      {watchlists.length === 0 ? (
+        <div className="no-watchlists">
+          <p>No watchlists yet.</p>
+          <button className="create-watchlist-btn">Create Watchlist</button>
+        </div>
+      ) : (
+        <>
+          <div className="watchlist-tabs">
+            {watchlists.map(list => (
+              <button
+                key={list.id}
+                className={`watchlist-tab ${activeWatchlist === list.id ? 'active' : ''}`}
+                onClick={() => setActiveWatchlist(list.id)}
               >
-                {symbol}
+                {list.name}
+                <span className="symbol-count">({list.symbols.length})</span>
+              </button>
+            ))}
+          </div>
+
+          <div className="watchlist-content">
+            {activeList?.symbols.map(symbol => (
+              <div 
+                key={symbol.id} 
+                className="stock-item"
+              >
+                <div 
+                  className="stock-info"
+                  onClick={() => onSelectStock(symbol)}
+                >
+                  <div className="stock-symbol">{symbol.symbol}</div>
+                  <div className="company-name">{symbol.company_name}</div>
+                </div>
+                <div className="stock-actions">
+                  <div className="stock-price">
+                    <div className="current-price">${symbol.current_price?.toFixed(2) || 'N/A'}</div>
+                    {symbol.price_change && (
+                      <div className={`price-change ${symbol.price_change >= 0 ? 'gain' : 'loss'}`}>
+                        {symbol.price_change >= 0 ? '+' : ''}{symbol.price_change.toFixed(2)}%
+                      </div>
+                    )}
+                  </div>
+                  <OpenModalButton
+                    buttonText={<FaTrash />}
+                    className="remove-symbol-btn"
+                    modalComponent={
+                      <ConfirmModal
+                        message={`Remove ${symbol.symbol} from watchlist?`}
+                        onConfirm={() => handleRemoveSymbol(activeWatchlist, symbol.symbol)}
+                      />
+                    }
+                  />
+                </div>
               </div>
             ))}
           </div>
-        </div>
-      ))}
+        </>
+      )}
     </div>
   );
 }

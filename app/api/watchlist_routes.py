@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from flask_login import login_required, current_user
-from app.models import db, Watchlist
+from app.models import db, Watchlist, WatchlistSymbol
 from datetime import datetime
 
 watchlist_routes = Blueprint('watchlists', __name__)
@@ -8,7 +8,7 @@ watchlist_routes = Blueprint('watchlists', __name__)
 @watchlist_routes.route('/')
 @login_required
 def get_watchlists():
-    """Get user's watchlists"""
+    """Get user's watchlists with symbols"""
     watchlists = Watchlist.query.filter_by(user_id=current_user.id).all()
     return {'watchlists': [watchlist.to_dict() for watchlist in watchlists]}
 
@@ -23,8 +23,7 @@ def create_watchlist():
         
     watchlist = Watchlist(
         user_id=current_user.id,
-        name=data['name'],
-        symbols=','.join(data.get('symbols', []))
+        name=data['name']
     )
     
     db.session.add(watchlist)
@@ -41,14 +40,29 @@ def add_symbol(id):
     if not watchlist or watchlist.user_id != current_user.id:
         return {'error': 'Watchlist not found'}, 404
         
-    symbol = request.json.get('symbol', '').upper()
+    data = request.json
+    symbol = data.get('symbol', '').upper()
     if not symbol:
         return {'error': 'Symbol is required'}, 400
         
-    current_symbols = set(watchlist.symbols.split(',') if watchlist.symbols else [])
-    current_symbols.add(symbol)
-    watchlist.symbols = ','.join(current_symbols)
+    # Check if symbol already exists in watchlist
+    existing = WatchlistSymbol.query.filter_by(
+        watchlist_id=id, 
+        symbol=symbol
+    ).first()
     
+    if existing:
+        return {'error': 'Symbol already in watchlist'}, 400
+        
+    new_symbol = WatchlistSymbol(
+        watchlist_id=id,
+        symbol=symbol,
+        company_name=data.get('company_name'),
+        current_price=data.get('current_price'),
+        price_change=data.get('price_change')
+    )
+    
+    db.session.add(new_symbol)
     db.session.commit()
     return watchlist.to_dict()
 
@@ -61,9 +75,13 @@ def remove_symbol(id, symbol):
     if not watchlist or watchlist.user_id != current_user.id:
         return {'error': 'Watchlist not found'}, 404
         
-    current_symbols = set(watchlist.symbols.split(',') if watchlist.symbols else [])
-    current_symbols.discard(symbol.upper())
-    watchlist.symbols = ','.join(current_symbols)
+    symbol_to_remove = WatchlistSymbol.query.filter_by(
+        watchlist_id=id,
+        symbol=symbol.upper()
+    ).first()
     
-    db.session.commit()
+    if symbol_to_remove:
+        db.session.delete(symbol_to_remove)
+        db.session.commit()
+        
     return watchlist.to_dict() 

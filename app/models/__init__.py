@@ -4,6 +4,7 @@ from .portfolio import Portfolio
 from .order import Order
 from .transaction import Transaction
 from .watchlist import Watchlist
+from .watchlist_symbol import WatchlistSymbol
 
 __all__ = [
     'db',

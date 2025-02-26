@@ -10,19 +10,18 @@ class Watchlist(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('users.id')), nullable=False)
     name = db.Column(db.String(50), nullable=False)
-    symbols = db.Column(db.String(1000), nullable=False, default='')  # Comma-separated list of symbols
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Relationships
     user = db.relationship('User', back_populates='watchlists')
+    symbols = db.relationship('WatchlistSymbol', back_populates='watchlist', cascade='all, delete-orphan')
 
     def to_dict(self):
         return {
             'id': self.id,
-            'user_id': self.user_id,
             'name': self.name,
-            'symbols': self.symbols.split(',') if self.symbols else [],
+            'symbols': [symbol.to_dict() for symbol in self.symbols],
             'created_at': self.created_at.isoformat(),
             'updated_at': self.updated_at.isoformat()
         } 

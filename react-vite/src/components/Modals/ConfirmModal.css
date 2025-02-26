@@ -1,0 +1,47 @@
+.confirm-modal {
+  padding: 2rem;
+  min-width: 300px;
+}
+
+.confirm-content {
+  text-align: center;
+}
+
+.confirm-content p {
+  margin-bottom: 1.5rem;
+  color: white;
+  font-size: 1.1rem;
+}
+
+.confirm-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.confirm-btn, .cancel-btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.confirm-btn {
+  background: #ff4444;
+  color: white;
+}
+
+.confirm-btn:hover {
+  background: #ff2020;
+}
+
+.cancel-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.cancel-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+} 
