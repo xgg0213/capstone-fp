@@ -1,77 +1,48 @@
-from app.models import db, Watchlist, WatchlistSymbol, environment, SCHEMA
+from app.models import db, Watchlist, WatchlistSymbol, User, Symbol, environment, SCHEMA
 from sqlalchemy.sql import text
 from datetime import datetime
 
 def seed_watchlists():
-    # First, create watchlists
-    demo_watchlist = Watchlist(
-        user_id=1,
-        name='My First Watchlist'
-    )
+    # Get users and symbols first
+    users = User.query.all()
+    symbols = Symbol.query.all()
 
-    demo_watchlist2 = Watchlist(
-        user_id=1,
-        name='Tech Stocks'
-    )
+    # Create watchlists
+    watchlists = [
+        Watchlist(
+            user_id=users[0].id,
+            name="Tech Stocks"
+        ),
+        Watchlist(
+            user_id=users[1].id,
+            name="My Favorites"
+        )
+    ]
 
-    marnie_watchlist = Watchlist(
-        user_id=2,
-        name='Favorites'
-    )
-
-    db.session.add_all([demo_watchlist, demo_watchlist2, marnie_watchlist])
+    for watchlist in watchlists:
+        db.session.add(watchlist)
+    
     db.session.commit()
 
-    # Then, add symbols to watchlists
-    demo_symbols = [
+    # Add symbols to watchlists
+    watchlist_symbols = [
         WatchlistSymbol(
-            watchlist_id=1,
-            symbol='AAPL',
-            company_name='Apple Inc.',
-            current_price=175.50,
-            price_change=1.25
+            watchlist_id=watchlists[0].id,
+            symbol_id=symbols[0].id  # AAPL
         ),
         WatchlistSymbol(
-            watchlist_id=1,
-            symbol='MSFT',
-            company_name='Microsoft Corporation',
-            current_price=325.75,
-            price_change=2.30
+            watchlist_id=watchlists[0].id,
+            symbol_id=symbols[1].id  # GOOGL
         ),
         WatchlistSymbol(
-            watchlist_id=2,
-            symbol='GOOGL',
-            company_name='Alphabet Inc.',
-            current_price=135.20,
-            price_change=-0.75
-        ),
-        WatchlistSymbol(
-            watchlist_id=2,
-            symbol='META',
-            company_name='Meta Platforms Inc.',
-            current_price=292.50,
-            price_change=1.80
+            watchlist_id=watchlists[1].id,
+            symbol_id=symbols[2].id  # MSFT
         )
     ]
 
-    marnie_symbols = [
-        WatchlistSymbol(
-            watchlist_id=3,
-            symbol='TSLA',
-            company_name='Tesla, Inc.',
-            current_price=245.30,
-            price_change=-1.20
-        ),
-        WatchlistSymbol(
-            watchlist_id=3,
-            symbol='NVDA',
-            company_name='NVIDIA Corporation',
-            current_price=420.15,
-            price_change=3.45
-        )
-    ]
+    for ws in watchlist_symbols:
+        db.session.add(ws)
 
-    db.session.add_all(demo_symbols + marnie_symbols)
     db.session.commit()
 
 def undo_watchlists():
@@ -79,8 +50,8 @@ def undo_watchlists():
         db.session.execute(f"TRUNCATE table {SCHEMA}.watchlist_symbols RESTART IDENTITY CASCADE;")
         db.session.execute(f"TRUNCATE table {SCHEMA}.watchlists RESTART IDENTITY CASCADE;")
     else:
-        db.session.execute(text("DELETE FROM watchlist_symbols"))
-        db.session.execute(text("DELETE FROM watchlists"))
-        
+        db.session.execute("DELETE FROM watchlist_symbols")
+        db.session.execute("DELETE FROM watchlists")
+    
     db.session.commit()
     print('Watchlists table cleared!') 

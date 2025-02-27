@@ -1,35 +1,37 @@
-from app.models import db, Transaction, environment, SCHEMA
+from app.models import db, Transaction, User, Symbol, Order, environment, SCHEMA
 from sqlalchemy.sql import text
-from datetime import datetime, timedelta
+from datetime import datetime
 
 def seed_transactions():
+    # Get users, symbols, and completed orders
+    users = User.query.all()
+    symbols = Symbol.query.all()
+    completed_orders = Order.query.filter_by(status='completed').all()
+
     transactions = [
         Transaction(
-            user_id=1,  # Demo user
-            order_id=1,  # AAPL order
-            symbol='AAPL',
-            shares=10,
+            user_id=users[0].id,
+            order_id=completed_orders[0].id,  # First completed order
+            symbol_id=symbols[0].id,  # AAPL
+            shares=100,
             price=175.50,
-            type='buy',
-            created_at=datetime.utcnow() - timedelta(days=5)
+            type='buy'
         ),
         Transaction(
-            user_id=2,  # Marnie
-            order_id=2,  # GOOGL order
-            symbol='GOOGL',
-            shares=5,
-            price=140.00,
-            type='buy',
-            created_at=datetime.utcnow() - timedelta(days=3)
+            user_id=users[0].id,
+            order_id=completed_orders[1].id,  # Second completed order
+            symbol_id=symbols[1].id,  # GOOGL
+            shares=50,
+            price=138.20,
+            type='buy'
         ),
         Transaction(
-            user_id=3,  # Bobbie
-            order_id=3,  # TSLA order
-            symbol='TSLA',
-            shares=15,
-            price=100.00,
-            type='buy',
-            created_at=datetime.utcnow() - timedelta(days=1)
+            user_id=users[1].id,
+            order_id=completed_orders[2].id,  # Third completed order
+            symbol_id=symbols[2].id,  # MSFT
+            shares=75,
+            price=330.50,
+            type='buy'
         )
     ]
 

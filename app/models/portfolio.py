@@ -9,7 +9,7 @@ class Portfolio(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('users.id')), nullable=False)
-    symbol = db.Column(db.String(10), nullable=False)
+    symbol_id = db.Column(db.Integer, db.ForeignKey('symbols.id'), nullable=False)
     shares = db.Column(db.Float, nullable=False, default=0)
     average_price = db.Column(db.Float, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -21,19 +21,29 @@ class Portfolio(db.Model):
 
     # Relationships
     user = db.relationship('User', back_populates='portfolios')
+    symbol = db.relationship('Symbol', back_populates='portfolio_positions')
 
     def to_dict(self):
+        symbol_data = self.symbol.to_dict() if self.symbol else {}
+        current_price = float(symbol_data.get('current_price', 0))
+        price_change = float(symbol_data.get('price_change_pct', 0))
+        
+        # Calculate total return percentage
+        total_return = ((current_price - self.average_price) / self.average_price * 100) if self.average_price > 0 else 0
+
         return {
             'id': self.id,
             'user_id': self.user_id,
-            'symbol': self.symbol,
+            'symbol': symbol_data.get('symbol'),  # Get symbol string from Symbol model
+            'company_name': symbol_data.get('company_name'),
             'shares': float(self.shares),
             'average_price': float(self.average_price),
-            # 'company_name': self.company_name,
-            # 'current_price': float(self.current_price) if self.current_price else None,
-            # 'day_change': float(self.day_change) if self.day_change else 0,
-            # 'total_return': float(self.total_return) if self.total_return else 0,
-            'market_value': float(self.shares * self.average_price),
+            'current_price': current_price,
+            'market_value': float(self.shares * current_price),
+            'total_cost': float(self.shares * self.average_price),
+            'total_return': float(total_return),
+            'day_change': price_change,
+            'unrealized_gain': float(self.shares * (current_price - self.average_price)),
             'created_at': self.created_at.isoformat(),
             'updated_at': self.updated_at.isoformat()
         } 

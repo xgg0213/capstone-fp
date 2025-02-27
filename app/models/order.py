@@ -9,33 +9,31 @@ class Order(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('users.id')), nullable=False)
-    symbol = db.Column(db.String(10), nullable=False)
-    order_type = db.Column(db.String(10), nullable=False)  # 'market' or 'limit'
-    side = db.Column(db.String(4), nullable=False)  # 'buy' or 'sell'
+    symbol_id = db.Column(db.Integer, db.ForeignKey('symbols.id'), nullable=False)
     shares = db.Column(db.Float, nullable=False)
-    price = db.Column(db.Float)  # Required for limit orders
-    status = db.Column(db.String(10), nullable=False)  # 'pending', 'filled', 'cancelled'
-    filled_price = db.Column(db.Float)  # Price at which order was filled
-    filled_at = db.Column(db.DateTime)  # When the order was filled
+    type = db.Column(db.String(4), nullable=False)  # buy, sell
+    status = db.Column(db.String(10), nullable=False, default='pending')  # pending, completed, cancelled
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Relationships
     user = db.relationship('User', back_populates='orders')
-    transactions = db.relationship('Transaction', back_populates='order', cascade='all, delete-orphan')
+    transactions = db.relationship('Transaction', back_populates='order')
+    symbol = db.relationship('Symbol', back_populates='orders')
 
     def to_dict(self):
+        symbol_data = self.symbol.to_dict() if self.symbol else {}
+        
         return {
             'id': self.id,
             'user_id': self.user_id,
-            'symbol': self.symbol,
-            'order_type': self.order_type,
-            'side': self.side,
-            'shares': float(self.shares),  # Convert to float for JSON
-            'price': float(self.price) if self.price else None,  # Handle None case
+            'symbol': symbol_data.get('symbol'),
+            'company_name': symbol_data.get('company_name'),
+            'shares': float(self.shares),
+            'type': self.type,
             'status': self.status,
-            'filled_price': float(self.filled_price) if self.filled_price else None,
-            'filled_at': self.filled_at.isoformat() if self.filled_at else None,
+            'current_price': float(symbol_data.get('current_price', 0)),
             'created_at': self.created_at.isoformat(),
-            'updated_at': self.updated_at.isoformat()
+            'updated_at': self.updated_at.isoformat(),
+            'transactions': [transaction.to_dict() for transaction in self.transactions]
         } 

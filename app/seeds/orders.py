@@ -1,53 +1,63 @@
-from app.models import db, Order, environment, SCHEMA
+from app.models import db, Order, User, Symbol, environment, SCHEMA
 from sqlalchemy.sql import text
-from datetime import datetime, timedelta
+from datetime import datetime
 
 def seed_orders():
-    # Create orders for existing users (user_id 1, 2, 3)
+    # Get users and symbols first
+    users = User.query.all()
+    symbols = Symbol.query.all()
+
+    # Create sample orders - mix of completed and pending
     orders = [
+        # Completed orders
         Order(
-            user_id=1,  # Demo user
-            symbol='AAPL',
-            order_type='market',
-            side='buy',
-            shares=10,
-            status='filled',
-            filled_price=175.50,
-            filled_at=datetime.utcnow() - timedelta(days=5)
+            user_id=users[0].id,
+            symbol_id=symbols[0].id,  # AAPL
+            shares=100,
+            type='buy',
+            status='completed'  # This will have a transaction
         ),
         Order(
-            user_id=2,  # Marnie
-            symbol='GOOGL',
-            order_type='limit',
-            side='buy',
-            shares=5,
-            price=140.00,  # Limit price
-            status='pending'
+            user_id=users[0].id,
+            symbol_id=symbols[1].id,  # GOOGL
+            shares=50,
+            type='buy',
+            status='completed'  # This will have a transaction
         ),
         Order(
-            user_id=3,  # Bobbie
-            symbol='TSLA',
-            order_type='market',
-            side='buy',
-            shares=15,
-            status='pending'
+            user_id=users[1].id,
+            symbol_id=symbols[2].id,  # MSFT
+            shares=75,
+            type='buy',
+            status='completed'  # This will have a transaction
+        ),
+        # Pending orders
+        Order(
+            user_id=users[0].id,
+            symbol_id=symbols[0].id,  # AAPL
+            shares=25,
+            type='buy',
+            status='pending'  # No transaction for this one
+        ),
+        Order(
+            user_id=users[1].id,
+            symbol_id=symbols[1].id,  # GOOGL
+            shares=30,
+            type='sell',
+            status='pending'  # No transaction for this one
         )
     ]
-    
-    try:
-        for order in orders:
-            db.session.add(order)
-        db.session.commit()
-        print('Orders seeded successfully!')
-    except Exception as e:
-        db.session.rollback()
-        print('Error seeding orders:', str(e))
-        raise e
+
+    for order in orders:
+        db.session.add(order)
+
+    db.session.commit()
 
 def undo_orders():
     if environment == "production":
         db.session.execute(f"TRUNCATE table {SCHEMA}.orders RESTART IDENTITY CASCADE;")
     else:
-        db.session.execute(text("DELETE FROM orders"))
+        db.session.execute("DELETE FROM orders")
+        
     db.session.commit()
     print('Orders table cleared!') 

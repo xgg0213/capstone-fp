@@ -1,40 +1,48 @@
-from app.models import db, Portfolio, User, environment, SCHEMA
+from app.models import db, Portfolio, User, Symbol, environment, SCHEMA
 from sqlalchemy.sql import text
 from datetime import datetime
 
 def seed_portfolios():
-    demo = User.query.filter_by(username='Demo').first()
-    
+    # Get users and symbols first
+    users = User.query.all()
+    symbols = Symbol.query.all()
+
     portfolios = [
         Portfolio(
-            user_id=demo.id,
-            symbol='AAPL',
-            shares=10,
+            user_id=users[0].id,  # Demo user
+            symbol_id=symbols[0].id,  # AAPL
+            shares=100,
             average_price=175.50
         ),
         Portfolio(
-            user_id=demo.id,
-            symbol='GOOGL',
-            shares=5,
-            average_price=142.30
+            user_id=users[0].id,  # Demo user
+            symbol_id=symbols[1].id,  # GOOGL
+            shares=50,
+            average_price=138.20
         ),
         Portfolio(
-            user_id=demo.id,
-            symbol='TSLA',
-            shares=15,
-            average_price=245.75
+            user_id=users[1].id,  # Marnie
+            symbol_id=symbols[2].id,  # MSFT
+            shares=75,
+            average_price=330.50
         )
     ]
-    
-    for portfolio in portfolios:
-        db.session.add(portfolio)
-        
-    db.session.commit()
-    print('Portfolios seeded successfully!')
+
+    try:
+        for portfolio in portfolios:
+            db.session.add(portfolio)
+        db.session.commit()
+        print('Portfolios seeded successfully!')
+    except Exception as e:
+        db.session.rollback()
+        print('Error seeding portfolios:', str(e))
+        raise e
 
 def undo_portfolios():
     if environment == "production":
         db.session.execute(f"TRUNCATE table {SCHEMA}.portfolios RESTART IDENTITY CASCADE;")
     else:
         db.session.execute(text("DELETE FROM portfolios"))
-    db.session.commit() 
+    
+    db.session.commit()
+    print('Portfolios table cleared!') 

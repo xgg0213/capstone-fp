@@ -9,23 +9,22 @@ class WatchlistSymbol(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     watchlist_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('watchlists.id')), nullable=False)
-    symbol = db.Column(db.String(10), nullable=False)
-    company_name = db.Column(db.String(100))
-    current_price = db.Column(db.Float)
-    price_change = db.Column(db.Float)
+    symbol_id = db.Column(db.Integer, db.ForeignKey('symbols.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    # Relationship
-    watchlist = db.relationship('Watchlist', back_populates='symbols')
+    # Relationships
+    watchlist = db.relationship('Watchlist', back_populates='watchlist_symbols')
+    symbol = db.relationship('Symbol', back_populates='watchlist_symbols')
 
     def to_dict(self):
+        symbol_data = self.symbol.to_dict() if self.symbol else {}
+        
         return {
             'id': self.id,
-            'symbol': self.symbol,
-            'company_name': self.company_name,
-            'current_price': self.current_price,
-            'price_change': self.price_change,
-            'created_at': self.created_at.isoformat(),
-            'updated_at': self.updated_at.isoformat()
+            'watchlist_id': self.watchlist_id,
+            'symbol': symbol_data.get('symbol'),
+            'company_name': symbol_data.get('company_name'),
+            'current_price': float(symbol_data.get('current_price', 0)),
+            'price_change_pct': float(symbol_data.get('price_change_pct', 0)),
+            'created_at': self.created_at.isoformat()
         } 

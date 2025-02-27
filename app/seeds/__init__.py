@@ -4,6 +4,7 @@ from .orders import seed_orders, undo_orders
 from .portfolios import seed_portfolios, undo_portfolios
 from .transactions import seed_transactions, undo_transactions
 from .watchlists import seed_watchlists, undo_watchlists
+from .symbols import seed_symbols, undo_symbols
 from app.models.db import db, environment, SCHEMA
 
 # Creates a seed group to hold our commands
@@ -15,17 +16,19 @@ seed_commands = AppGroup('seed')
 @seed_commands.command('all')
 def seed():
     if environment == 'production':
-        # Before seeding in production, truncate all tables
+        # Before seeding, in reverse order
         undo_watchlists()
-        undo_transactions()
+        undo_transactions()  # Transactions before orders
         undo_portfolios()
-        undo_orders()
+        undo_orders()       # Orders before symbols
+        undo_symbols()
         undo_users()
-        
+    
     seed_users()
-    seed_orders()
+    seed_symbols()
+    seed_orders()          # Orders before transactions
     seed_portfolios()
-    seed_transactions()
+    seed_transactions()    # Transactions after orders
     seed_watchlists()
 
 
@@ -38,3 +41,4 @@ def undo():
     undo_portfolios()
     undo_orders()
     undo_users()
+    undo_symbols()

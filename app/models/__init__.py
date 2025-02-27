@@ -5,6 +5,8 @@ from .order import Order
 from .transaction import Transaction
 from .watchlist import Watchlist
 from .watchlist_symbol import WatchlistSymbol
+from .symbol import Symbol
+from .symbol_price import SymbolPrice
 
 __all__ = [
     'db',
@@ -14,5 +16,8 @@ __all__ = [
     'Portfolio',
     'Order',
     'Transaction',
-    'Watchlist'
+    'Watchlist',
+    'WatchlistSymbol',
+    'Symbol',
+    'SymbolPrice'
 ]

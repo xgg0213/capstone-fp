@@ -13,15 +13,16 @@ class Watchlist(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    # Relationships
+    # Update relationship name from 'symbols' to 'watchlist_symbols'
+    watchlist_symbols = db.relationship('WatchlistSymbol', back_populates='watchlist', cascade='all, delete-orphan')
     user = db.relationship('User', back_populates='watchlists')
-    symbols = db.relationship('WatchlistSymbol', back_populates='watchlist', cascade='all, delete-orphan')
 
     def to_dict(self):
         return {
             'id': self.id,
+            'user_id': self.user_id,
             'name': self.name,
-            'symbols': [symbol.to_dict() for symbol in self.symbols],
+            'symbols': [symbol.to_dict() for symbol in self.watchlist_symbols],
             'created_at': self.created_at.isoformat(),
             'updated_at': self.updated_at.isoformat()
         } 
