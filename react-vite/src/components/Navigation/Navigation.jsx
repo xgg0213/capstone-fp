@@ -1,11 +1,21 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useState } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import ProfileButton from './ProfileButton';
 import './Navigation.css';
 
 function Navigation({ isLoaded }) {
   const sessionUser = useSelector(state => state.session.user);
+  const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      navigate(`/symbols/${searchTerm.trim().toUpperCase()}`);
+      setSearchTerm('');  // Clear search after navigation
+    }
+  };
 
   // If no user is logged in, show login/signup links
   if (!sessionUser) {
@@ -34,7 +44,18 @@ function Navigation({ isLoaded }) {
       </div>
       <div className="nav-center">
         <div className="search-bar">
-          <input type="text" placeholder="Search for stocks" />
+          <form onSubmit={handleSearch} className="search-form">
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search symbol (e.g., AAPL)"
+              className="search-input"
+            />
+            <button type="submit" className="search-button">
+              Search
+            </button>
+          </form>
         </div>
       </div>
       <div className="nav-right">

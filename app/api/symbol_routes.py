@@ -3,15 +3,15 @@ from flask_login import login_required
 from app.models import db, Symbol, SymbolPrice
 from datetime import datetime
 
-symbols_routes = Blueprint('symbols', __name__)
+symbol_routes = Blueprint('symbols', __name__)
 
-@symbols_routes.route('/')
+@symbol_routes.route('/')
 @login_required
 def get_symbols():
     symbols = Symbol.query.all()
     return {'symbols': [symbol.to_dict() for symbol in symbols]}
 
-@symbols_routes.route('/<symbol>')
+@symbol_routes.route('/<symbol>')
 @login_required
 def get_symbol(symbol):
     symbol_data = Symbol.query.filter(Symbol.symbol == symbol.upper()).first()
@@ -19,7 +19,7 @@ def get_symbol(symbol):
         return {'error': 'Symbol not found'}, 404
     return symbol_data.to_dict()
 
-@symbols_routes.route('/', methods=['POST'])
+@symbol_routes.route('/', methods=['POST'])
 @login_required
 def create_symbol():
     data = request.json
@@ -39,7 +39,7 @@ def create_symbol():
     
     return symbol.to_dict()
 
-@symbols_routes.route('/<int:id>', methods=['PUT'])
+@symbol_routes.route('/<int:id>', methods=['PUT'])
 @login_required
 def update_symbol(id):
     symbol = Symbol.query.get(id)
@@ -64,7 +64,7 @@ def update_symbol(id):
     
     return symbol.to_dict()
 
-@symbols_routes.route('/<symbol>/prices')
+@symbol_routes.route('/<symbol>/prices')
 @login_required
 def get_symbol_prices(symbol):
     symbol_data = Symbol.query.filter(Symbol.symbol == symbol.upper()).first()
@@ -73,7 +73,7 @@ def get_symbol_prices(symbol):
     
     return {'prices': [price.to_dict() for price in symbol_data.price_history]}
 
-@symbols_routes.route('/<symbol>/prices', methods=['POST'])
+@symbol_routes.route('/<symbol>/prices', methods=['POST'])
 @login_required
 def add_symbol_price(symbol):
     symbol_data = Symbol.query.filter(Symbol.symbol == symbol.upper()).first()
@@ -114,7 +114,7 @@ def add_symbol_price(symbol):
 
     return new_price.to_dict()
 
-@symbols_routes.route('/update-prices', methods=['POST'])
+@symbol_routes.route('/update-prices', methods=['POST'])
 @login_required
 def update_symbol_prices():
     """Update current prices for all symbols or specified symbols"""
@@ -133,7 +133,7 @@ def update_symbol_prices():
     
     return {'symbols': updated}
 
-@symbols_routes.route('/<symbol>/prices/latest', methods=['POST'])
+@symbol_routes.route('/<symbol>/prices/latest', methods=['POST'])
 @login_required
 def add_latest_price(symbol):
     """Add latest price and update symbol's current price"""
@@ -145,31 +145,36 @@ def add_latest_price(symbol):
     today = datetime.now().date()
     
     # Create or update today's price
-    price, created = get_or_create_price(
-        db.session,
-        SymbolPrice,
+    existing_price = SymbolPrice.query.filter_by(
         symbol_id=symbol_data.id,
-        date=today,
-        defaults={
-            'open_price': data['open'],
-            'close_price': data['close'],
-            'high_price': data['high'],
-            'low_price': data['low'],
-            'volume': data.get('volume')
-        }
-    )
-    
-    if not created:
-        # Update existing price
-        price.close_price = data['close']
-        price.high_price = max(price.high_price, data['high'])
-        price.low_price = min(price.low_price, data['low'])
-        price.volume = data.get('volume', price.volume)
-    
-    db.session.commit()
-    price.update_symbol_current_price()
-    db.session.commit()
+        date=today
+    ).first()
 
+    if existing_price:
+        # Update existing price
+        existing_price.close_price = data['close']
+        existing_price.high_price = max(existing_price.high_price, data['high'])
+        existing_price.low_price = min(existing_price.low_price, data['low'])
+        existing_price.volume = data.get('volume', existing_price.volume)
+        price = existing_price
+    else:
+        # Create new price
+        price = SymbolPrice(
+            symbol_id=symbol_data.id,
+            date=today,
+            open_price=data['open'],
+            close_price=data['close'],
+            high_price=data['high'],
+            low_price=data['low'],
+            volume=data.get('volume')
+        )
+        db.session.add(price)
+    
+    db.session.commit()
+    
+    # Update symbol's current price
+    symbol_data.update_current_price()
+    
     return price.to_dict()
 
 def get_or_create_price(session, model, defaults=None, **kwargs):

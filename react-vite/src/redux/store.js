@@ -7,10 +7,12 @@ import {
 import thunk from "redux-thunk";
 import sessionReducer from "./session";
 import watchlistReducer from "./watchlist";
+import symbolsReducer from "./symbols";
 
 const rootReducer = combineReducers({
   session: sessionReducer,
-  watchlist: watchlistReducer
+  watchlist: watchlistReducer,
+  symbols: symbolsReducer
 });
 
 let enhancer;
