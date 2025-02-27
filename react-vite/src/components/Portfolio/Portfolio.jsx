@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { csrfFetch } from '../../redux/csrf';
+import OpenModalButton from '../OpenModalButton/OpenModalButton';
+import OrderForm from '../Orders/OrderForm';
 import './Portfolio.css';
 
 function Portfolio() {
@@ -38,6 +40,13 @@ function Portfolio() {
 
   return (
     <div className="portfolio-container">
+      <div className="portfolio-header">
+        <h2>Portfolio</h2>
+        <div className="portfolio-value">
+          ${totalValue.toFixed(2)}
+        </div>
+      </div>
+
       <div className="portfolio-summary">
         <div className="summary-card">
           <h3>Portfolio Value</h3>
@@ -65,6 +74,7 @@ function Portfolio() {
             <div>Market Value</div>
             <div>Day's Gain/Loss</div>
             <div>Total Return</div>
+            <div>Actions</div>
           </div>
 
           {positions.length === 0 ? (
@@ -92,6 +102,18 @@ function Portfolio() {
                     <div className="return-value">
                       ${(position.shares * (position.current_price - position.average_price)).toFixed(2)}
                     </div>
+                  </div>
+                  <div className="holding-actions">
+                    <OpenModalButton
+                      buttonText="Place Order"
+                      className="place-order-btn"
+                      modalComponent={
+                        <OrderForm 
+                          initialSymbol={position.symbol}
+                          initialPrice={position.current_price}
+                        />
+                      }
+                    />
                   </div>
                 </div>
               ))}

@@ -142,4 +142,37 @@
   .position-row div:nth-child(n+5) {
     display: none;
   }
+}
+
+.holding-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.place-order-btn {
+  background: #00C805;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.place-order-btn:hover {
+  background: #00b300;
+}
+
+.holding-value {
+  text-align: right;
+}
+
+.holding-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 } 

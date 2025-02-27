@@ -26,6 +26,7 @@ function Layout() {
     <>
       {!hideNav && <Navigation />}
       <Outlet />
+      <Modal />
     </>
   );
 }

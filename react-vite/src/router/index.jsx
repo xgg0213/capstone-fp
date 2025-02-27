@@ -6,6 +6,8 @@ import SignupFormPage from '../components/SignupFormPage/SignupFormPage';
 import Dashboard from "../components/Dashboard/Dashboard";
 import ProtectedRoute from './ProtectedRoute';
 import Portfolio from '../components/Portfolio/Portfolio';
+import Transactions from '../components/Transactions/Transactions';
+import Account from '../components/Account/Account';
 
 const router = createBrowserRouter([
   {
@@ -28,11 +30,15 @@ const router = createBrowserRouter([
           },
           {
             path: '/portfolio',
-            element: (
-              // <ProtectedRoute>
-                <Portfolio />
-              // </ProtectedRoute>
-            )
+            element: <Portfolio />
+          },
+          {
+            path: '/transactions',
+            element: <Transactions />
+          },
+          {
+            path: '/account',
+            element: <Account />
           },
           // Add other protected routes here
         ],

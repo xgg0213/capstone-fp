@@ -1,104 +1,109 @@
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { csrfFetch } from '../../redux/csrf';
+import { useDispatch, useSelector } from 'react-redux';
+import { useModal } from '../../context/Modal';
+import './OrderForm.css';
 
-function OrderForm({ stock }) {
+function OrderForm({ initialSymbol = '', initialPrice = null }) {
   const dispatch = useDispatch();
-  const [orderType, setOrderType] = useState('market');
-  const [side, setSide] = useState('buy');
-  const [shares, setShares] = useState('');
-  const [price, setPrice] = useState('');
+  const { closeModal } = useModal();
+  const [symbol, setSymbol] = useState(initialSymbol);
+  const [shares, setShares] = useState(1);
+  const [orderType, setOrderType] = useState('buy');
+  const user = useSelector(state => state.session.user);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await csrfFetch('/api/orders', {
+      const response = await fetch('/api/transactions/', {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify({
-          symbol: stock.symbol,
-          order_type: orderType,
-          side,
+          symbol,
           shares: Number(shares),
-          price: orderType === 'limit' ? Number(price) : null
+          type: orderType,
+          price: initialPrice
         })
       });
 
       if (response.ok) {
-        // Handle success
-        setShares('');
-        setPrice('');
+        // Handle successful order
+        closeModal();
+        // Optionally refresh portfolio data
       }
-    } catch (err) {
-      // Handle error
+    } catch (error) {
+      console.error('Error placing order:', error);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="order-form">
-      <div className="order-type-selector">
-        <button
-          type="button"
-          className={orderType === 'market' ? 'active' : ''}
-          onClick={() => setOrderType('market')}
-        >
-          Market
-        </button>
-        <button
-          type="button"
-          className={orderType === 'limit' ? 'active' : ''}
-          onClick={() => setOrderType('limit')}
-        >
-          Limit
-        </button>
-      </div>
-
-      <div className="side-selector">
-        <button
-          type="button"
-          className={side === 'buy' ? 'active' : ''}
-          onClick={() => setSide('buy')}
-        >
-          Buy
-        </button>
-        <button
-          type="button"
-          className={side === 'sell' ? 'active' : ''}
-          onClick={() => setSide('sell')}
-        >
-          Sell
-        </button>
-      </div>
-
-      <div className="input-group">
-        <label>Shares</label>
-        <input
-          type="number"
-          value={shares}
-          onChange={(e) => setShares(e.target.value)}
-          min="0"
-          step="1"
-          required
-        />
-      </div>
-
-      {orderType === 'limit' && (
-        <div className="input-group">
-          <label>Limit Price</label>
+    <div className="order-form">
+      <h2>Place {orderType === 'buy' ? 'Buy' : 'Sell'} Order</h2>
+      
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label>Symbol</label>
           <input
-            type="number"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-            min="0"
-            step="0.01"
+            type="text"
+            value={symbol}
+            onChange={(e) => setSymbol(e.target.value.toUpperCase())}
+            disabled={!!initialSymbol}
             required
           />
         </div>
-      )}
 
-      <button type="submit" className="submit-button">
-        Place Order
-      </button>
-    </form>
+        <div className="order-type">
+          <button
+            type="button"
+            className={`type-btn ${orderType === 'buy' ? 'active' : ''}`}
+            onClick={() => setOrderType('buy')}
+          >
+            Buy
+          </button>
+          <button
+            type="button"
+            className={`type-btn ${orderType === 'sell' ? 'active' : ''}`}
+            onClick={() => setOrderType('sell')}
+          >
+            Sell
+          </button>
+        </div>
+
+        <div className="form-group">
+          <label>Shares</label>
+          <input
+            type="number"
+            min="1"
+            value={shares}
+            onChange={(e) => setShares(Math.max(1, parseInt(e.target.value) || 0))}
+            required
+          />
+        </div>
+
+        {initialPrice && (
+          <div className="order-summary">
+            <div className="summary-row">
+              <span>Market Price</span>
+              <span>${initialPrice.toFixed(2)}</span>
+            </div>
+            <div className="summary-row total">
+              <span>Estimated Total</span>
+              <span>${(shares * initialPrice).toFixed(2)}</span>
+            </div>
+          </div>
+        )}
+
+        <div className="form-actions">
+          <button type="button" onClick={closeModal} className="cancel-btn">
+            Cancel
+          </button>
+          <button type="submit" className="submit-btn">
+            Place Order
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }
 

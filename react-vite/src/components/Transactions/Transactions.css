@@ -1,0 +1,85 @@
+.transactions-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: #1a1a1a;
+}
+
+.transactions-container h2 {
+  color: white;
+  margin-bottom: 2rem;
+}
+
+.transactions-table {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.table-header {
+  display: grid;
+  grid-template-columns: 1fr 0.8fr 0.8fr 0.8fr 0.8fr 1fr;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.transaction-row {
+  display: grid;
+  grid-template-columns: 1fr 0.8fr 0.8fr 0.8fr 0.8fr 1fr;
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  align-items: center;
+}
+
+.transaction-row:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.type {
+  font-weight: 500;
+}
+
+.type.buy {
+  color: #00C805;
+}
+
+.type.sell {
+  color: #ff4444;
+}
+
+.symbol {
+  color: #00C805;
+  font-weight: 500;
+}
+
+.shares, .price, .total {
+  font-family: monospace;
+}
+
+.no-transactions {
+  text-align: center;
+  padding: 3rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.loading {
+  text-align: center;
+  padding: 3rem;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .table-header,
+  .transaction-row {
+    grid-template-columns: 1fr 0.8fr 0.8fr 0.8fr;
+  }
+
+  .table-header div:nth-child(n+5),
+  .transaction-row div:nth-child(n+5) {
+    display: none;
+  }
+} 
