@@ -62,7 +62,7 @@ function Navigation({ isLoaded }) {
         <div className="balance">
           Buying Power: ${sessionUser.balance?.toFixed(2)}
         </div>
-        {/* <NavLink to="/portfolio">Portfolio</NavLink> */}
+        <NavLink to="/portfolio">Portfolio</NavLink>
         <NavLink to="/transactions">History</NavLink>
         <NavLink to="/account">Account</NavLink>
         <ProfileButton user={sessionUser} />

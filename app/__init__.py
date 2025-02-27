@@ -41,7 +41,7 @@ app.register_blueprint(user_routes, url_prefix='/api/users')
 app.register_blueprint(auth_routes, url_prefix='/api/auth')
 app.register_blueprint(portfolio_routes, url_prefix='/api/portfolio')
 app.register_blueprint(order_routes, url_prefix='/api/orders')
-app.register_blueprint(watchlist_routes, url_prefix='/api/watchlists')
+app.register_blueprint(watchlist_routes, url_prefix='/api/watchlist')
 app.register_blueprint(transaction_routes, url_prefix='/api/transactions')
 app.register_blueprint(symbol_routes, url_prefix='/api/symbols')
 

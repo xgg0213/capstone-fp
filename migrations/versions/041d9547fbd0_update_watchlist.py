@@ -1,8 +1,8 @@
-"""add symbols
+"""update watchlist
 
-Revision ID: 8e7649b306c9
+Revision ID: 041d9547fbd0
 Revises: 
-Create Date: 2025-02-26 20:46:54.498050
+Create Date: 2025-02-26 22:32:22.339963
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '8e7649b306c9'
+revision = '041d9547fbd0'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -89,8 +89,8 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=50), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.Column('updated_at', sa.DateTime(), nullable=True),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -112,7 +112,6 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('watchlist_id', sa.Integer(), nullable=False),
     sa.Column('symbol_id', sa.Integer(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['symbol_id'], ['symbols.id'], ),
     sa.ForeignKeyConstraint(['watchlist_id'], ['watchlists.id'], ),
     sa.PrimaryKeyConstraint('id')

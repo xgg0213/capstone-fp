@@ -20,7 +20,7 @@ class Symbol(db.Model):
     portfolio_positions = db.relationship('Portfolio', back_populates='symbol')
     transactions = db.relationship('Transaction', back_populates='symbol')
     orders = db.relationship('Order', back_populates='symbol')
-    watchlist_symbols = db.relationship('WatchlistSymbol', back_populates='symbol')
+    watchlist_symbols = db.relationship('WatchlistSymbol', back_populates='symbol', cascade='all, delete-orphan')
 
     def to_dict(self):
         # Get the latest price history

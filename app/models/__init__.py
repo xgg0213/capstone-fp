@@ -17,7 +17,7 @@ __all__ = [
     'Order',
     'Transaction',
     'Watchlist',
-    'WatchlistSymbol',
+    'Watchlistymbol',
     'Symbol',
     'SymbolPrice'
 ]

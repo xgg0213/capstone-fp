@@ -45,13 +45,37 @@ def seed_watchlists():
 
     db.session.commit()
 
+    # Create demo watchlist
+    demo_watchlist = Watchlist(
+        user_id=1,  # Demo user
+        name="My First Watchlist"
+    )
+
+    db.session.add(demo_watchlist)
+    db.session.commit()
+
+    # Add symbols to demo watchlist
+    demo_symbols = [
+        WatchlistSymbol(
+            watchlist_id=demo_watchlist.id,
+            symbol_id=symbols[0].id  # AAPL
+        ),
+        WatchlistSymbol(
+            watchlist_id=demo_watchlist.id,
+            symbol_id=symbols[1].id  # GOOGL
+        )
+    ]
+
+    db.session.add_all(demo_symbols)
+    db.session.commit()
+
 def undo_watchlists():
     if environment == "production":
         db.session.execute(f"TRUNCATE table {SCHEMA}.watchlist_symbols RESTART IDENTITY CASCADE;")
         db.session.execute(f"TRUNCATE table {SCHEMA}.watchlists RESTART IDENTITY CASCADE;")
     else:
-        db.session.execute("DELETE FROM watchlist_symbols")
-        db.session.execute("DELETE FROM watchlists")
-    
+        db.session.execute(text("DELETE FROM watchlist_symbols"))
+        db.session.execute(text("DELETE FROM watchlists"))
+        
     db.session.commit()
     print('Watchlists table cleared!') 
