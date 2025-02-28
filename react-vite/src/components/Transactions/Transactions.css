@@ -1,85 +1,172 @@
 .transactions-container {
-  padding: 2rem;
   max-width: 1200px;
-  margin: 0 auto;
-  background-color: #1a1a1a;
+  margin: 2rem auto;
+  padding: 0 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 200%;
 }
 
 .transactions-container h2 {
-  color: white;
+  width: 50%;
+  font-size: 1.2rem;
+  color: var(--text-color);
   margin-bottom: 2rem;
+  font-weight: 300;
+  align-self: center;
+  padding-left: 1.2rem;
 }
 
-.transactions-table {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
+.transactions-list {
+  background: var(--card-background);
+  border-top: 1px solid var(--border-color);
+  border-radius: 8px;
   overflow: hidden;
+  width: 50%;
+  font-size: 0.7rem;
 }
 
-.table-header {
-  display: grid;
-  grid-template-columns: 1fr 0.8fr 0.8fr 0.8fr 0.8fr 1fr;
-  padding: 1rem;
-  background: rgba(255, 255, 255, 0.1);
+.transaction-item {
+  cursor: pointer;
+  padding: 1.2rem;
+  border-bottom: 1px solid var(--border-color);
+  transition: all 0.2s ease;
+  font-size: 0.8rem;
+}
+
+.transaction-item:last-child {
+  border-bottom: none;
+}
+
+.transaction-item:hover {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.transaction-symbol {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--primary-color);
+  width: 120px;
+}
+
+.transaction-details {
+  flex: 1;
+  margin: 0 2rem;
+}
+
+.transaction-type {
+  font-size: 0.8rem;
+  color: var(--text-color);
+  margin-bottom: 0.5rem;
+}
+
+.transaction-shares {
+  font-size: 0.8rem;
   color: rgba(255, 255, 255, 0.7);
-  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+}
+
+.transaction-date {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.transaction-total {
+  font-size: 0.8rem;
   font-weight: 500;
-}
-
-.transaction-row {
-  display: grid;
-  grid-template-columns: 1fr 0.8fr 0.8fr 0.8fr 0.8fr 1fr;
-  padding: 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  color: white;
-  align-items: center;
-}
-
-.transaction-row:hover {
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.type {
-  font-weight: 500;
-}
-
-.type.buy {
-  color: #00C805;
-}
-
-.type.sell {
-  color: #ff4444;
-}
-
-.symbol {
-  color: #00C805;
-  font-weight: 500;
-}
-
-.shares, .price, .total {
-  font-family: monospace;
+  color: var(--text-color);
+  text-align: right;
+  width: 120px;
 }
 
 .no-transactions {
-  text-align: center;
   padding: 3rem;
-  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 1.1rem;
 }
 
 .loading {
-  text-align: center;
   padding: 3rem;
-  color: white;
+  text-align: center;
+  color: var(--text-color);
+  font-size: 1.1rem;
 }
 
+.transaction-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.transaction-expanded {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.8rem;
+}
+
+.transaction-item.expanded {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.transaction-company {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  width: 200px;
+}
+
+.company-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.company-symbol {
+  font-size: 0.8rem;
+  color: var(--primary-color);
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
-  .table-header,
-  .transaction-row {
-    grid-template-columns: 1fr 0.8fr 0.8fr 0.8fr;
+  .transactions-container {
+    padding: 0 1rem;
+    margin: 1rem auto;
   }
 
-  .table-header div:nth-child(n+5),
-  .transaction-row div:nth-child(n+5) {
-    display: none;
+  .transaction-summary {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .transaction-expanded {
+    width: 100%;
+  }
+
+  .transaction-item {
+    padding: 1rem;
+  }
+
+  .transaction-symbol {
+    width: auto;
+  }
+
+  .transaction-details {
+    margin: 0;
+    width: 100%;
+  }
+
+  .transaction-total {
+    width: 100%;
+    text-align: left;
+  }
+
+  .transaction-company {
+    width: auto;
+    flex: 1;
   }
 } 

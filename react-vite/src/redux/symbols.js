@@ -1,12 +1,14 @@
+import { csrfFetch } from './csrf';
+
 // Constants
-const LOAD_SYMBOLS = 'symbols/LOAD_SYMBOLS';
+const LOAD_SYMBOLS = 'symbols/LOAD';
 const LOAD_SYMBOL = 'symbols/LOAD_SYMBOL';
 const UPDATE_SYMBOL_PRICE = 'symbols/UPDATE_SYMBOL_PRICE';
 
 // Action Creators
 const loadSymbols = (symbols) => ({
     type: LOAD_SYMBOLS,
-    payload: symbols
+    symbols
 });
 
 const loadSymbol = (symbol) => ({
@@ -20,9 +22,9 @@ const updateSymbolPrice = (symbol) => ({
 });
 
 // Thunks
-export const fetchSymbols = () => async (dispatch) => {
+export const fetchSymbols = () => async dispatch => {
     try {
-        const response = await fetch('/api/symbols');
+        const response = await csrfFetch('/api/symbols/');
         if (response.ok) {
             const data = await response.json();
             dispatch(loadSymbols(data.symbols));
@@ -30,7 +32,7 @@ export const fetchSymbols = () => async (dispatch) => {
         }
     } catch (error) {
         console.error('Error fetching symbols:', error);
-        return null;
+        throw error;
     }
 };
 
@@ -93,6 +95,7 @@ export const updateSymbolPrices = (symbols = []) => async (dispatch) => {
 
 // Initial State
 const initialState = {
+    symbols: [],
     allSymbols: {},
     currentSymbol: null,
     isLoading: false,
@@ -102,18 +105,8 @@ const initialState = {
 // Reducer
 const symbolsReducer = (state = initialState, action) => {
     switch (action.type) {
-        case LOAD_SYMBOLS: {
-            const allSymbols = {};
-            action.payload.forEach(symbol => {
-                allSymbols[symbol.symbol] = symbol;
-            });
-            return {
-                ...state,
-                allSymbols,
-                isLoading: false,
-                error: null
-            };
-        }
+        case LOAD_SYMBOLS:
+            return { ...state, symbols: action.symbols };
         case LOAD_SYMBOL:
             return {
                 ...state,

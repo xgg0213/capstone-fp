@@ -8,11 +8,13 @@ import thunk from "redux-thunk";
 import sessionReducer from "./session";
 import watchlistReducer from "./watchlist";
 import symbolsReducer from "./symbols";
+import transactionsReducer from './transactions';
 
 const rootReducer = combineReducers({
   session: sessionReducer,
   watchlist: watchlistReducer,
-  symbols: symbolsReducer
+  symbols: symbolsReducer,
+  transactions: transactionsReducer
 });
 
 let enhancer;
