@@ -27,7 +27,7 @@ class Watchlist(db.Model):
                     'symbol': ws.symbol.symbol,
                     'company_name': ws.symbol.company_name,
                     'current_price': float(ws.symbol.current_price) if ws.symbol.current_price else None,
-                    'price_change_pct': float(ws.symbol.price_change_pct) if ws.symbol.price_change_pct else None
+                    'price_change': float(ws.symbol.price_change_pct) if ws.symbol.price_change_pct else None
                 } for ws in self.watchlist_symbols
             ],
             'created_at': self.created_at,

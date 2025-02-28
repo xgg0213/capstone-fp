@@ -24,7 +24,7 @@ const removeWatchlist = (watchlistId) => ({
 // Thunks
 export const getWatchlists = () => async (dispatch) => {
   try {
-    const response = await csrfFetch('/api/watchlists/');
+    const response = await csrfFetch('/api/watchlist/');
     if (response.ok) {
       const data = await response.json();
       dispatch(loadWatchlists(data.watchlists));
@@ -37,8 +37,11 @@ export const getWatchlists = () => async (dispatch) => {
 
 export const createWatchlist = (name) => async (dispatch) => {
   try {
-    const response = await csrfFetch('/api/watchlists/', {
+    const response = await csrfFetch('/api/watchlist/', {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify({ name })
     });
     if (response.ok) {

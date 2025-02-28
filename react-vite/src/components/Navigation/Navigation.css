@@ -1,82 +1,109 @@
-.profile-dropdown {
-  position: absolute;
-  top: 60px;
-  right: 20px;
-  background: white;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 0;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  min-width: 200px;
-  z-index: 1000;
-}
-
+/* Main Navigation */
 .main-nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  border-bottom: 1px solid var(--border-color);
-  background-color: white;
+  background-color: var(--nav-background);
 }
 
+/* Logo Section */
 .nav-left {
+  flex: 0 0 200px;
   display: flex;
   align-items: center;
 }
 
 .nav-logo {
-  height: 40px;
+  height: 20px;
 }
 
+/* Search Section */
 .nav-center {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  max-width: 600px;
-  margin: 0 2rem;
+  flex: 0 1 400px;
+  margin: 0 8rem;
 }
 
 .search-bar {
   width: 100%;
 }
 
-.search-bar input {
+.search-form {
+  position: relative;
   width: 100%;
-  padding: 0.5rem 1rem;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  font-size: 1rem;
 }
 
+.search-input {
+  width: 100%;
+  padding: 8px 12px 8px 36px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 12px;
+  background-color: var(--card-background);
+  color: var(--text-color);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(0, 200, 5, 0.1);
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+  font-size: 12px;
+  pointer-events: none;
+}
+
+/* Right Section */
 .nav-right {
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   gap: 1.5rem;
+  white-space: nowrap;
 }
 
 .nav-right a {
   text-decoration: none;
   color: var(--text-color);
-  font-weight: 500;
+  /* font-weight: 100; */
+  font-size: 12px;
 }
 
 .nav-right a:hover {
   color: var(--primary-color);
 }
 
-.profile-section {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-/* Styles for non-logged in navigation */
 .nav-right a.active {
   color: var(--primary-color);
 }
 
-/* Responsive design */
+/* Balance Display */
+.balance {
+  color: var(--primary-color);
+  /* font-weight: 500; */
+  font-size: 12px;
+  padding: 0.5rem 1rem;
+  background: rgba(0, 200, 5, 0.1);
+  border-radius: 4px;
+  margin-right: 1rem;
+}
+
+
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .nav-center {
+    flex-basis: 300px;
+    margin: 0 1rem;
+  }
+}
+
 @media (max-width: 768px) {
   .nav-center {
     display: none;
@@ -85,154 +112,4 @@
   .nav-right {
     gap: 1rem;
   }
-}
-
-/* Add these styles to your existing Navigation.css */
-
-.logout-button {
-  background: none;
-  border: 1px solid var(--border-color);
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 500;
-  color: var(--text-color);
-}
-
-.logout-button:hover {
-  background: #f5f5f5;
-  color: var(--primary-color);
-}
-
-/* Add/update these styles in your Navigation.css */
-
-.profile-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.2s;
-}
-
-.profile-button:hover {
-  background-color: #f5f5f5;
-}
-
-.profile-button svg {
-  font-size: 1.5rem;
-  color: var(--text-color);
-}
-
-.profile-dropdown.hidden {
-  display: none;
-}
-
-.profile-dropdown li {
-  list-style: none;
-}
-
-.profile-dropdown .user-info {
-  padding: 1rem;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.profile-dropdown .username {
-  font-weight: 500;
-  color: var(--text-color);
-}
-
-.profile-dropdown .email {
-  font-size: 0.9rem;
-  color: #666;
-  margin-top: 0.25rem;
-}
-
-.profile-dropdown .menu-item {
-  padding: 0;
-}
-
-.profile-dropdown .menu-item a,
-.profile-dropdown .menu-item button {
-  display: block;
-  width: 100%;
-  padding: 0.75rem 1rem;
-  text-align: left;
-  background: none;
-  border: none;
-  color: var(--text-color);
-  font-size: 1rem;
-  cursor: pointer;
-  text-decoration: none;
-}
-
-.profile-dropdown .menu-item a:hover,
-.profile-dropdown .menu-item button:hover {
-  background-color: #f5f5f5;
-}
-
-.profile-dropdown .menu-divider {
-  height: 1px;
-  background-color: var(--border-color);
-  margin: 0.5rem 0;
-}
-
-.profile-dropdown .logout-button {
-  color: #ff4444;
-}
-
-.profile-dropdown .logout-button:hover {
-  background-color: #fff5f5;
-}
-
-.balance {
-  color: #00C805;
-  font-weight: 500;
-  padding: 0.5rem 1rem;
-  background: rgba(0, 200, 5, 0.1);
-  border-radius: 4px;
-  margin-right: 1rem;
-}
-
-.search-form {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0 16px;
-}
-
-.search-input {
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 14px;
-  min-width: 200px;
-}
-
-.search-input:focus {
-  outline: none;
-  border-color: #0066cc;
-  box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
-}
-
-.search-button {
-  padding: 8px 16px;
-  background-color: #0066cc;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.2s;
-}
-
-.search-button:hover {
-  background-color: #0052a3;
-}
-
-.search-button:active {
-  background-color: #004080;
 }

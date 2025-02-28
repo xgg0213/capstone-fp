@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate, NavLink } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { thunkLogout } from "../../redux/session";
-import { FaUserCircle } from 'react-icons/fa';
+import { FaBars } from 'react-icons/fa';
 
 function ProfileButton({ user }) {
   const dispatch = useDispatch();
@@ -42,36 +42,21 @@ function ProfileButton({ user }) {
   return (
     <>
       <button onClick={toggleMenu} className="profile-button">
-        <FaUserCircle />
+        <FaBars />
       </button>
       <ul className={ulClassName} ref={ulRef}>
         {user && (
           <>
-            <li className="user-info">
+            <div className="user-info">
               <div className="username">{user.username}</div>
               <div className="email">{user.email}</div>
-            </li>
-            {/* <li className="menu-item">
-              <NavLink to="/portfolio" onClick={closeMenu}>
-                Portfolio
-              </NavLink>
-            </li>
-            <li className="menu-item">
-              <NavLink to="/transactions" onClick={closeMenu}>
-                History
-              </NavLink>
-            </li> */}
-            {/* <li className="menu-item">
-              <NavLink to="/account" onClick={closeMenu}>
-                Account
-              </NavLink>
-            </li> */}
-            {/* <li className="menu-divider"></li> */}
-            <li className="menu-item">
+            </div>
+
+            <div className="menu-item">
               <button onClick={handleLogout} className="logout-button">
                 Log Out
               </button>
-            </li>
+            </div>
           </>
         )}
       </ul>

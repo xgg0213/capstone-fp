@@ -4,9 +4,11 @@
 :root {
   --primary-color: #00C805;
   --secondary-color: #1E2124;
-  --text-color: #333;
-  --background-color: #fff;
-  --border-color: #e0e0e0;
+  --text-color: #fff;
+  --background-color: #1b1b1b;
+  --border-color: #333;
+  --nav-background: #1b1b1b;
+  --card-background: #1b1b1b;
 }
 
 body {
@@ -17,13 +19,13 @@ body {
   background-color: var(--background-color);
 }
 
-/* Navigation */
+/* Navigation
 .main-nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  border-bottom: 1px solid var(--border-color);
+
 }
 
 .nav-logo {
@@ -38,19 +40,20 @@ body {
 }
 
 /* Dashboard */
-.dashboard {
+/* .dashboard {
   display: grid;
   grid-template-columns: 1fr 2fr;
   gap: 2rem;
   padding: 2rem;
-}
+} */
 
 /* Portfolio */
-.portfolio {
-  background: white;
+/* .portfolio {
+  background: var(--card-background);
   border-radius: 8px;
   padding: 1rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  border: 1px solid var(--border-color);
 }
 
 .position-item {
@@ -58,14 +61,15 @@ body {
   justify-content: space-between;
   padding: 1rem;
   border-bottom: 1px solid var(--border-color);
-}
+} */
 
 /* Order Form */
-.order-form {
-  background: white;
+/* .order-form {
+  background: var(--card-background);
   border-radius: 8px;
   padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  border: 1px solid var(--border-color);
 }
 
 .input-group {
@@ -79,15 +83,16 @@ body {
   padding: 0.75rem 1.5rem;
   border-radius: 4px;
   cursor: pointer;
-}
+} */
 
 /* Watchlists */
-.watchlists {
-  background: white;
+/* .watchlists {
+  background: var(--card-background);
   border-radius: 8px;
   padding: 1rem;
   margin-top: 2rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  border: 1px solid var(--border-color);
 }
 
 .stock-item {
@@ -96,5 +101,5 @@ body {
 }
 
 .stock-item:hover {
-  background: #f5f5f5;
-}
+  background: #2a2a2a;
+}  */
