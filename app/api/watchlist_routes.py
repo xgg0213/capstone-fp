@@ -9,8 +9,16 @@ watchlist_routes = Blueprint('watchlist', __name__)
 @login_required
 def get_watchlists():
     """Get user's watchlists with symbols"""
-    watchlists = Watchlist.query.filter_by(user_id=current_user.id).all()
-    return {'watchlists': [watchlist.to_dict() for watchlist in watchlists]}
+    try:
+        # Get all watchlists for the current user
+        watchlists = Watchlist.query.filter_by(user_id=current_user.id).all()
+        
+        # Format the response
+        return jsonify({
+            'watchlists': [watchlist.to_dict() for watchlist in watchlists]
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @watchlist_routes.route('/', methods=['POST'])
 @login_required
@@ -19,52 +27,65 @@ def create_watchlist():
     data = request.json
     
     if not data.get('name'):
-        return {'error': 'Name is required'}, 400
+        return jsonify({'error': 'Name is required'}), 400
         
-    watchlist = Watchlist(
-        user_id=current_user.id,
-        name=data['name']
-    )
-    
-    db.session.add(watchlist)
-    db.session.commit()
-    
-    return watchlist.to_dict()
+    try:
+        watchlist = Watchlist(
+            user_id=current_user.id,
+            name=data['name']
+        )
+        
+        db.session.add(watchlist)
+        db.session.commit()
+        
+        return jsonify(watchlist.to_dict())
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
 
 @watchlist_routes.route('/<int:id>/symbols', methods=['POST'])
 @login_required
-def add_symbol(id):
+def add_symbol_to_watchlist(id):
     """Add a symbol to watchlist"""
     watchlist = Watchlist.query.get(id)
     
     if not watchlist or watchlist.user_id != current_user.id:
-        return {'error': 'Watchlist not found'}, 404
+        return jsonify({'error': 'Watchlist not found'}), 404
         
     data = request.json
-    symbol = data.get('symbol', '').upper()
-    if not symbol:
-        return {'error': 'Symbol is required'}, 400
-        
-    # Check if symbol already exists in watchlist
-    existing = WatchlistSymbol.query.filter_by(
-        watchlist_id=id, 
-        symbol=symbol
-    ).first()
+    symbol_str = data.get('symbol', '').upper()
     
-    if existing:
-        return {'error': 'Symbol already in watchlist'}, 400
+    if not symbol_str:
+        return jsonify({'error': 'Symbol is required'}), 400
         
-    new_symbol = WatchlistSymbol(
-        watchlist_id=id,
-        symbol=symbol,
-        company_name=data.get('company_name'),
-        current_price=data.get('current_price'),
-        price_change=data.get('price_change')
-    )
-    
-    db.session.add(new_symbol)
-    db.session.commit()
-    return watchlist.to_dict()
+    try:
+        # Get the symbol from the database
+        symbol = Symbol.query.filter_by(symbol=symbol_str).first()
+        if not symbol:
+            return jsonify({'error': 'Symbol not found'}), 404
+            
+        # Check if symbol already exists in watchlist
+        existing = WatchlistSymbol.query.filter_by(
+            watchlist_id=id,
+            symbol_id=symbol.id
+        ).first()
+        
+        if existing:
+            return jsonify({'error': 'Symbol already in watchlist'}), 400
+            
+        # Add new symbol to watchlist
+        watchlist_symbol = WatchlistSymbol(
+            watchlist_id=id,
+            symbol_id=symbol.id
+        )
+        
+        db.session.add(watchlist_symbol)
+        db.session.commit()
+        
+        return jsonify(watchlist.to_dict())
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
 
 @watchlist_routes.route('/<int:id>/symbols/<symbol>', methods=['DELETE'])
 @login_required

@@ -21,7 +21,15 @@ class Watchlist(db.Model):
             'id': self.id,
             'user_id': self.user_id,
             'name': self.name,
-            'symbols': [ws.symbol.to_dict() for ws in self.watchlist_symbols],
+            'symbols': [
+                {
+                    'id': ws.symbol.id,
+                    'symbol': ws.symbol.symbol,
+                    'company_name': ws.symbol.company_name,
+                    'current_price': float(ws.symbol.current_price) if ws.symbol.current_price else None,
+                    'price_change_pct': float(ws.symbol.price_change_pct) if ws.symbol.price_change_pct else None
+                } for ws in self.watchlist_symbols
+            ],
             'created_at': self.created_at,
             'updated_at': self.updated_at
         } 
