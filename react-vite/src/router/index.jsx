@@ -1,8 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ModalProvider } from '../context/Modal';
 import Layout from "./Layout";
-// import LandingPage from "../components/LandingPage";
-// import LoginFormPage from "../components/LoginFormPage";
 import SignupFormPage from "../components/SignupFormPage/SignupFormPage";
 import SymbolDetails from '../components/SymbolDetails/SymbolDetails';
 import LoginPage from "../components/LoginPage/LoginPage";

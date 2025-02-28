@@ -23,15 +23,16 @@ const updateBalance = (balance) => ({
 
 // Thunks
 export const thunkAuthenticate = () => async (dispatch) => {
-	const response = await csrfFetch("/api/auth/");
-	if (response.ok) {
-		const data = await response.json();
-		if (data.errors) {
-			return;
-		}
-
-		dispatch(setUser(data));
-	}
+  try {
+    const response = await csrfFetch("/api/auth/");
+    if (response.ok) {
+      const data = await response.json();
+      dispatch(setUser(data));
+    }
+  } catch (error) {
+    // Silently fail - user is not authenticated
+    console.log("User not authenticated");
+  }
 };
 
 export const thunkLogin = (credentials) => async dispatch => {

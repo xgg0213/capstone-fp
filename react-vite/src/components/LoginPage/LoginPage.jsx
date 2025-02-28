@@ -12,16 +12,26 @@ function LoginPage() {
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
 
-  // Redirect if user is already logged in
+  // Only redirect if user is already logged in
   useEffect(() => {
     if (user) {
       navigate('/dashboard');
     }
   }, [user, navigate]);
 
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrors({});
+
+    if (!validateEmail(email)) {
+      setErrors({ credential: 'Please enter a valid email address' });
+      return;
+    }
 
     try {
       await dispatch(thunkLogin({ email, password }));
@@ -44,7 +54,7 @@ function LoginPage() {
     <div className="login-page">
       <div className="login-right">
         <div className="feature-list">
-          <h2>Why Choose SimpleTrade?</h2>
+          <h2>Why Choose TradeEasyUS?</h2>
           <div className="feature-item">
             <p>A seamless, secure, and intuitive trading experience for all investors</p>
           </div>
@@ -55,14 +65,16 @@ function LoginPage() {
 
       <div className="login-left">
         <div className="login-content">
-          <h1>Welcome to SimpleTrade</h1>
+          <h1>Login to TradeEasyUS</h1>
           
           <form onSubmit={handleSubmit} className="login-form">
             {errors.credential && (
-              <div className="error-message">{errors.credential}</div>
+              <div className="error-message">
+                {errors.credential}
+              </div>
             )}
             
-            <div className="form-group">
+            <div className="form-group-login">
               <label htmlFor="email">Email</label>
               <input
                 id="email"
@@ -70,11 +82,12 @@ function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                placeholder="Enter your email"
+                pattern="[^\s@]+@[^\s@]+\.[^\s@]+"
+                title="Please enter a valid email address"
               />
             </div>
 
-            <div className="form-group">
+            <div className="form-group-login">
               <label htmlFor="password">Password</label>
               <input
                 id="password"
@@ -82,7 +95,6 @@ function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                placeholder="Enter your password"
               />
             </div>
 
@@ -105,7 +117,7 @@ function LoginPage() {
                 onClick={() => navigate('/signup')}
                 className="signup-link"
               >
-                Sign up for SimpleTrade
+                Sign up for TradeEasyUS
               </button>
             </div>
           </form>

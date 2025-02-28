@@ -1,8 +1,22 @@
-import { RouterProvider } from "react-router-dom";
-import { router } from "./router";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { useLocation } from "react-router-dom";
+import { thunkAuthenticate } from "./redux/session";
+import Router from "./router";
 
 function App() {
-  return <RouterProvider router={router} />;
+  const dispatch = useDispatch();
+  const location = useLocation();
+  const isPublicRoute = ['/', '/signup'].includes(location.pathname);
+
+  useEffect(() => {
+    // Only check auth for non-public routes
+    if (!isPublicRoute) {
+      dispatch(thunkAuthenticate());
+    }
+  }, [dispatch, isPublicRoute]);
+
+  return <Router />;
 }
 
 export default App; 
