@@ -1,10 +1,24 @@
+/* Container Layout */
 .watchlists-container {
-  background: #1a1a1a;
+  /* background: #1a1a1a; */
   border-radius: 12px;
   padding: 1.5rem;
   height: 100%;
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  /* align-items: center; */
+
+  /* max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 200%; */
 }
 
+/* Header */
 .watchlists-header {
   display: flex;
   justify-content: space-between;
@@ -17,6 +31,7 @@
   margin: 0;
 }
 
+/* Tabs */
 .watchlist-tabs {
   display: flex;
   gap: 0.5rem;
@@ -48,11 +63,19 @@
   color: #00C805;
 }
 
+.symbol-count {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  margin-left: 0.5rem;
+}
+
+/* Stock Items */
 .stock-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
+  /* padding: 1rem; */
+  font-size: 0.8rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -66,13 +89,20 @@
   font-weight: 500;
 }
 
+.company-name {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.8rem;
+}
+
 .stock-shares {
   color: rgba(255, 255, 255, 0.7);
   font-size: 0.9rem;
 }
 
+/* Price Display */
 .stock-price {
   text-align: right;
+  font-size: 0.8rem;
 }
 
 .current-price {
@@ -93,6 +123,32 @@
   color: #ff4444;
 }
 
+/* Actions */
+.stock-actions {
+  display: flex;
+  align-items: center;
+  /* gap: 1rem; */
+  padding-bottom: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.remove-symbol-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.remove-symbol-btn:hover {
+  color: #ff4444;
+}
+
+/* Empty State */
 .no-watchlists {
   text-align: center;
   padding: 2rem;
@@ -115,41 +171,9 @@
   background: #00b300;
 }
 
+/* Loading State */
 .loading {
   text-align: center;
   padding: 2rem;
   color: white;
-}
-
-.symbol-count {
-  font-size: 0.8rem;
-  opacity: 0.7;
-  margin-left: 0.5rem;
-}
-
-.company-name {
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 0.8rem;
-}
-
-.stock-actions {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.remove-symbol-btn {
-  background: none;
-  border: none;
-  color: rgba(255, 255, 255, 0.5);
-  cursor: pointer;
-  padding: 0.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: color 0.2s;
-}
-
-.remove-symbol-btn:hover {
-  color: #ff4444;
 } 
