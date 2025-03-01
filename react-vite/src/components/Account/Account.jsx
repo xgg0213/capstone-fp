@@ -41,19 +41,49 @@ function Account() {
     }
   };
 
+  if (!user) {
+    return <div className="loading">Loading account information...</div>;
+  }
+
   return (
     <div className="account-container">
-      <div className="account-header">
-        <h2>Account Settings</h2>
-      </div>
-
-      <div className="account-section">
-        <h3>Account Balance</h3>
-        <div className="current-balance">
-          <span className="label">Current Balance:</span>
-          <span className="value">${user.balance?.toFixed(2)}</span>
+      <h2>Account Information</h2>
+      <div className="account-content">
+        <div className="account-section">
+          <div className="account-row">
+            <span className="account-label">Email</span>
+            <span className="account-value account-email">{user.email}</span>
+          </div>
         </div>
 
+        <div className="account-section">
+          <div className="account-row">
+            <span className="account-label">Member Since</span>
+            <span className="account-value">
+              {new Date(user.created_at).toLocaleDateString()}
+            </span>
+          </div>
+        </div>
+
+        <div className="account-section">
+          <div className="account-row">
+            <span className="account-label">Account Type</span>
+            <span className="account-value">Individual Trading Account</span>
+          </div>
+
+          <div className="account-row">
+            <span className="account-label">Account Balance</span>
+            <span className="account-value account-balance">
+              ${user.balance?.toFixed(2)}
+            </span>
+          </div>
+          
+        </div>
+
+        
+      </div>
+
+      <div className="account-update">
         <form onSubmit={handleSubmit} className="balance-form">
           <div className="form-group">
             <label>Add Funds</label>
@@ -68,36 +98,16 @@ function Account() {
                 placeholder="Enter amount"
               />
             </div>
+            <button type="submit" className="submit-btn">
+              Add Funds
+            </button>
           </div>
 
           {error && <div className="error-message">{error}</div>}
           {success && <div className="success-message">{success}</div>}
-
-          <button type="submit" className="submit-btn">
-            Add Funds
-          </button>
         </form>
       </div>
 
-      <div className="account-section">
-        <h3>Account Information</h3>
-        <div className="info-grid">
-          <div className="info-item">
-            <span className="label">Username</span>
-            <span className="value">{user.username}</span>
-          </div>
-          <div className="info-item">
-            <span className="label">Email</span>
-            <span className="value">{user.email}</span>
-          </div>
-          <div className="info-item">
-            <span className="label">Member Since</span>
-            <span className="value">
-              {new Date(user.created_at).toLocaleDateString()}
-            </span>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

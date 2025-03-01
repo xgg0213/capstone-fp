@@ -40,25 +40,18 @@ function Portfolio() {
 
   return (
     <div className="portfolio-container">
-      <div className="portfolio-header">
-        <h2>Portfolio</h2>
-        <div className="portfolio-value">
-          ${totalValue.toFixed(2)}
-        </div>
-      </div>
+      <h2>Total Portfolio Value</h2>
+      <h1>${totalValue.toFixed(2)}</h1>
 
       <div className="portfolio-summary">
-        <div className="summary-card">
-          <h3>Portfolio Value</h3>
-          <div className="value">${totalValue.toFixed(2)}</div>
+        <div className="summary-row">
+          <span>Cash Balance</span>
+          <span className="portfolio-value">${user.balance?.toFixed(2)}</span>
         </div>
-        <div className="summary-card">
-          <h3>Cash Balance</h3>
-          <div className="value">${user.balance?.toFixed(2)}</div>
-        </div>
-        <div className="summary-card">
-          <h3>Total Assets</h3>
-          <div className="value">${(totalValue + (user.balance || 0)).toFixed(2)}</div>
+
+        <div className="summary-row">
+          <span>Stocks</span>
+          <span className="portfolio-value">${(totalValue + (user.balance || 0)).toFixed(2)}</span>
         </div>
       </div>
 
@@ -69,10 +62,10 @@ function Portfolio() {
             <div>Symbol</div>
             {/* <div>Company</div> */}
             <div>Shares</div>
-            <div>Avg Price</div>
-            <div>Current Price</div>
+            <div>Avg Cost</div>
+            <div>Price</div>
             <div>Market Value</div>
-            <div>Day's Gain/Loss</div>
+            {/* <div>Day's Gain/Loss</div> */}
             <div>Total Return</div>
             <div>Actions</div>
           </div>
@@ -98,14 +91,14 @@ function Portfolio() {
                     {position.day_change >= 0 ? '+' : ''}{position.day_change?.toFixed(2)}%
                   </div> */}
                   <div className={`total-return ${position.total_return >= 0 ? 'gain' : 'loss'}`}>
-                    {position.total_return >= 0 ? '+' : ''}{position.total_return?.toFixed(2)}%
+                    {/* {position.total_return >= 0 ? '+' : ''}{position.total_return?.toFixed(2)}% */}
                     <div className="return-value">
                       ${(position.shares * (position.current_price - position.average_price)).toFixed(2)}
                     </div>
                   </div>
                   <div className="holding-actions">
                     <OpenModalButton
-                      buttonText="Place Order"
+                      buttonText="Buy / Sell"
                       className="place-order-btn"
                       modalComponent={
                         <OrderForm 

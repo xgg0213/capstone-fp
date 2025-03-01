@@ -9,7 +9,7 @@
 }
 
 .transactions-container h2 {
-  width: 50%;
+  width: 40%;
   font-size: 1.2rem;
   color: var(--text-color);
   margin-bottom: 2rem;
@@ -23,7 +23,7 @@
   border-top: 1px solid var(--border-color);
   border-radius: 8px;
   overflow: hidden;
-  width: 50%;
+  width: 40%;
   font-size: 0.7rem;
 }
 

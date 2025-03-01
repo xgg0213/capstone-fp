@@ -1,133 +1,170 @@
+/* Container Layout */
 .account-container {
-  padding: 2rem;
   max-width: 1200px;
-  margin: 0 auto;
-  background-color: #1a1a1a;
-  min-height: calc(100vh - 60px);
+  margin: 2rem auto;
+  padding: 0 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 200%;
 }
 
-.account-header {
+.account-container h2 {
+  width: 40%;
+  font-size: 1.2rem;
+  color: var(--text-color);
   margin-bottom: 2rem;
+  font-weight: 300;
+  align-self: center;
+  padding-left: 1.2rem;
 }
 
-.account-header h2 {
-  color: white;
-  margin: 0;
+/* Account Content */
+.account-content, .account-update {
+  background: var(--card-background);
+  border-top: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+  width: 40%;
+  font-size: 0.8rem;
 }
 
+.account-update {
+  margin-top: 2rem;
+  padding: 1.2rem;
+
+}
+
+/* Account Sections */
 .account-section {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
+  padding: 1.2rem;
+  border-bottom: 1px solid var(--border-color);
 }
 
-.account-section h3 {
-  color: white;
-  margin: 0 0 1.5rem;
+.account-section:last-child {
+  border-bottom: none;
 }
 
-.current-balance {
+/* Account Rows */
+.account-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.8rem;
 }
 
+.account-row:last-child {
+  margin-bottom: 0;
+}
+
+/* Text Styles */
+.account-label, .form-group label {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.8rem;
+}
+
+.account-value {
+  color: var(--text-color);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.account-balance {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Form Styles */
 .balance-form {
-  max-width: 400px;
+  width: 100%;
 }
 
 .form-group {
-  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
 }
 
 .form-group label {
-  display: block;
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 0.5rem;
+  white-space: nowrap;
 }
 
 .input-group {
   display: flex;
   align-items: center;
   background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-color);
   border-radius: 4px;
+  flex: 1;
 }
 
 .currency-symbol {
-  padding: 0.75rem;
+  padding: 0.5rem 0.75rem;
   color: rgba(255, 255, 255, 0.7);
-  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  border-right: 1px solid var(--border-color);
 }
 
 .input-group input {
   flex: 1;
   background: none;
   border: none;
-  padding: 0.75rem;
-  color: white;
-  font-size: 1rem;
+  padding: 0.5rem;
+  color: var(--text-color);
+  font-size: 0.8rem;
 }
 
-.input-group input:focus {
-  outline: none;
-}
-
-.submit-btn {
-  background: #00C805;
+.form-group .submit-btn {
+  background: var(--primary-color);
   color: white;
   border: none;
-  padding: 0.75rem 1.5rem;
+  padding: 0.5rem 1rem;
   border-radius: 4px;
-  font-weight: 500;
+  font-size: 0.8rem;
   cursor: pointer;
-  transition: background-color 0.2s;
-  width: 100%;
+  white-space: nowrap;
 }
 
-.submit-btn:hover {
-  background: #00b300;
+/* Messages */
+.error-message, .success-message {
+  margin-top: 0.8rem;
+  text-align: center;
+  font-size: 0.8rem;
 }
 
 .error-message {
   color: #ff4444;
-  margin-bottom: 1rem;
 }
 
 .success-message {
-  color: #00C805;
-  margin-bottom: 1rem;
+  color: var(--primary-color);
 }
 
-.info-grid {
-  display: grid;
-  gap: 1rem;
+/* Loading State */
+.loading {
+  padding: 3rem;
+  text-align: center;
+  color: var(--text-color);
+  font-size: 1.1rem;
 }
 
-.info-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 1rem;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-}
-
-.label {
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.value {
-  color: white;
-  font-weight: 500;
-}
-
+/* Responsive Design */
 @media (max-width: 768px) {
   .account-container {
-    padding: 1rem;
+    padding: 0 1rem;
+    margin: 1rem auto;
+  }
+
+  .account-content {
+    flex-direction: column;
+  }
+
+  .account-section {
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .account-section:last-child {
+    border-bottom: none;
   }
 } 
