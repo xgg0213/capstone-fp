@@ -13,10 +13,18 @@ from app.models.db import db, environment, SCHEMA
 # So we can type `flask seed --help`
 seed_commands = AppGroup('seed')
 
+def setup_schema():
+    """
+    Sets up schema for production database
+    """
+    if environment == "production":
+        db.session.execute(f'CREATE SCHEMA IF NOT EXISTS {SCHEMA}')
+        db.session.commit()
 
 # Creates the `flask seed all` command
 @seed_commands.command('all')
 def seed():
+    setup_schema()  # Create schema first
     if environment == "production":
         # Before seeding in production, you want to run the seed undo 
         # command, which will  truncate all tables prefixed with 
@@ -55,6 +63,11 @@ def seed():
 # Creates the `flask seed undo` command
 @seed_commands.command('undo')
 def undo():
+    if environment == "production":
+        # Create schema before attempting to undo
+        db.session.execute(f'CREATE SCHEMA IF NOT EXISTS {SCHEMA}')
+        db.session.commit()
+        
     # Undo in reverse order to handle dependencies
     undo_transactions()
     undo_orders()
