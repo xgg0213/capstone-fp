@@ -1,8 +1,8 @@
-"""update  migration
+"""update migration
 
-Revision ID: 3d50099a1157
+Revision ID: d178e3952535
 Revises: 
-Create Date: 2025-03-02 16:56:12.057366
+Create Date: 2025-03-02 17:48:36.794637
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '3d50099a1157'
+revision = 'd178e3952535'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,14 +21,14 @@ def upgrade():
     op.create_table('symbols',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('symbol', sa.String(length=10), nullable=False),
-    sa.Column('company_name', sa.String(length=255), nullable=True),
-    sa.Column('current_price', sa.Numeric(precision=10, scale=2), nullable=False),
-    sa.Column('daily_high', sa.Numeric(precision=10, scale=2), nullable=True),
-    sa.Column('daily_low', sa.Numeric(precision=10, scale=2), nullable=True),
-    sa.Column('daily_volume', sa.Integer(), nullable=True),
-    sa.Column('price_change_pct', sa.Numeric(precision=5, scale=2), nullable=True),
-    sa.Column('last_updated', sa.DateTime(), nullable=True),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('company_name', sa.String(length=255), nullable=False),
+    sa.Column('current_price', sa.Float(), nullable=False),
+    sa.Column('daily_high', sa.Float(), nullable=True),
+    sa.Column('daily_low', sa.Float(), nullable=True),
+    sa.Column('daily_volume', sa.BigInteger(), nullable=True),
+    sa.Column('price_change_pct', sa.Float(), nullable=True),
+    sa.Column('created_at', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('symbol')
     )
@@ -112,9 +112,11 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('watchlist_id', sa.Integer(), nullable=False),
     sa.Column('symbol_id', sa.Integer(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), server_default=sa.text('(CURRENT_TIMESTAMP)'), nullable=True),
     sa.ForeignKeyConstraint(['symbol_id'], ['symbols.id'], ),
     sa.ForeignKeyConstraint(['watchlist_id'], ['watchlists.id'], ),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('watchlist_id', 'symbol_id', name='unique_watchlist_symbol')
     )
     # ### end Alembic commands ###
 
