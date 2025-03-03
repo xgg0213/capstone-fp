@@ -6,7 +6,14 @@ class SymbolPrice(db.Model):
     __tablename__ = 'symbol_prices'
 
     if environment == "production":
-        __table_args__ = {'schema': SCHEMA}
+        __table_args__ = (
+            db.UniqueConstraint('symbol_id', 'date', name='unique_symbol_date'),
+            {'schema': SCHEMA}
+        )
+    else:
+        __table_args__ = (
+            db.UniqueConstraint('symbol_id', 'date', name='unique_symbol_date'),
+        )
 
     id = db.Column(db.Integer, primary_key=True)
     symbol_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('symbols.id')), nullable=False)
@@ -15,11 +22,8 @@ class SymbolPrice(db.Model):
     close_price = db.Column(db.Float, nullable=False)
     high_price = db.Column(db.Float, nullable=False)
     low_price = db.Column(db.Float, nullable=False)
-    volume = db.Column(db.Integer)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-    # Create a unique constraint for symbol_id and date
-    __table_args__ = (db.UniqueConstraint('symbol_id', 'date', name='unique_symbol_date'),)
+    volume = db.Column(db.BigInteger)
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
 
     # Relationship
     symbol = db.relationship('Symbol', back_populates='price_history')
@@ -29,10 +33,10 @@ class SymbolPrice(db.Model):
             'id': self.id,
             'symbol_id': self.symbol_id,
             'date': self.date.isoformat(),
-            'open': float(self.open_price),
-            'close': float(self.close_price),
-            'high': float(self.high_price),
-            'low': float(self.low_price),
+            'open': self.open_price,
+            'close': self.close_price,
+            'high': self.high_price,
+            'low': self.low_price,
             'volume': self.volume,
             'created_at': self.created_at.isoformat()
         }

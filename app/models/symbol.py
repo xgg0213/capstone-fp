@@ -18,17 +18,14 @@ class Symbol(db.Model):
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
 
-    # Add relationships
-    price_history = db.relationship('SymbolPrice', back_populates='symbol', order_by='desc(SymbolPrice.date)')
-    portfolio_positions = db.relationship('Portfolio', back_populates='symbol')
+    # Relationships
+    price_history = db.relationship('SymbolPrice', back_populates='symbol', order_by='desc(SymbolPrice.date)', cascade='all, delete-orphan')
+    portfolio_positions = db.relationship('Portfolio', back_populates='symbol', cascade='all, delete-orphan')
     transactions = db.relationship('Transaction', back_populates='symbol', cascade='all, delete-orphan')
-    orders = db.relationship('Order', back_populates='symbol')
+    orders = db.relationship('Order', back_populates='symbol', cascade='all, delete-orphan')
     watchlist_symbols = db.relationship('WatchlistSymbol', back_populates='symbol', cascade='all, delete-orphan')
 
     def to_dict(self):
-        # Get the latest price history
-        latest_price = self.price_history[0] if self.price_history else None
-        
         return {
             'id': self.id,
             'symbol': self.symbol,
