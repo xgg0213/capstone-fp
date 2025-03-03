@@ -20,10 +20,10 @@ RUN pip install psycopg2
 COPY . .
 
 # Initialize database and run migrations
-# RUN flask db init || true
-# RUN flask db migrate -m "initial migration" || true
-# RUN flask db upgrade || true
-# RUN flask seed all
-RUN flask db upgrade
+RUN flask db init || true
+RUN flask db migrate -m "initial migration" || true
+RUN flask db upgrade || true
 RUN flask seed all
+# RUN flask db upgrade
+# RUN flask seed all
 CMD gunicorn app:app
