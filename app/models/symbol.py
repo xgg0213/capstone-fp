@@ -1,24 +1,27 @@
-from .db import db
+from .db import db, environment, SCHEMA, add_prefix_for_prod
 from datetime import datetime
 
 class Symbol(db.Model):
     __tablename__ = 'symbols'
 
+    if environment == "production":
+        __table_args__ = {'schema': SCHEMA}
+
     id = db.Column(db.Integer, primary_key=True)
     symbol = db.Column(db.String(10), nullable=False, unique=True)
-    company_name = db.Column(db.String(255))
-    current_price = db.Column(db.Numeric(10, 2), nullable=False)
-    daily_high = db.Column(db.Numeric(10, 2))
-    daily_low = db.Column(db.Numeric(10, 2))
-    daily_volume = db.Column(db.Integer)
-    price_change_pct = db.Column(db.Numeric(5, 2))
-    last_updated = db.Column(db.DateTime, default=datetime.utcnow)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    company_name = db.Column(db.String(255), nullable=False)
+    current_price = db.Column(db.Float, nullable=False)
+    daily_high = db.Column(db.Float)
+    daily_low = db.Column(db.Float)
+    daily_volume = db.Column(db.BigInteger)
+    price_change_pct = db.Column(db.Float)
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
+    updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
 
     # Add relationships
     price_history = db.relationship('SymbolPrice', back_populates='symbol', order_by='desc(SymbolPrice.date)')
     portfolio_positions = db.relationship('Portfolio', back_populates='symbol')
-    transactions = db.relationship('Transaction', back_populates='symbol')
+    transactions = db.relationship('Transaction', back_populates='symbol', cascade='all, delete-orphan')
     orders = db.relationship('Order', back_populates='symbol')
     watchlist_symbols = db.relationship('WatchlistSymbol', back_populates='symbol', cascade='all, delete-orphan')
 
@@ -30,12 +33,13 @@ class Symbol(db.Model):
             'id': self.id,
             'symbol': self.symbol,
             'company_name': self.company_name,
-            'current_price': float(self.current_price) if self.current_price else None,
-            'daily_high': float(self.daily_high) if self.daily_high else None,
-            'daily_low': float(self.daily_low) if self.daily_low else None,
+            'current_price': self.current_price,
+            'daily_high': self.daily_high,
+            'daily_low': self.daily_low,
             'daily_volume': self.daily_volume,
-            'price_change_pct': float(self.price_change_pct) if self.price_change_pct else None,
-            'last_updated': self.last_updated.isoformat() if self.last_updated else None,
+            'price_change_pct': self.price_change_pct,
+            'created_at': self.created_at,
+            'updated_at': self.updated_at,
             'price_history': [price.to_dict() for price in self.price_history[:30]]  # Last 30 days
         }
 
@@ -60,5 +64,5 @@ class Symbol(db.Model):
             self.daily_high = latest.high_price
             self.daily_low = latest.low_price
             self.daily_volume = latest.volume
-            self.last_updated = datetime.utcnow()
+            self.updated_at = datetime.utcnow()
             db.session.commit() 
