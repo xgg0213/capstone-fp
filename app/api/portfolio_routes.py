@@ -10,8 +10,18 @@ portfolio_routes = Blueprint('portfolio', __name__)
 @login_required
 def get_portfolio():
     """Get user's portfolio positions"""
-    positions = Portfolio.query.filter_by(user_id=current_user.id).all()
-    return {'positions': [position.to_dict() for position in positions]}
+    try:
+        # Get user's portfolio
+        portfolios = Portfolio.query.filter_by(user_id=current_user.id).all()
+        
+        if not portfolios:
+            return {'portfolios': []}
+            
+        return {'portfolios': [portfolio.to_dict() for portfolio in portfolios]}
+    except Exception as e:
+        # Log the error
+        print(f"Error in get_portfolio: {str(e)}")
+        return {'error': 'An error occurred while fetching portfolio'}, 500
 
 @portfolio_routes.route('/history')
 @login_required
@@ -43,24 +53,29 @@ def update_balance():
     """
     Update user's balance
     """
-    data = request.get_json()
-    
-    if 'amount' not in data:
-        return {'errors': {'amount': 'Amount is required'}}, 400
-        
     try:
-        amount = Decimal(str(data['amount']))
-        if amount <= 0:
-            return {'errors': {'amount': 'Amount must be positive'}}, 400
+        data = request.get_json()
+        amount = data.get('amount')
+        
+        if not amount:
+            return {'errors': {'amount': 'Amount is required'}}, 400
+            
+        try:
+            amount = Decimal(str(amount))
+        except (ValueError, TypeError):
+            return {'errors': {'amount': 'Invalid amount format'}}, 400
             
         user = User.query.get(current_user.id)
-        user.balance = user.balance + amount
+        if not user:
+            return {'errors': {'user': 'User not found'}}, 404
+            
+        user.balance = float(Decimal(str(user.balance)) + amount)
+        user.updated_at = datetime.utcnow()
         
         db.session.commit()
-        return {'balance': float(user.balance)}
         
-    except (ValueError, TypeError):
-        return {'errors': {'amount': 'Invalid amount format'}}, 400
+        return {'balance': user.balance}
     except Exception as e:
         db.session.rollback()
+        print(f"Error in update_balance: {str(e)}")
         return {'errors': {'server': 'An error occurred'}}, 500 
