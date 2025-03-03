@@ -12,7 +12,7 @@ class WatchlistSymbol(db.Model):
 
     # Relationships
     watchlist = db.relationship('Watchlist', back_populates='watchlist_symbols')
-    symbol = db.relationship('Symbol', back_populates='watchlist_symbols')
+    symbol = db.relationship('Symbol', primaryjoin="WatchlistSymbol.symbol_id==Symbol.id", back_populates='watchlist_symbols')
 
     def to_dict(self):
         return {
