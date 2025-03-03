@@ -21,33 +21,28 @@ def setup_schema():
         db.session.execute(f'CREATE SCHEMA IF NOT EXISTS {SCHEMA}')
         db.session.commit()
 
+def undo_tables():
+    """Safely undo tables if they exist"""
+    if environment == "production":
+        try:
+            db.session.execute(f'DROP SCHEMA IF EXISTS {SCHEMA} CASCADE')
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            print(f"Error dropping schema: {e}")
+        
+        # Recreate schema
+        db.session.execute(f'CREATE SCHEMA IF NOT EXISTS {SCHEMA}')
+        db.session.commit()
+
 # Creates the `flask seed all` command
 @seed_commands.command('all')
 def seed():
-    setup_schema()  # Create schema first
+    setup_schema()
     if environment == "production":
-        # Before seeding in production, you want to run the seed undo 
-        # command, which will  truncate all tables prefixed with 
-        # the schema name (see comment in users.py undo_users function).
-        undo_transactions()
-        undo_orders()
-        undo_portfolios()
-        undo_watchlist_symbols()
-        undo_watchlists()
-        undo_symbol_prices()
-        undo_symbols()
-        undo_users()
-        
-        # # Before seeding, truncate all tables prefixed with schema name
-        # db.session.execute(f"TRUNCATE table {SCHEMA}.transactions RESTART IDENTITY CASCADE;")
-        # db.session.execute(f"TRUNCATE table {SCHEMA}.orders RESTART IDENTITY CASCADE;")
-        # db.session.execute(f"TRUNCATE table {SCHEMA}.portfolios RESTART IDENTITY CASCADE;")
-        # db.session.execute(f"TRUNCATE table {SCHEMA}.watchlist_symbols RESTART IDENTITY CASCADE;")
-        # db.session.execute(f"TRUNCATE table {SCHEMA}.watchlists RESTART IDENTITY CASCADE;")
-        # db.session.execute(f"TRUNCATE table {SCHEMA}.symbol_prices RESTART IDENTITY CASCADE;")
-        # db.session.execute(f"TRUNCATE table {SCHEMA}.symbols RESTART IDENTITY CASCADE;")
-        # db.session.execute(f"TRUNCATE table {SCHEMA}.users RESTART IDENTITY CASCADE;")
-        # db.session.commit()
+        # Instead of trying to truncate tables that might not exist,
+        # just drop and recreate the schema
+        undo_tables()
 
     # Seed in proper order based on dependencies
     seed_users()
@@ -64,16 +59,13 @@ def seed():
 @seed_commands.command('undo')
 def undo():
     if environment == "production":
-        # Create schema before attempting to undo
-        db.session.execute(f'CREATE SCHEMA IF NOT EXISTS {SCHEMA}')
-        db.session.commit()
-        
-    # Undo in reverse order to handle dependencies
-    undo_transactions()
-    undo_orders()
-    undo_portfolios() 
-    undo_watchlist_symbols()
-    undo_watchlists()
-    undo_symbol_prices()
-    undo_symbols()
-    undo_users()
+        undo_tables()
+    else:
+        undo_transactions()
+        undo_orders()
+        undo_portfolios()
+        undo_watchlist_symbols()
+        undo_watchlists()
+        undo_symbol_prices()
+        undo_symbols()
+        undo_users()
