@@ -9,7 +9,7 @@ class Order(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('users.id')), nullable=False)
-    symbol_id = db.Column(db.Integer, db.ForeignKey('symbols.id'), nullable=False)
+    symbol_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('symbols.id')), nullable=False)
     shares = db.Column(db.Float, nullable=False)
     type = db.Column(db.String(4), nullable=False)  # buy, sell
     status = db.Column(db.String(10), nullable=False, default='pending')  # pending, completed, cancelled

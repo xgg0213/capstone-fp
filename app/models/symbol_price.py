@@ -9,7 +9,7 @@ class SymbolPrice(db.Model):
         __table_args__ = {'schema': SCHEMA}
 
     id = db.Column(db.Integer, primary_key=True)
-    symbol_id = db.Column(db.Integer, db.ForeignKey('symbols.id'), nullable=False)
+    symbol_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod('symbols.id')), nullable=False)
     date = db.Column(db.Date, nullable=False)
     open_price = db.Column(db.Float, nullable=False)
     close_price = db.Column(db.Float, nullable=False)
