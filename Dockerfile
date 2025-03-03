@@ -19,12 +19,14 @@ RUN pip install psycopg2
 
 COPY . .
 
-# Initialize database and run migrations
-# Add the init and migrate commands to ensure migration files are created
-RUN flask db init || true
-RUN flask db migrate -m "initial migration" || true
-RUN flask db upgrade || true
-RUN flask seed all
+# Remove existing migrations and recreate them
+RUN rm -rf migrations/
+RUN python -c "from app.models.db import db, SCHEMA; from app import app; with app.app_context(): db.session.execute(f'DROP SCHEMA IF EXISTS {SCHEMA} CASCADE'); db.session.execute(f'CREATE SCHEMA IF NOT EXISTS {SCHEMA}'); db.session.commit()"
+
+# Initialize migrations
+RUN flask db init
+RUN flask db migrate -m "initial migration"
+RUN flask db upgrade
 # RUN flask db upgrade
 # RUN flask seed all
 CMD gunicorn app:app
