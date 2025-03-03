@@ -21,7 +21,7 @@ COPY . .
 
 # Remove existing migrations and recreate them
 RUN rm -rf migrations/
-RUN python -c "from app.models.db import db, SCHEMA; from app import app; with app.app_context(): db.session.execute(f'DROP SCHEMA IF EXISTS {SCHEMA} CASCADE'); db.session.execute(f'CREATE SCHEMA IF NOT EXISTS {SCHEMA}'); db.session.commit()"
+# RUN python -c "from app.models.db import db, SCHEMA; from app import app; with app.app_context(): db.session.execute(f'DROP SCHEMA IF EXISTS {SCHEMA} CASCADE'); db.session.execute(f'CREATE SCHEMA IF NOT EXISTS {SCHEMA}'); db.session.commit()"
 
 # Initialize migrations
 RUN flask db init
