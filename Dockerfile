@@ -20,6 +20,7 @@ RUN pip install psycopg2
 COPY . .
 
 # Initialize database and run migrations
+# Add the init and migrate commands to ensure migration files are created
 RUN flask db init || true
 RUN flask db migrate -m "initial migration" || true
 RUN flask db upgrade || true
