@@ -1,6 +1,7 @@
 .symbol-details {
     padding: 20px;
     max-width: 1200px;
+    width: 60%;
     margin: 0 auto;
 }
 
@@ -11,52 +12,34 @@
     margin-bottom: 20px;
 }
 
-.current-price {
-    font-size: 24px;
-    font-weight: bold;
-}
 
-.price-change {
+
+.price-change-details {
     margin-left: 10px;
     padding: 4px 8px;
     border-radius: 4px;
-    font-size: 16px;
+    font-size: 0.8rem;
 }
 
-.price-change.positive {
+.price-change-details.positive {
     color: #00C805;
     background-color: rgba(0, 200, 5, 0.1);
 }
 
-.price-change.negative {
+.price-change-details.negative {
     color: #FF4444;
     background-color: rgba(255, 68, 68, 0.1);
 }
 
-.price-stats {
-    display: flex;
-    gap: 32px;
-    margin-bottom: 24px;
-    padding: 20px;
-    background-color: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    border: 1px solid rgba(0,0,0,0.1);
-}
-
-.price-stats div {
-    font-size: 15px;
-    color: #555;
-}
 
 .price-chart {
-    background: white;
+    /* background: white; */
     padding: 24px;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    /* border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05); */
     margin-top: 24px;
-    height: 500px;
-    border: 1px solid rgba(0,0,0,0.1);
+    height: 400px;
+    /* border: 1px solid rgba(0,0,0,0.1); */
 }
 
 .symbol-header h2 {
@@ -66,11 +49,14 @@
     margin: 0;
 }
 
-.current-price {
+.current-price-details {
     display: flex;
     align-items: center;
     gap: 12px;
+    font-size: 1.2rem;
+    font-weight: bold;
 }
+
 
 .symbol-info {
     display: flex;
@@ -78,16 +64,21 @@
     gap: 8px;
 }
 
-.action-buttons {
-    display: flex;
-    gap: 12px;
+.symbol-info h2 {
+    font-size: 1.2rem;
+    font-weight: 400;
+    color: var(--text-color);
 }
+
+
+
+
 
 .watchlist-button,
 .order-button {
-    padding: 10px 20px;
+    padding: 6px 10px;
     border-radius: 8px;
-    font-size: 14px;
+    font-size: 0.7rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -252,4 +243,205 @@
 .watchlist-button:disabled {
     opacity: 0.6;
     cursor: wait;
+}
+
+/* Container Layout */
+.symbol-details-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 200%;
+}
+
+/* Header */
+.symbol-details-container h2 {
+    width: 50%;
+    font-size: 0.8rem;
+    color: var(--text-color);
+    margin-bottom: 0;
+    font-weight: 300;
+    align-self: center;
+}
+
+.symbol-details-container h1 {
+    width: 50%;
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--text-color);
+    margin-top: 10px;
+    margin-bottom: 2rem;
+    align-self: center;
+}
+
+/* Price Summary */
+.price-summary {
+    background: var(--card-background);
+    overflow: hidden;
+    width: 50%;
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 20px;
+    margin-bottom: 0.8rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.summary-row:last-child {
+    margin-bottom: 0;
+}
+
+.price-value {
+    font-size: 0.8rem;
+    color: var(--text-color);
+    font-weight: 400;
+}
+
+/* Details Content */
+.details-content {
+    width: 50%;
+    font-size: 0.8rem;
+}
+
+.details-section {
+    margin-bottom: 2rem;
+}
+
+.details-section h3 {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+}
+
+/* Trading Form */
+.trading-form {
+    background: var(--card-background);
+    border-top: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    flex: 1;
+}
+
+.input-group input {
+    flex: 1;
+    background: none;
+    border: none;
+    padding: 0.5rem;
+    color: var(--text-color);
+    font-size: 0.8rem;
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.stat-item {
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+.stat-label {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.stat-value {
+    color: var(--text-color);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.trade-btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.trade-btn:hover {
+    background: #00b300;
+}
+
+.watchlist-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.watchlist-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* Loading State */
+.loading {
+    padding: 3rem;
+    text-align: center;
+    color: var(--text-color);
+    font-size: 1.1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .symbol-details-container {
+        padding: 0 1rem;
+        margin: 1rem auto;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
 } 

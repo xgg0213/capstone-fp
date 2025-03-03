@@ -75,13 +75,13 @@ const SymbolDetails = () => {
 
     if (!symbolData) return <div>Loading...</div>;
 
-    // Prepare chart data
+    // Prepare chart data with reversed dates
     const chartData = {
-        labels: priceHistory.map(price => new Date(price.date).toLocaleDateString()),
+        labels: priceHistory.map(price => new Date(price.date).toLocaleDateString()).reverse(),
         datasets: [
             {
                 label: 'Price',
-                data: priceHistory.map(price => price.close),
+                data: priceHistory.map(price => price.close).reverse(),
                 fill: true,
                 borderColor: '#00C805',
                 backgroundColor: 'rgba(0, 200, 5, 0.1)',
@@ -98,6 +98,11 @@ const SymbolDetails = () => {
     const chartOptions = {
         responsive: true,
         maintainAspectRatio: false,
+        elements: {  
+        line: {
+            borderWidth: 1  // This makes the line thinner (default is usually 3)
+        }
+        },
         plugins: {
             legend: {
                 display: false
@@ -110,11 +115,11 @@ const SymbolDetails = () => {
                 intersect: false,
                 backgroundColor: 'rgba(0, 0, 0, 0.8)',
                 titleFont: {
-                    size: 14,
+                    size: 12,
                     weight: 'bold'
                 },
                 bodyFont: {
-                    size: 13
+                    size: 12
                 },
                 padding: 12,
                 displayColors: false,
@@ -136,10 +141,12 @@ const SymbolDetails = () => {
                         size: 12
                     },
                     maxRotation: 0,
-                    color: '#666'
+                    color: '#666',
+                    maxTicksLimit: 6 // Limit number of x-axis labels
                 }
             },
             y: {
+                display: false, // Hide y-axis labels
                 grid: {
                     display: false,
                     drawBorder: false
@@ -224,9 +231,9 @@ const SymbolDetails = () => {
             <div className="symbol-header">
                 <div className="symbol-info">
                     <h2>{symbolData.company_name} ({symbolData.symbol})</h2>
-                    <div className="current-price">
+                    <div className="current-price-details">
                         ${symbolData.current_price}
-                        <span className={`price-change ${symbolData.price_change_pct >= 0 ? 'positive' : 'negative'}`}>
+                        <span className={`price-change-details ${symbolData.price_change_pct >= 0 ? 'positive' : 'negative'}`}>
                             {symbolData.price_change_pct}%
                         </span>
                     </div>
@@ -249,11 +256,11 @@ const SymbolDetails = () => {
                 </div>
             </div>
             
-            <div className="price-stats">
+            {/* <div className="price-stats">
                 <div>Daily High: ${symbolData.daily_high}</div>
                 <div>Daily Low: ${symbolData.daily_low}</div>
                 <div>Volume: {symbolData.daily_volume?.toLocaleString()}</div>
-            </div>
+            </div> */}
 
             <div className="price-chart">
                 <Line data={chartData} options={chartOptions} />
