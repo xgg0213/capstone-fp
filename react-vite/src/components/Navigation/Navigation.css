@@ -3,7 +3,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
+  padding: 2rem;
   background-color: var(--nav-background);
 }
 
@@ -55,7 +55,7 @@
   top: 50%;
   transform: translateY(-50%);
   color: #999;
-  font-size: 12px;
+  font-size: 16px;
   pointer-events: none;
 }
 
@@ -71,8 +71,8 @@
 .nav-right a {
   text-decoration: none;
   color: var(--text-color);
-  /* font-weight: 100; */
-  font-size: 12px;
+  font-weight: 500;
+  font-size: 14px;
 }
 
 .nav-right a:hover {
@@ -86,8 +86,8 @@
 /* Balance Display */
 .balance {
   color: var(--primary-color);
-  /* font-weight: 500; */
-  font-size: 12px;
+  font-weight: 500;
+  font-size: 14px;
   padding: 0.5rem 1rem;
   background: rgba(0, 200, 5, 0.1);
   border-radius: 4px;

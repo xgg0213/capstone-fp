@@ -9,6 +9,8 @@
   align-items: center;
   justify-content: center;
   transition: background-color 0.2s;
+  font-size: 14px;
+  font-weight: 500;
 }
 
 /* .profile-button:hover {

@@ -1,7 +1,7 @@
 /* Container Layout */
 .portfolio-container {
   max-width: 1200px;
-  margin: 2rem auto;
+  margin: 2.5rem auto;
   padding: 0 2rem;
   display: flex;
   flex-direction: column;
@@ -12,7 +12,7 @@
 /* Portfolio Header */
 .portfolio-container h2 {
   width: 50%;
-  font-size: 0.8rem;
+  font-size: 1rem;
   color: var(--text-color);
   margin-bottom: 0;
   font-weight: 300;
@@ -23,7 +23,7 @@
 .portfolio-container h1 {
   width: 50%;
   font-size: 1.5rem;
-  font-weight: 400;
+  font-weight: 500;
   color: var(--text-color);
   margin-top: 10px;
   margin-bottom: 2rem;
@@ -31,11 +31,6 @@
   /* padding-left: 1.2rem; */
 }
 
-.portfolio-value {
-  font-size: 0.8rem;
-  color: var(--text-color);
-  font-weight: 400;
-}
 
 /* Portfolio Summary */
 .portfolio-summary {
@@ -44,7 +39,7 @@
   border-radius: 8px; */
   overflow: hidden;
   width: 50%;
-  font-size: 0.8rem;
+  font-size: 1rem;
   margin-bottom: 1rem;
 }
 
@@ -71,13 +66,14 @@
   /* border-radius: 8px; */
   overflow: hidden;
   width: 50%;
-  font-size: 0.8rem;
+  font-size: 1rem;
   /* margin-bottom: 2rem; */
 }
 
 .portfolio-holdings h2 {
   margin-bottom: 2rem;
   font-size: 1rem;
+  font-weight: 500;
 }
 
 /* Holdings Table */
@@ -93,7 +89,7 @@
   /* padding: 1rem; */
   /* background: rgba(255, 255, 255, 0.1); */
   color: rgba(255, 255, 255, 0.7);
-  font-size: 0.8rem;
+  font-size: 1rem;
   font-weight: 400;
   padding-bottom: 1rem;
 }
@@ -116,9 +112,9 @@
 /* Holding Details */
 
 .return-value {
-  font-size: 0.8rem;
+  font-size: 1rem;
   opacity: 0.8;
-  margin-top: 0.25rem;
+  /* margin-top: 0.25rem; */
 }
 
 /* Status Colors */
@@ -144,7 +140,7 @@
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.2s;
-  font-size: 0.5rem;
+  font-size: 0.7rem;
   font-weight: 400;
 }
 

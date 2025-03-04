@@ -42,8 +42,8 @@ function OrderForm({ initialSymbol = '', initialPrice = null }) {
       <h2>Place {orderType === 'buy' ? 'Buy' : 'Sell'} Order</h2>
       
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Symbol</label>
+        <div className="form-group-order">
+          {/* <label>Symbol</label> */}
           <input
             type="text"
             value={symbol}
@@ -70,7 +70,7 @@ function OrderForm({ initialSymbol = '', initialPrice = null }) {
           </button>
         </div>
 
-        <div className="form-group">
+        <div className="form-group-order">
           <label>Shares</label>
           <input
             type="number"
@@ -83,11 +83,11 @@ function OrderForm({ initialSymbol = '', initialPrice = null }) {
 
         {initialPrice && (
           <div className="order-summary">
-            <div className="summary-row">
+            <div className="summary-row-order">
               <span>Market Price</span>
               <span>${initialPrice.toFixed(2)}</span>
             </div>
-            <div className="summary-row total">
+            <div className="summary-row-order total">
               <span>Estimated Total</span>
               <span>${(shares * initialPrice).toFixed(2)}</span>
             </div>

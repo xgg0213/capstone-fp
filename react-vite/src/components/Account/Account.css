@@ -1,7 +1,7 @@
 /* Container Layout */
 .account-container {
   max-width: 1200px;
-  margin: 2rem auto;
+  margin: 2.5rem auto;
   padding: 0 2rem;
   display: flex;
   flex-direction: column;
@@ -11,7 +11,7 @@
 
 .account-container h2 {
   width: 40%;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   color: var(--text-color);
   margin-bottom: 2rem;
   font-weight: 300;
@@ -26,7 +26,6 @@
   border-radius: 8px;
   overflow: hidden;
   width: 40%;
-  font-size: 0.8rem;
 }
 
 .account-update {
@@ -60,17 +59,17 @@
 /* Text Styles */
 .account-label, .form-group label {
   color: rgba(255, 255, 255, 0.7);
-  font-size: 0.8rem;
+  font-size: 1rem;
 }
 
 .account-value {
   color: var(--text-color);
-  font-size: 0.8rem;
+  /* font-size: 1rem; */
   font-weight: 500;
 }
 
 .account-balance {
-  font-size: 0.9rem;
+  /* font-size: 0.9rem; */
   font-weight: 500;
 }
 
@@ -111,7 +110,7 @@
   border: none;
   padding: 0.5rem;
   color: var(--text-color);
-  font-size: 0.8rem;
+  /* font-size: 0.8rem; */
 }
 
 .form-group .submit-btn {
@@ -120,7 +119,7 @@
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 4px;
-  font-size: 0.8rem;
+  /* font-size: 0.8rem; */
   cursor: pointer;
   white-space: nowrap;
 }

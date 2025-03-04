@@ -1,6 +1,6 @@
 .transactions-container {
   max-width: 1200px;
-  margin: 2rem auto;
+  margin: 2.5rem auto;
   padding: 0 2rem;
   display: flex;
   flex-direction: column;
@@ -10,7 +10,7 @@
 
 .transactions-container h2 {
   width: 40%;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   color: var(--text-color);
   margin-bottom: 2rem;
   font-weight: 300;
@@ -24,7 +24,6 @@
   border-radius: 8px;
   overflow: hidden;
   width: 40%;
-  font-size: 0.7rem;
 }
 
 .transaction-item {
@@ -32,7 +31,6 @@
   padding: 1.2rem;
   border-bottom: 1px solid var(--border-color);
   transition: all 0.2s ease;
-  font-size: 0.8rem;
 }
 
 .transaction-item:last-child {
@@ -73,7 +71,7 @@
 }
 
 .transaction-total {
-  font-size: 0.8rem;
+  font-size: 1rem;
   font-weight: 500;
   color: var(--text-color);
   text-align: right;
@@ -120,13 +118,13 @@
 }
 
 .company-name {
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 500;
   color: var(--text-color);
 }
 
 .company-symbol {
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   color: var(--primary-color);
 }
 
