@@ -46,6 +46,7 @@ def seed_transactions():
         raise e
 
 def undo_transactions():
+    # Because sqlite & psql
     if environment == "production":
         db.session.execute(f"TRUNCATE table {SCHEMA}.transactions RESTART IDENTITY CASCADE;")
     else:
