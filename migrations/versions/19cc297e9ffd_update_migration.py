@@ -5,8 +5,13 @@ Revises:
 Create Date: 2025-03-02 23:51:22.089581
 
 """
+
 from alembic import op
 import sqlalchemy as sa
+
+import os
+environment = os.getenv("FLASK_ENV")
+SCHEMA = os.environ.get("SCHEMA")
 
 # ffdc0a98111c, 3d50099a1157
 # revision identifiers, used by Alembic.
@@ -119,6 +124,17 @@ def upgrade():
     sa.UniqueConstraint('watchlist_id', 'symbol_id', name='unique_watchlist_symbol')
     )
     # ### end Alembic commands ###
+
+    # Ensure to mannually add this part to ensure Render deployment is successful, specific to this situation
+    if environment == "production":
+        op.execute(f"ALTER TABLE users SET SCHEMA {SCHEMA};")
+        op.execute(f"ALTER TABLE orders SET SCHEMA {SCHEMA};")
+        op.execute(f"ALTER TABLE portfolios SET SCHEMA {SCHEMA};")
+        op.execute(f"ALTER TABLE symbols SET SCHEMA {SCHEMA};")
+        op.execute(f"ALTER TABLE symbol_prices SET SCHEMA {SCHEMA};")
+        op.execute(f"ALTER TABLE transactions SET SCHEMA {SCHEMA};")
+        op.execute(f"ALTER TABLE watchlists SET SCHEMA {SCHEMA};")
+        op.execute(f"ALTER TABLE watchlist_symbols SET SCHEMA {SCHEMA};")
 
 
 def downgrade():
