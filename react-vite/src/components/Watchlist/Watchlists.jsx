@@ -92,8 +92,9 @@ function Watchlists({ onSelectStock }) {
                   className="stock-info"
                   onClick={() => onSelectStock(symbol)}
                 >
-                  <div className="stock-symbol">{symbol.symbol}</div>
                   <div className="company-name">{symbol.company_name}</div>
+                  <div className="stock-symbol">{symbol.symbol}</div>
+                  
                 </div>
                 <div className="stock-actions">
                   <div className="stock-price">

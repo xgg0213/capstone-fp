@@ -1,0 +1,32 @@
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.dashboard-left {
+  width: 100%;
+  min-width: 0;
+}
+
+.dashboard-right {
+  width: 100%;
+  min-width: 0;
+}
+
+/* Responsive layout */
+@media (max-width: 1024px) {
+  .dashboard {
+    padding: 1rem;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 1rem;
+  }
+} 

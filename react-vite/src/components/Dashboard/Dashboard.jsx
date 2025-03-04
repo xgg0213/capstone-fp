@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import Portfolio from '../Portfolio/Portfolio';
 import Watchlists from '../Watchlist/Watchlists';
 import OrderForm from '../Orders/OrderForm';
+import './Dashboard.css';
 
 function Dashboard() {
   const user = useSelector(state => state.session.user);
@@ -12,25 +13,10 @@ function Dashboard() {
     <div className="dashboard">
       <div className="dashboard-left">
         <Portfolio />
-        
       </div>
       <div className="dashboard-right">
         <Watchlists onSelectStock={setSelectedStock} />
       </div>
-      {/* <div className="dashboard-right">
-        {selectedStock ? (
-          <>
-            <div className="stock-chart">
-              
-            </div>
-            <OrderForm stock={selectedStock} />
-          </>
-        ) : (
-          <div className="welcome-message">
-            Select a stock to trade
-          </div>
-        )}
-      </div> */}
     </div>
   );
 }
