@@ -19,7 +19,7 @@
 }
 
 .transactions-list {
-  background: var(--card-background);
+  /* background: var(--card-background); */
   border-top: 1px solid var(--border-color);
   border-radius: 8px;
   overflow: hidden;

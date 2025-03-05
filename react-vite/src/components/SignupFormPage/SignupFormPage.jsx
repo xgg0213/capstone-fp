@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { thunkSignup } from "../../redux/session";
+import { thunkSignup, thunkLogin } from "../../redux/session";
 import "./SignupForm.css";
 
 function SignupFormPage() {
@@ -23,33 +23,37 @@ function SignupFormPage() {
       return setErrors({ confirmPassword: "Passwords must match" });
     }
 
-    try {
-      await dispatch(
-        thunkSignup({
-          email,
-          username,
-          firstName,
-          lastName,
-          password,
-        })
-      );
+    const response = await dispatch(
+      thunkSignup({
+        email,
+        username,
+        firstName,
+        lastName,
+        password,
+      })
+    );
+
+    if (response === null) {
+      // Signup was successful
       navigate("/dashboard");
-    } catch (error) {
-      const data = await error.json();
-      if (data?.errors) setErrors(data.errors);
+    } else if (response.errors) {
+      setErrors(response.errors);
     }
   };
 
   return (
     <div className="signup-page">
-
       <div className="signup-content">
         <h1>Create your account</h1>
-        <p className="subtitle">Join SimpleTrade and start investing today</p>
+        <p className="subtitle">Join TradeEasyUS and start investing today</p>
+
+        {errors.general && (
+          <p className="error general-error">{errors.general}</p>
+        )}
 
         <form onSubmit={handleSubmit} className="signup-form">
           <div className="name-fields">
-            <div className="form-group">
+            <div className="form-group-signup">
               <label htmlFor="firstName">First Name</label>
               <input
                 id="firstName"
@@ -62,7 +66,7 @@ function SignupFormPage() {
               {errors.firstName && <p className="error">{errors.firstName}</p>}
             </div>
 
-            <div className="form-group">
+            <div className="form-group-signup">
               <label htmlFor="lastName">Last Name</label>
               <input
                 id="lastName"
@@ -76,7 +80,7 @@ function SignupFormPage() {
             </div>
           </div>
 
-          <div className="form-group">
+          <div className="form-group-signup">
             <label htmlFor="email">Email</label>
             <input
               id="email"
@@ -89,7 +93,7 @@ function SignupFormPage() {
             {errors.email && <p className="error">{errors.email}</p>}
           </div>
 
-          <div className="form-group">
+          <div className="form-group-signup">
             <label htmlFor="username">Username</label>
             <input
               id="username"
@@ -102,7 +106,7 @@ function SignupFormPage() {
             {errors.username && <p className="error">{errors.username}</p>}
           </div>
 
-          <div className="form-group">
+          <div className="form-group-signup">
             <label htmlFor="password">Password</label>
             <input
               id="password"
@@ -115,7 +119,7 @@ function SignupFormPage() {
             {errors.password && <p className="error">{errors.password}</p>}
           </div>
 
-          <div className="form-group">
+          <div className="form-group-signup">
             <label htmlFor="confirmPassword">Confirm Password</label>
             <input
               id="confirmPassword"
@@ -141,7 +145,7 @@ function SignupFormPage() {
               onClick={() => navigate("/")}
               className="login-link"
             >
-              Log in to SimpleTrade
+              Log in to TradeEasyUS
             </button>
           </div>
         </form>

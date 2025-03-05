@@ -18,6 +18,7 @@ body {
     Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   color: var(--text-color);
   background-color: var(--background-color);
+  background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
 }
 
 /* Navigation

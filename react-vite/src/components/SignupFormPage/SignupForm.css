@@ -2,26 +2,25 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 110vh;
-  background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
   padding: 2rem;
+  min-height: calc(100vh - 80px); /* Account for navbar */
 }
 
 .signup-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: .5rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  max-width: 480px;
+  /* background: var(--card-background); */
+  padding: 2.5rem;
+  /* border-radius: 12px; */
   width: 100%;
+  max-width: 480px;
+  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
 }
 
 .signup-content h1 {
+  color: var(--text-color);
+  margin-bottom: 1rem;
   font-size: 1.8rem;
-  color: white;
-  /* margin-bottom: 1rem; */
+  font-weight: 500;
+  text-align: center;
 }
 
 .signup-content p {
@@ -31,8 +30,10 @@
   }
 
 .subtitle {
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 2rem;
+  color: var(--text-secondary);
+  margin-bottom: 2.5rem;
+  text-align: center;
+  font-size: 1rem;
 }
 
 .signup-form {
@@ -42,81 +43,97 @@
 }
 
 .name-fields {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  display: flex;
+  gap: 2rem;
+  /* margin-bottom: 0.5rem; */
+  width: 100%;
 }
 
-.form-group {
+.name-fields .form-group-signup {
+  flex: 1;
+  min-width: 0; /* Prevents flex items from overflowing */
+}
+
+.form-group-signup {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  width: 100%;
+  /* margin-bottom: 1rem; */
 }
 
-.form-group label {
+.form-group-signup label {
+  color: var(--text-color);
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
   font-weight: 500;
-  color: white;
+  display: block;
+  width: 100%;
 }
 
-.form-group input {
-  padding: 0.75rem;
-  border: 1px solid rgba(255,255,255,0.2);
+.form-group-signup input {
+  width: 100%;
+  padding: 0.875rem;
+  border: 1px solid var(--border-color);
   border-radius: 8px;
-  font-size: 1rem;
-  transition: all 0.2s;
-  background: rgba(255,255,255,0.1);
-  color: white;
+  background: var(--input-background);
+  color: gray;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  box-sizing: border-box; /* Ensures padding doesn't affect width */
 }
 
-.form-group input::placeholder {
-  color: rgba(255,255,255,0.5);
+.form-group-signup input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(0, 200, 5, 0.1);
 }
 
-.form-group input:focus {
-  border-color: #00C805;
-  box-shadow: 0 0 0 2px rgba(0,200,5,0.2);
-  background: rgba(255,255,255,0.15);
+.form-group-signup input::placeholder {
+  color: var(--text-secondary);
 }
 
 .error {
   color: #ff4444;
-  font-size: 0.875rem;
-  margin-top: 0.25rem;
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
 }
 
 .signup-button {
-  background-color: #00C805;
+  background: var(--primary-color);
   color: white;
-  padding: 0.75rem;
+  padding: 0.875rem;
   border: none;
   border-radius: 8px;
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
+  margin-top: 1rem;
+  width: 100%;
 }
 
 .signup-button:hover {
-  background-color: #00b300;
+  background: #00b300;
   transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .login-prompt {
   text-align: center;
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid rgba(255,255,255,0.2);
-  color: white;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+  color: var(--text-secondary);
 }
 
 .login-link {
   background: none;
   border: none;
-  color: #00C805;
-  font-weight: 500;
+  color: var(--primary-color);
   cursor: pointer;
   margin-left: 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
 }
 
 .login-link:hover {
@@ -136,17 +153,21 @@
 }
 
 /* Responsive design */
-@media (max-width: 768px) {
+@media (max-width: 480px) {
   .signup-page {
-    padding: 0;
+    padding: 1rem;
   }
 
   .signup-content {
-    padding: 2rem 1rem;
-    border-radius: 0;
+    padding: 1.5rem;
   }
 
   .name-fields {
-    grid-template-columns: 1fr;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .name-fields .form-group-signup {
+    width: 100%;
   }
 }
