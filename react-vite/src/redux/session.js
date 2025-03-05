@@ -217,50 +217,55 @@ export const thunkLogin = (credentials) => async dispatch => {
 
 export const thunkSignup = (user) => async (dispatch) => {
   try {
+    // console.log("Attempting signup with data:", {
+    //   ...user,
+    //   password: '[REDACTED]'  // Don't log the actual password
+    // });
+
     const response = await csrfFetch("/api/auth/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(user)
+      body: JSON.stringify({
+        username: user.username,
+        email: user.email,
+        password: user.password,
+        first_name: user.firstName,
+        last_name: user.lastName
+      })
     });
 
-    // console.log("Signup Response Status:", response.status); // Debug log
+    console.log("Signup response status:", response.status);
 
-    if(response.ok) {
+    if (response.ok) {
       const data = await response.json();
+      console.log("Signup success data:", data);
       dispatch(setUser(data));
-    } else {
-      const errorMessages = await response.json();
-      // Debug log
-      // console.log("Signup Error Response:", {
-      //   status: response.status,
-      //   errorMessages
-      // });
-      return errorMessages;
-    }
-  } catch (error) {
-    // Debug log
-    // console.error("Signup Error Details:", {
-    //   name: error.name,
-    //   message: error.message,
-    //   stack: error.stack
-    // });
-    
-    // If it's a response error, try to parse it
-    if (error.json) {
-      try {
-        const errorData = await error.json();
-        // console.log("Error Response Data:", errorData); // Debug log
-        return errorData;
-      } catch (e) {
-        console.error("Could not parse error response:", e);
-      }
-    }
+      return null;
+    } 
 
-    // return { 
-    //   errors: {
-    //     email: "Email already exists"  // Default error for duplicate email
-    //   }
-    // };
+    const errorData = await response.json();
+    console.log("Signup error data:", errorData);
+    return {
+      errors: errorData.errors || { general: "Signup failed. Please try again." }
+    };
+
+  } catch (error) {
+    console.error("Signup error:", {
+      status: error.status,
+      statusText: error.statusText,
+      message: error.message
+    });
+
+    try {
+      const errorJson = await error.json();
+      console.log("Error response body:", errorJson);
+      return { errors: errorJson.errors || { general: "Server error during signup." } };
+    } catch (e) {
+      console.error("Could not parse error response:", e);
+      return {
+        errors: { general: "An error occurred during signup. Please try again." }
+      };
+    }
   }
 };
 

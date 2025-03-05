@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { thunkSignup, thunkLogin } from "../../redux/session";
+import { thunkSignup } from "../../redux/session";
 import "./SignupForm.css";
 
 function SignupFormPage() {
@@ -23,21 +23,36 @@ function SignupFormPage() {
       return setErrors({ confirmPassword: "Passwords must match" });
     }
 
-    const response = await dispatch(
-      thunkSignup({
-        email,
-        username,
-        firstName,
-        lastName,
-        password,
-      })
-    );
+    const userData = {
+      username,
+      email,
+      firstName,
+      lastName,
+      password
+    };
+
+    const response = await dispatch(thunkSignup(userData));
 
     if (response === null) {
-      // Signup was successful
       navigate("/dashboard");
     } else if (response.errors) {
-      setErrors(response.errors);
+      // Handle array of error messages
+      if (Array.isArray(response.errors)) {
+        const formattedErrors = {};
+        response.errors.forEach(error => {
+          const [field, message] = error.split(" : ");
+          formattedErrors[field] = message;
+        });
+        setErrors(formattedErrors);
+      } 
+      // Handle object of error messages
+      else if (typeof response.errors === 'object') {
+        setErrors(response.errors);
+      }
+      // Handle single error message
+      else {
+        setErrors({ general: response.errors });
+      }
     }
   };
 
@@ -45,7 +60,7 @@ function SignupFormPage() {
     <div className="signup-page">
       <div className="signup-content">
         <h1>Create your account</h1>
-        <p className="subtitle">Join TradeEasyUS and start investing today</p>
+        <h2 className="subtitle">Join TradeEasyUS and start investing today</h2>
 
         {errors.general && (
           <p className="error general-error">{errors.general}</p>
@@ -62,8 +77,9 @@ function SignupFormPage() {
                 onChange={(e) => setFirstName(e.target.value)}
                 required
                 placeholder="Enter your first name"
+                className={errors.first_name ? "error-input" : ""}
               />
-              {errors.firstName && <p className="error">{errors.firstName}</p>}
+              {errors.first_name && <p className="error">{errors.first_name}</p>}
             </div>
 
             <div className="form-group-signup">
@@ -75,22 +91,10 @@ function SignupFormPage() {
                 onChange={(e) => setLastName(e.target.value)}
                 required
                 placeholder="Enter your last name"
+                className={errors.last_name ? "error-input" : ""}
               />
-              {errors.lastName && <p className="error">{errors.lastName}</p>}
+              {errors.last_name && <p className="error">{errors.last_name}</p>}
             </div>
-          </div>
-
-          <div className="form-group-signup">
-            <label htmlFor="email">Email</label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              placeholder="Enter your email"
-            />
-            {errors.email && <p className="error">{errors.email}</p>}
           </div>
 
           <div className="form-group-signup">
@@ -102,8 +106,23 @@ function SignupFormPage() {
               onChange={(e) => setUsername(e.target.value)}
               required
               placeholder="Choose a username"
+              className={errors.username ? "error-input" : ""}
             />
             {errors.username && <p className="error">{errors.username}</p>}
+          </div>
+
+          <div className="form-group-signup">
+            <label htmlFor="email">Email</label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              placeholder="Enter your email"
+              className={errors.email ? "error-input" : ""}
+            />
+            {errors.email && <p className="error">{errors.email}</p>}
           </div>
 
           <div className="form-group-signup">
@@ -115,6 +134,7 @@ function SignupFormPage() {
               onChange={(e) => setPassword(e.target.value)}
               required
               placeholder="Create a password"
+              className={errors.password ? "error-input" : ""}
             />
             {errors.password && <p className="error">{errors.password}</p>}
           </div>
@@ -128,6 +148,7 @@ function SignupFormPage() {
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
               placeholder="Confirm your password"
+              className={errors.confirmPassword ? "error-input" : ""}
             />
             {errors.confirmPassword && (
               <p className="error">{errors.confirmPassword}</p>
