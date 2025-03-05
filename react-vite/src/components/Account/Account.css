@@ -10,7 +10,7 @@
 }
 
 .account-container h2 {
-  width: 40%;
+  width: 60%;
   font-size: 1.5rem;
   color: var(--text-color);
   margin-bottom: 2rem;
@@ -25,7 +25,7 @@
   border-top: 1px solid var(--border-color);
   border-radius: 8px;
   overflow: hidden;
-  width: 40%;
+  width: 60%;
 }
 
 .account-update {

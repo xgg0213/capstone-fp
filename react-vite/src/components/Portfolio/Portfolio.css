@@ -11,7 +11,7 @@
 
 /* Portfolio Header */
 .portfolio-container h2 {
-  width: 50%;
+  width: 60%;
   font-size: 1rem;
   color: var(--text-color);
   margin-bottom: 0;
@@ -21,7 +21,7 @@
 }
 
 .portfolio-container h1 {
-  width: 50%;
+  width: 60%;
   font-size: 1.5rem;
   font-weight: 500;
   color: var(--text-color);
@@ -38,7 +38,7 @@
   /* border-top: 1px solid var(--border-color);
   border-radius: 8px; */
   overflow: hidden;
-  width: 50%;
+  width: 60%;
   font-size: 1rem;
   margin-bottom: 1rem;
 }
@@ -65,7 +65,7 @@
   border-top: 1px solid var(--border-color); */
   /* border-radius: 8px; */
   overflow: hidden;
-  width: 50%;
+  width: 60%;
   font-size: 1rem;
   /* margin-bottom: 2rem; */
 }
