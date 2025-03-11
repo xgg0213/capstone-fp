@@ -10,6 +10,8 @@
   --border-color: #333;
   --nav-background: #1b1b1b;
   --card-background: #1b1b1b;
+  --sell-background: #f5f5f5;
+  --buy-background: #00C805;
 }
 
 body {

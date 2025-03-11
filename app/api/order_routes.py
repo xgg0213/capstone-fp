@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from flask_login import login_required, current_user
-from app.models import db, Order, Transaction, Portfolio, User
+from app.models import db, Order, Transaction, Portfolio, User, Symbol
 from datetime import datetime
 
 order_routes = Blueprint('orders', __name__)
@@ -12,23 +12,36 @@ def place_order():
     data = request.json
     
     # Validate order data
-    required_fields = ['symbol', 'order_type', 'side', 'shares']
+    required_fields = ['symbol', 'shares', 'type']
     if not all(field in data for field in required_fields):
         return {'error': 'Missing required fields'}, 400
-        
+    
+    # Find the symbol in the database
+    symbol_obj = Symbol.query.filter_by(symbol=data['symbol'].upper()).first()
+    if not symbol_obj:
+        return {'error': f"Symbol {data['symbol']} not found"}, 404
+    
+    # Check if user has enough balance for buy orders
+    if data['type'] == 'buy':
+        user = User.query.get(current_user.id)
+        order_total = float(data['shares']) * (data.get('price') or symbol_obj.current_price)
+        if order_total > user.balance:
+            return {'error': 'Insufficient funds'}, 400
+    
     # Create new order
     order = Order(
         user_id=current_user.id,
-        symbol=data['symbol'].upper(),
-        order_type=data['order_type'],
-        side=data['side'],
+        symbol_id=symbol_obj.id,
         shares=float(data['shares']),
-        price=data.get('price'),
+        type=data['type'],
         status='pending'
     )
     
     db.session.add(order)
     db.session.commit()
+    
+    # Process the order immediately for demo purposes
+    process_order_internal(order.id)
     
     return order.to_dict()
 
@@ -65,9 +78,14 @@ def cancel_order(id):
 @order_routes.route('/<int:order_id>/process', methods=['POST'])
 @login_required
 def process_order(order_id):
-    """
-    Process a pending order (Demo version)
-    """
+    """Process a pending order (Demo version)"""
+    result = process_order_internal(order_id)
+    if isinstance(result, tuple):
+        return result
+    return result.to_dict()
+
+def process_order_internal(order_id):
+    """Internal function to process an order"""
     order = Order.query.get(order_id)
     
     if not order:
@@ -79,45 +97,61 @@ def process_order(order_id):
     if order.status != 'pending':
         return {'errors': ['Order is not pending']}, 400
     
-    # For demo: use order price or default price
-    market_price = order.price or 100.00
+    # Get the symbol object
+    symbol_obj = Symbol.query.get(order.symbol_id)
+    if not symbol_obj:
+        return {'errors': ['Symbol not found']}, 404
+    
+    # For demo: use current price from symbol
+    market_price = symbol_obj.current_price
     
     # Update order status
-    order.status = 'filled'
-    order.filled_price = market_price
-    order.filled_at = datetime.utcnow()
+    order.status = 'completed'
+    
+    # Update user balance for buy orders
+    user = User.query.get(current_user.id)
+    order_total = float(order.shares) * market_price
+    
+    if order.type == 'buy':
+        if order_total > user.balance:
+            return {'errors': ['Insufficient funds']}, 400
+        user.balance -= order_total
+    else:  # sell
+        user.balance += order_total
     
     # Update portfolio
     portfolio = Portfolio.query.filter_by(
         user_id=current_user.id,
-        symbol=order.symbol
+        symbol_id=order.symbol_id
     ).first()
     
     if not portfolio:
         portfolio = Portfolio(
             user_id=current_user.id,
-            symbol=order.symbol,
+            symbol_id=order.symbol_id,
             shares=0
         )
         db.session.add(portfolio)
     
     # Update shares based on buy/sell
-    if order.side == 'buy':
+    if order.type == 'buy':
         portfolio.shares += order.shares
     else:  # sell
+        if portfolio.shares < order.shares:
+            return {'errors': ['Not enough shares to sell']}, 400
         portfolio.shares -= order.shares
     
     # Create transaction record
     transaction = Transaction(
         user_id=current_user.id,
         order_id=order.id,
-        symbol=order.symbol,
+        symbol_id=order.symbol_id,
         shares=order.shares,
         price=market_price,
-        type=order.side
+        type=order.type
     )
     
     db.session.add(transaction)
     db.session.commit()
     
-    return order.to_dict() 
+    return order 

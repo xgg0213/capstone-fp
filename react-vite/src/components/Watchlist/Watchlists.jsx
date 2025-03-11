@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getWatchlists } from '../../redux/watchlist';
+import { getWatchlists, removeSymbolFromWatchlist } from '../../redux/watchlist';
 import { FaTrash } from 'react-icons/fa';
 import OpenModalButton from '../OpenModalButton/OpenModalButton';
 import ConfirmModal from '../Modals/ConfirmModal';
@@ -37,17 +37,18 @@ function Watchlists({ onSelectStock }) {
 
   const handleRemoveSymbol = async (watchlistId, symbol) => {
     try {
-      const response = await fetch(`/api/watchlists/${watchlistId}/symbols/${symbol}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      if (response.ok) {
-        dispatch(getWatchlists());
+      const success = await dispatch(removeSymbolFromWatchlist(watchlistId, symbol));
+      
+      if (success) {
+        // Refresh watchlists after successful removal
+        await dispatch(getWatchlists());
+      } else {
+        console.error('Failed to remove symbol from watchlist');
+        // You could add a toast notification here
       }
     } catch (error) {
       console.error('Error removing symbol:', error);
+      // You could add a toast notification here
     }
     closeMenu();
   };

@@ -43,7 +43,7 @@
   margin-bottom: 1rem;
 }
 
-.summary-row {
+.summary-row-portfolio {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -54,7 +54,7 @@
   border-radius: 8px;
 }
 
-.summary-row:last-child {
+.summary-row-portfolio:last-child {
   margin-bottom: 0;
 }
 
@@ -103,6 +103,12 @@
   align-items: center;
   padding-bottom: 0.7rem;
   padding-top: 0.7rem;
+}
+
+.position-row .symbol, .position-row .price, .position-row .shares, .position-row .avg-cost {
+  font-size: 1rem;
+  color: var(--text-color);
+  font-weight: 400;
 }
 
 .position-row:hover {

@@ -91,21 +91,34 @@ def add_symbol_to_watchlist(id):
 @login_required
 def remove_symbol(id, symbol):
     """Remove a symbol from watchlist"""
-    watchlist = Watchlist.query.get(id)
-    
-    if not watchlist or watchlist.user_id != current_user.id:
-        return {'error': 'Watchlist not found'}, 404
+    try:
+        watchlist = Watchlist.query.get(id)
         
-    symbol_to_remove = WatchlistSymbol.query.filter_by(
-        watchlist_id=id,
-        symbol=symbol.upper()
-    ).first()
-    
-    if symbol_to_remove:
+        if not watchlist or watchlist.user_id != current_user.id:
+            return {'error': 'Watchlist not found'}, 404
+            
+        # First, find the Symbol object by its symbol string
+        symbol_obj = Symbol.query.filter_by(symbol=symbol.upper()).first()
+        
+        if not symbol_obj:
+            return {'error': 'Symbol not found'}, 404
+            
+        # Then find the WatchlistSymbol entry using watchlist_id and symbol_id
+        symbol_to_remove = WatchlistSymbol.query.filter_by(
+            watchlist_id=id,
+            symbol_id=symbol_obj.id
+        ).first()
+        
+        if not symbol_to_remove:
+            return {'error': 'Symbol not in watchlist'}, 404
+            
         db.session.delete(symbol_to_remove)
         db.session.commit()
-        
-    return watchlist.to_dict()
+            
+        return watchlist.to_dict()
+    except Exception as e:
+        db.session.rollback()
+        return {'error': str(e)}, 500
 
 @watchlist_routes.route('/<symbol>', methods=['GET'])
 @login_required
