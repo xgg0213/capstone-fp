@@ -46,6 +46,10 @@ export const thunkPlaceOrder = (orderData) => async (dispatch) => {
     if (response.ok) {
       const data = await response.json();
       dispatch(placeOrder(data));
+      
+      // Refresh user session data to update balance
+      await dispatch(thunkAuthenticate());
+      
       return { success: true, order: data };
     } else {
       const data = await response.json();

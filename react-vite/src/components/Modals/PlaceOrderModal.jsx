@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useModal } from '../../context/Modal';
 import { csrfFetch } from '../../redux/csrf';
 import { fetchPortfolio } from '../../redux/portfolio';
+import { thunkAuthenticate } from '../../redux/session';
 import './PlaceOrderModal.css';
 
 function PlaceOrderModal({ symbol = '', currentPrice = null, initialOrderType = 'buy' }) {
@@ -47,6 +48,9 @@ function PlaceOrderModal({ symbol = '', currentPrice = null, initialOrderType = 
       if (response.ok) {
         // Refresh portfolio data in Redux
         await dispatch(fetchPortfolio());
+        
+        // Refresh user session data to update balance
+        await dispatch(thunkAuthenticate());
         
         // Close the modal
         closeModal();

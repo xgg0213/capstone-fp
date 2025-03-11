@@ -1,52 +1,51 @@
 from app.models import db, Transaction, User, Symbol, Order, environment, SCHEMA
 from sqlalchemy.sql import text
 from datetime import datetime
+import random
 
 def seed_transactions():
-    # Get users, symbols, and completed orders
-    users = User.query.all()
-    symbols = Symbol.query.all()
+
+    
+    # Get completed orders
     completed_orders = Order.query.filter_by(status='completed').all()
+    
+    if not completed_orders:
+        print("No completed orders found. Make sure to seed orders first.")
+        return
 
-    transactions = [
-        Transaction(
-            user_id=users[0].id,
-            order_id=completed_orders[0].id,  # First completed order
-            symbol_id=symbols[0].id,  # AAPL
-            shares=100,
-            price=175.50,
-            type='buy'
-        ),
-        Transaction(
-            user_id=users[0].id,
-            order_id=completed_orders[1].id,  # Second completed order
-            symbol_id=symbols[1].id,  # GOOGL
-            shares=50,
-            price=138.20,
-            type='buy'
-        ),
-        Transaction(
-            user_id=users[1].id,
-            order_id=completed_orders[2].id,  # Third completed order
-            symbol_id=symbols[2].id,  # MSFT
-            shares=75,
-            price=330.50,
-            type='buy'
+    # Create transactions for all completed orders
+    transactions = []
+    for order in completed_orders:
+        # Get the symbol for this order
+        symbol = Symbol.query.get(order.symbol_id)
+        if not symbol:
+            print(f"Warning: Symbol with ID {order.symbol_id} not found for order {order.id}")
+            continue
+            
+        # Create transaction with a price close to current price
+        # Use a consistent price factor based on order ID for reproducibility
+        random.seed(order.id)  # Set seed based on order ID for consistency
+        price_factor = random.uniform(0.95, 1.05)
+        transaction_price = symbol.current_price * price_factor
+        
+        # Create transaction with same date as order
+        transaction = Transaction(
+            user_id=order.user_id,
+            order_id=order.id,
+            symbol_id=order.symbol_id,
+            shares=order.shares,
+            price=transaction_price,
+            type=order.type,
+            created_at=order.created_at  # Use the same date as the order
         )
-    ]
-
-    try:
-        for transaction in transactions:
-            db.session.add(transaction)
-        db.session.commit()
-        print('Transactions seeded successfully!')
-    except Exception as e:
-        db.session.rollback()
-        print('Error seeding transactions:', str(e))
-        raise e
+        
+        transactions.append(transaction)
+        db.session.add(transaction)
+    
+    db.session.commit()
+    print(f'Added {len(transactions)} transactions to the database')
 
 def undo_transactions():
-    # Because sqlite & psql
     if environment == "production":
         db.session.execute(f"TRUNCATE table {SCHEMA}.transactions RESTART IDENTITY CASCADE;")
     else:

@@ -9,9 +9,10 @@ import * as sessionActions from "./redux/session";
 
 const store = configureStore();
 
-if (process.env.NODE_ENV !== 'production') {
-  restoreCSRF().catch(console.error);
+// Restore CSRF token in all environments
+restoreCSRF().catch(console.error);
 
+if (process.env.NODE_ENV !== 'production') {
   window.csrfFetch = csrfFetch;
   window.store = store;
   window.sessionActions = sessionActions;

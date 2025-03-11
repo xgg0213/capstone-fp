@@ -16,6 +16,7 @@ import {
   Legend
 } from 'chart.js';
 import './SymbolDetails.css';
+import { csrfFetch } from '../../redux/csrf';
 
 // Register ChartJS components
 ChartJS.register(
@@ -171,7 +172,7 @@ const SymbolDetails = () => {
 
     const handleAddToWatchlist = async () => {
         try {
-            const response = await fetch('/api/watchlist', {
+            const response = await csrfFetch('/api/watchlist', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -181,16 +182,23 @@ const SymbolDetails = () => {
 
             if (response.ok) {
                 setIsInWatchlist(true);
+                // Show success message
+                alert(`${symbol.toUpperCase()} added to watchlist successfully!`);
+            } else {
+                const data = await response.json();
+                console.error('Error adding to watchlist:', data.errors || 'Unknown error');
+                alert(`Failed to add to watchlist: ${data.errors ? data.errors.join(', ') : 'Unknown error'}`);
             }
         } catch (error) {
             console.error('Error adding to watchlist:', error);
+            alert('Failed to add to watchlist. Please try again.');
         }
     };
 
     return (
         <div className="symbol-details">
             <div className="symbol-header">
-                <div className="symbol-info">
+                <div className="symbol-info-details">
                     <h2>{symbolData.company_name} ({symbolData.symbol})</h2>
                     <div className="current-price-details">
                         ${symbolData.current_price}

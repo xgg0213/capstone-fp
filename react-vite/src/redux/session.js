@@ -180,7 +180,7 @@ export const thunkAuthenticate = () => async (dispatch) => {
   // use fetch for /api/auth & having the thunkAuthenticate in Layout.jsx
   // Option 2:
   // remove the thunkAuthenticate from Layout.jsx and use csrfFetch here
-	const response = await csrfFetch("/api/auth/");
+	const response = await fetch("/api/auth/");
 	if (response.ok) {
 		const data = await response.json();
 		if (data.errors) {
