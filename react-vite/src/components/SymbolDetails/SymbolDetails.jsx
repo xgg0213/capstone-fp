@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchSymbol, fetchSymbolPrices } from '../../redux/symbols';
+import { addSymbolToWatchlist, checkSymbolInWatchlist } from '../../redux/watchlist';
+import { fetchPortfolio } from '../../redux/portfolio';
 import { Line } from 'react-chartjs-2';
 import OpenModalButton from '../OpenModalButton';
 import PlaceOrderModal from '../Modals/PlaceOrderModal';
@@ -43,6 +45,7 @@ const SymbolDetails = () => {
 
     useEffect(() => {
         if (symbol) {
+            // Fetch symbol data
             dispatch(fetchSymbol(symbol))
                 .then(data => {
                     if (!data) {
@@ -51,23 +54,19 @@ const SymbolDetails = () => {
                 })
                 .catch(() => navigate('/dashboard'));
 
+            // Fetch price history
             dispatch(fetchSymbolPrices(symbol))
                 .then(prices => setPriceHistory(prices));
 
+            // Fetch portfolio data
+            dispatch(fetchPortfolio());
+
             // Check if symbol is in watchlist
-            fetch(`/api/watchlist/${symbol}/check`)
-                .then(async response => {
-                    if (!response.ok) {
-                        const error = await response.text();
-                        throw new Error(error);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    setIsInWatchlist(data.isWatched);
+            dispatch(checkSymbolInWatchlist(symbol))
+                .then(isWatched => {
+                    setIsInWatchlist(isWatched);
                 })
                 .catch(error => {
-                    console.error('Error checking watchlist status:', error);
                     setIsInWatchlist(false);
                 });
         }
@@ -172,25 +171,16 @@ const SymbolDetails = () => {
 
     const handleAddToWatchlist = async () => {
         try {
-            const response = await csrfFetch('/api/watchlist', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ symbol: symbol.toUpperCase() })
-            });
-
-            if (response.ok) {
+            const result = await dispatch(addSymbolToWatchlist(symbol));
+            
+            if (result.success) {
                 setIsInWatchlist(true);
                 // Show success message
                 alert(`${symbol.toUpperCase()} added to watchlist successfully!`);
             } else {
-                const data = await response.json();
-                console.error('Error adding to watchlist:', data.errors || 'Unknown error');
-                alert(`Failed to add to watchlist: ${data.errors ? data.errors.join(', ') : 'Unknown error'}`);
+                alert(`Failed to add to watchlist: ${result.errors ? result.errors.join(', ') : 'Unknown error'}`);
             }
         } catch (error) {
-            console.error('Error adding to watchlist:', error);
             alert('Failed to add to watchlist. Please try again.');
         }
     };
@@ -218,13 +208,18 @@ const SymbolDetails = () => {
                     )}
                     <OpenModalButton
                         buttonText="Place Order"
-                        className="order-button"
+                        className="place-order-btn"
                         modalComponent={
-                            <PlaceOrderModal
-                                symbol={symbol}
-                                currentPrice={symbolData.current_price}
-                                initialOrderType="buy"
-                            />
+                            symbolData && symbolData.current_price ? (
+                                <PlaceOrderModal 
+                                    symbol={symbol} 
+                                    currentPrice={symbolData.current_price} 
+                                />
+                            ) : (
+                                <div className="error-message">
+                                    Unable to load symbol data. Please try again.
+                                </div>
+                            )
                         }
                     />
                 </div>

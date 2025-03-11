@@ -5,6 +5,9 @@ const LOAD_WATCHLISTS = 'watchlists/LOAD_WATCHLISTS';
 const ADD_WATCHLIST = 'watchlists/ADD_WATCHLIST';
 const REMOVE_WATCHLIST = 'watchlists/REMOVE_WATCHLIST';
 const REMOVE_SYMBOL = 'watchlists/REMOVE_SYMBOL';
+const ADD_SYMBOL = 'watchlists/ADD_SYMBOL';
+const SET_WATCHED_SYMBOLS = 'watchlists/SET_WATCHED_SYMBOLS';
+const SET_ERROR = 'watchlists/SET_ERROR';
 
 // Action Creators
 const loadWatchlists = (watchlists) => ({
@@ -27,6 +30,21 @@ const removeSymbol = (watchlistId, symbol) => ({
   payload: { watchlistId, symbol }
 });
 
+const addSymbol = (symbol) => ({
+  type: ADD_SYMBOL,
+  payload: symbol
+});
+
+const setWatchedSymbols = (symbols) => ({
+  type: SET_WATCHED_SYMBOLS,
+  payload: symbols
+});
+
+const setError = (error) => ({
+  type: SET_ERROR,
+  payload: error
+});
+
 // Thunks
 export const getWatchlists = () => async (dispatch) => {
   try {
@@ -34,10 +52,21 @@ export const getWatchlists = () => async (dispatch) => {
     if (response.ok) {
       const data = await response.json();
       dispatch(loadWatchlists(data.watchlists));
+      
+      // Extract all watched symbols from watchlists
+      const watchedSymbols = new Set();
+      data.watchlists.forEach(watchlist => {
+        watchlist.symbols.forEach(symbol => {
+          watchedSymbols.add(symbol.symbol);
+        });
+      });
+      dispatch(setWatchedSymbols(Array.from(watchedSymbols)));
+      
       return data.watchlists;
     }
   } catch (error) {
     console.error('Error fetching watchlists:', error);
+    dispatch(setError(error.toString()));
   }
 };
 
@@ -57,6 +86,47 @@ export const createWatchlist = (name) => async (dispatch) => {
     }
   } catch (error) {
     console.error('Error creating watchlist:', error);
+    dispatch(setError(error.toString()));
+  }
+};
+
+export const addSymbolToWatchlist = (symbol) => async (dispatch) => {
+  try {
+    const response = await csrfFetch('/api/watchlist', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ symbol: symbol.toUpperCase() })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      dispatch(addSymbol(symbol.toUpperCase()));
+      return { success: true, data };
+    } else {
+      const errorData = await response.json();
+      dispatch(setError(errorData.errors || 'Failed to add to watchlist'));
+      return { success: false, errors: errorData.errors };
+    }
+  } catch (error) {
+    console.error('Error adding symbol to watchlist:', error);
+    dispatch(setError(error.toString()));
+    return { success: false, errors: [error.toString()] };
+  }
+};
+
+export const checkSymbolInWatchlist = (symbol) => async (dispatch) => {
+  try {
+    const response = await csrfFetch(`/api/watchlist/${symbol}/check`);
+    if (response.ok) {
+      const data = await response.json();
+      return data.isWatched;
+    }
+    return false;
+  } catch (error) {
+    console.error('Error checking if symbol is in watchlist:', error);
+    return false;
   }
 };
 
@@ -78,17 +148,21 @@ export const removeSymbolFromWatchlist = (watchlistId, symbol) => async (dispatc
     } else {
       const errorData = await response.json();
       console.error('Error removing symbol:', errorData.error);
+      dispatch(setError(errorData.error));
       return false;
     }
   } catch (error) {
     console.error('Error removing symbol from watchlist:', error);
+    dispatch(setError(error.toString()));
     return false;
   }
 };
 
 // Reducer
 const initialState = {
-  watchlists: []
+  watchlists: [],
+  watchedSymbols: [],
+  error: null
 };
 
 const watchlistReducer = (state = initialState, action) => {
@@ -96,21 +170,44 @@ const watchlistReducer = (state = initialState, action) => {
     case LOAD_WATCHLISTS:
       return {
         ...state,
-        watchlists: action.payload
+        watchlists: action.payload,
+        error: null
       };
     case ADD_WATCHLIST:
       return {
         ...state,
-        watchlists: [...state.watchlists, action.payload]
+        watchlists: [...state.watchlists, action.payload],
+        error: null
       };
     case REMOVE_WATCHLIST:
       return {
         ...state,
-        watchlists: state.watchlists.filter(list => list.id !== action.payload)
+        watchlists: state.watchlists.filter(list => list.id !== action.payload),
+        error: null
       };
     case REMOVE_SYMBOL:
       // This is handled by the getWatchlists refresh, but we could optimize it here
-      return state;
+      return {
+        ...state,
+        error: null
+      };
+    case ADD_SYMBOL:
+      return {
+        ...state,
+        watchedSymbols: [...state.watchedSymbols, action.payload],
+        error: null
+      };
+    case SET_WATCHED_SYMBOLS:
+      return {
+        ...state,
+        watchedSymbols: action.payload,
+        error: null
+      };
+    case SET_ERROR:
+      return {
+        ...state,
+        error: action.payload
+      };
     default:
       return state;
   }
