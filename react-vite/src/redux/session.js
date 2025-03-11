@@ -155,6 +155,7 @@ import {csrfFetch} from "./csrf"
 // Action Types
 const SET_USER = 'session/setUser';
 const REMOVE_USER = 'session/removeUser';
+const UPDATE_BALANCE = 'session/UPDATE_BALANCE';
 
 // Action Creators
 const setUser = (user) => ({
@@ -164,6 +165,11 @@ const setUser = (user) => ({
 
 const removeUser = () => ({
   type: REMOVE_USER
+});
+
+const updateBalance = (balance) => ({
+  type: UPDATE_BALANCE,
+  payload: balance
 });
 
 export const thunkAuthenticate = () => async (dispatch) => {
@@ -274,6 +280,36 @@ export const thunkLogout = () => async (dispatch) => {
   dispatch(removeUser());
 };
 
+export const thunkUpdateBalance = (amount) => async (dispatch) => {
+  try {
+    const response = await csrfFetch('/api/portfolio', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ amount })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      dispatch(updateBalance(data.balance));
+      return { success: true, balance: data.balance };
+    } else {
+      const errorData = await response.json();
+      return { 
+        success: false, 
+        errors: errorData.errors || { general: 'Failed to update balance' }
+      };
+    }
+  } catch (error) {
+    console.error('Error updating balance:', error);
+    return { 
+      success: false, 
+      errors: { general: 'An error occurred while updating your balance' }
+    };
+  }
+};
+
 const initialState = { user: null };
 
 function sessionReducer(state = initialState, action) {
@@ -282,6 +318,14 @@ function sessionReducer(state = initialState, action) {
       return { user: action.payload };
     case REMOVE_USER:
       return { user: null };
+    case UPDATE_BALANCE:
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          balance: action.payload
+        }
+      };
     default:
       return state;
   }
