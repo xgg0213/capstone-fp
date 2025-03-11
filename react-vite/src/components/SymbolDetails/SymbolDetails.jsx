@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchSymbol, fetchSymbolPrices } from '../../redux/symbols';
 import { Line } from 'react-chartjs-2';
+import OpenModalButton from '../OpenModalButton';
+import PlaceOrderModal from '../Modals/PlaceOrderModal';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -14,6 +16,7 @@ import {
   Legend
 } from 'chart.js';
 import './SymbolDetails.css';
+import { csrfFetch } from '../../redux/csrf';
 
 // Register ChartJS components
 ChartJS.register(
@@ -31,9 +34,6 @@ const SymbolDetails = () => {
     const navigate = useNavigate();
     const { symbol } = useParams();
     const [priceHistory, setPriceHistory] = useState([]);
-    const [showOrderForm, setShowOrderForm] = useState(false);
-    const [shares, setShares] = useState('');
-    const [errors, setErrors] = useState([]);
     const [isInWatchlist, setIsInWatchlist] = useState(false);
     
     const symbolData = useSelector(state => 
@@ -172,7 +172,7 @@ const SymbolDetails = () => {
 
     const handleAddToWatchlist = async () => {
         try {
-            const response = await fetch('/api/watchlist', {
+            const response = await csrfFetch('/api/watchlist', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -182,54 +182,23 @@ const SymbolDetails = () => {
 
             if (response.ok) {
                 setIsInWatchlist(true);
+                // Show success message
+                alert(`${symbol.toUpperCase()} added to watchlist successfully!`);
+            } else {
+                const data = await response.json();
+                console.error('Error adding to watchlist:', data.errors || 'Unknown error');
+                alert(`Failed to add to watchlist: ${data.errors ? data.errors.join(', ') : 'Unknown error'}`);
             }
         } catch (error) {
             console.error('Error adding to watchlist:', error);
+            alert('Failed to add to watchlist. Please try again.');
         }
     };
-
-    const handlePlaceOrder = () => {
-        setShowOrderForm(true);
-    };
-
-    const handleSubmitOrder = async (e) => {
-        e.preventDefault();
-        setErrors([]);
-
-        const orderData = {
-            symbol: symbol.toUpperCase(),
-            shares: Number(shares),
-            price: symbolData.current_price
-        };
-
-        try {
-            const response = await fetch('/api/orders', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(orderData)
-            });
-
-            if (response.ok) {
-                setShowOrderForm(false);
-                setShares('');
-                navigate('/portfolio');
-            } else {
-                const data = await response.json();
-                if (data.errors) setErrors(data.errors);
-            }
-        } catch (error) {
-            setErrors(['An error occurred while placing the order.']);
-        }
-    };
-
-    const orderTotal = shares ? (shares * symbolData?.current_price).toFixed(2) : '0.00';
 
     return (
         <div className="symbol-details">
             <div className="symbol-header">
-                <div className="symbol-info">
+                <div className="symbol-info-details">
                     <h2>{symbolData.company_name} ({symbolData.symbol})</h2>
                     <div className="current-price-details">
                         ${symbolData.current_price}
@@ -247,12 +216,17 @@ const SymbolDetails = () => {
                             Add to Watchlist
                         </button>
                     )}
-                    <button 
+                    <OpenModalButton
+                        buttonText="Place Order"
                         className="order-button"
-                        onClick={handlePlaceOrder}
-                    >
-                        Place Order
-                    </button>
+                        modalComponent={
+                            <PlaceOrderModal
+                                symbol={symbol}
+                                currentPrice={symbolData.current_price}
+                                initialOrderType="buy"
+                            />
+                        }
+                    />
                 </div>
             </div>
             
@@ -265,55 +239,6 @@ const SymbolDetails = () => {
             <div className="price-chart">
                 <Line data={chartData} options={chartOptions} />
             </div>
-
-            {showOrderForm && (
-                <div className="order-form-overlay">
-                    <div className="order-form">
-                        <h3>Place Order for {symbol}</h3>
-                        <form onSubmit={handleSubmitOrder}>
-                            {errors.length > 0 && (
-                                <div className="errors">
-                                    {errors.map((error, idx) => (
-                                        <div key={idx} className="error">{error}</div>
-                                    ))}
-                                </div>
-                            )}
-                            <div className="form-group">
-                                <label>Current Price:</label>
-                                <div>${symbolData.current_price}</div>
-                            </div>
-                            <div className="form-group">
-                                <label>Available Balance:</label>
-                                <div>${user.balance.toFixed(2)}</div>
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="shares">Number of Shares:</label>
-                                <input
-                                    type="number"
-                                    id="shares"
-                                    value={shares}
-                                    onChange={(e) => setShares(e.target.value)}
-                                    min="1"
-                                    step="1"
-                                    required
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label>Estimated Total:</label>
-                                <div>${orderTotal}</div>
-                            </div>
-                            <div className="form-actions">
-                                <button type="button" onClick={() => setShowOrderForm(false)}>
-                                    Cancel
-                                </button>
-                                <button type="submit" className="submit-order">
-                                    Confirm Order
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };

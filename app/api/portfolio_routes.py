@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from flask_login import login_required, current_user
-from app.models import db, Portfolio, Transaction, User
+from app.models import db, Portfolio, Transaction, User, Symbol
 from datetime import datetime
 from decimal import Decimal
 
@@ -46,6 +46,30 @@ def get_portfolio_history():
         })
     
     return {'history': history}
+
+@portfolio_routes.route('/symbol/<symbol>')
+@login_required
+def get_portfolio_by_symbol(symbol):
+    """Get portfolio position for a specific symbol"""
+    try:
+        # Find the symbol in the database
+        symbol_obj = Symbol.query.filter_by(symbol=symbol.upper()).first()
+        if not symbol_obj:
+            return {'error': f"Symbol {symbol} not found"}, 404
+            
+        # Get the portfolio position
+        portfolio = Portfolio.query.filter_by(
+            user_id=current_user.id,
+            symbol_id=symbol_obj.id
+        ).first()
+        
+        if not portfolio:
+            return {'error': 'No position found for this symbol'}, 404
+            
+        return portfolio.to_dict()
+    except Exception as e:
+        print(f"Error in get_portfolio_by_symbol: {str(e)}")
+        return {'error': 'An error occurred while fetching portfolio position'}, 500
 
 @portfolio_routes.route('', methods=['POST'])
 @login_required

@@ -23,7 +23,6 @@ app.config.from_object(Config)
 # Initialize extensions
 db.init_app(app)
 Migrate(app, db)
-# csrf = CSRFProtect(app)
 
 # Setup login manager
 login = LoginManager(app)
@@ -45,7 +44,18 @@ app.register_blueprint(watchlist_routes, url_prefix='/api/watchlist')
 app.register_blueprint(transaction_routes, url_prefix='/api/transactions')
 app.register_blueprint(symbol_routes, url_prefix='/api/symbols')
 
-
+# After all route registrations
+@app.after_request
+def inject_csrf_token(response):
+    response.set_cookie(
+        'csrf_token',
+        generate_csrf(),
+        secure=True if os.environ.get('FLASK_ENV') == 'production' else False,
+        samesite='Strict' if os.environ.get('FLASK_ENV') == 'production' else None,
+        httponly=True,
+        max_age=86400  # 24 hours
+    )
+    return response
 
 # Since we are deploying with Docker and Flask,
 # we won't be using a buildpack when we deploy to Heroku.

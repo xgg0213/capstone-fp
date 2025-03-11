@@ -59,13 +59,13 @@
 }
 
 
-.symbol-info {
+.symbol-info-details {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
-.symbol-info h2 {
+.symbol-info-details h2 {
     font-size: 1.2rem;
     font-weight: 400;
     color: var(--text-color);

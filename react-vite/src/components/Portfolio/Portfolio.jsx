@@ -1,46 +1,35 @@
 import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { csrfFetch } from '../../redux/csrf';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchPortfolio } from '../../redux/portfolio';
 import OpenModalButton from '../OpenModalButton';
-import OrderForm from '../Orders/OrderForm';
+import PlaceOrderModal from '../Modals/PlaceOrderModal';
 import './Portfolio.css';
 
 function Portfolio() {
-    const [positions, setPositions] = useState([]);
+    const dispatch = useDispatch();
     const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [totalValue, setTotalValue] = useState(0);
     const user = useSelector(state => state.session.user);
+    const portfolioState = useSelector(state => state.portfolio);
+    const positions = portfolioState.positions || [];
+    const totalValue = portfolioState.totalValue || 0;
+    const error = portfolioState.error;
 
     useEffect(() => {
-        const fetchPortfolio = async () => {
+        const loadPortfolio = async () => {
             try {
                 setIsLoading(true);
-                const response = await csrfFetch('/api/portfolio/');
-                if (response.ok) {
-                    const data = await response.json();
-                    // Ensure we always have an array, even if empty
-                    setPositions(data.portfolios || []);
-                    // Calculate total portfolio value
-                    const total = (data.portfolios || []).reduce((sum, pos) => 
-                        sum + (pos.shares * (pos.current_price || pos.average_price)), 0);
-                    setTotalValue(total);
-                } else {
-                    const errorData = await response.json();
-                    setError(errorData.error || 'Failed to fetch portfolio');
-                }
+                await dispatch(fetchPortfolio());
             } catch (err) {
-                setError('Error fetching portfolio data');
-                console.error('Error fetching portfolio:', err);
+                console.error('Error loading portfolio:', err);
             } finally {
                 setIsLoading(false);
             }
         };
 
         if (user) {
-            fetchPortfolio();
+            loadPortfolio();
         }
-    }, [user]);
+    }, [dispatch, user]);
 
     if (isLoading) return <div className="loading">Loading portfolio...</div>;
     if (error) return <div className="error">{error}</div>;
@@ -102,9 +91,10 @@ function Portfolio() {
                                             buttonText="Buy / Sell"
                                             className="place-order-btn"
                                             modalComponent={
-                                                <OrderForm 
-                                                    initialSymbol={position.symbol}
-                                                    initialPrice={position.current_price}
+                                                <PlaceOrderModal 
+                                                    symbol={position.symbol}
+                                                    currentPrice={position.current_price}
+                                                    initialOrderType="buy"
                                                 />
                                             }
                                         />

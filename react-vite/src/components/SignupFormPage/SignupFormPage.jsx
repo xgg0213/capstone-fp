@@ -23,33 +23,52 @@ function SignupFormPage() {
       return setErrors({ confirmPassword: "Passwords must match" });
     }
 
-    try {
-      await dispatch(
-        thunkSignup({
-          email,
-          username,
-          firstName,
-          lastName,
-          password,
-        })
-      );
+    const userData = {
+      username,
+      email,
+      firstName,
+      lastName,
+      password
+    };
+
+    const response = await dispatch(thunkSignup(userData));
+
+    if (response === null) {
       navigate("/dashboard");
-    } catch (error) {
-      const data = await error.json();
-      if (data?.errors) setErrors(data.errors);
+    } else if (response.errors) {
+      // Handle array of error messages
+      if (Array.isArray(response.errors)) {
+        const formattedErrors = {};
+        response.errors.forEach(error => {
+          const [field, message] = error.split(" : ");
+          formattedErrors[field] = message;
+        });
+        setErrors(formattedErrors);
+      } 
+      // Handle object of error messages
+      else if (typeof response.errors === 'object') {
+        setErrors(response.errors);
+      }
+      // Handle single error message
+      else {
+        setErrors({ general: response.errors });
+      }
     }
   };
 
   return (
     <div className="signup-page">
-
       <div className="signup-content">
         <h1>Create your account</h1>
-        <p className="subtitle">Join SimpleTrade and start investing today</p>
+        <h2 className="subtitle">Join TradeEasyUS and start investing today</h2>
+
+        {errors.general && (
+          <p className="error general-error">{errors.general}</p>
+        )}
 
         <form onSubmit={handleSubmit} className="signup-form">
           <div className="name-fields">
-            <div className="form-group">
+            <div className="form-group-signup">
               <label htmlFor="firstName">First Name</label>
               <input
                 id="firstName"
@@ -58,11 +77,12 @@ function SignupFormPage() {
                 onChange={(e) => setFirstName(e.target.value)}
                 required
                 placeholder="Enter your first name"
+                className={errors.first_name ? "error-input" : ""}
               />
-              {errors.firstName && <p className="error">{errors.firstName}</p>}
+              {errors.first_name && <p className="error">{errors.first_name}</p>}
             </div>
 
-            <div className="form-group">
+            <div className="form-group-signup">
               <label htmlFor="lastName">Last Name</label>
               <input
                 id="lastName"
@@ -71,25 +91,13 @@ function SignupFormPage() {
                 onChange={(e) => setLastName(e.target.value)}
                 required
                 placeholder="Enter your last name"
+                className={errors.last_name ? "error-input" : ""}
               />
-              {errors.lastName && <p className="error">{errors.lastName}</p>}
+              {errors.last_name && <p className="error">{errors.last_name}</p>}
             </div>
           </div>
 
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              placeholder="Enter your email"
-            />
-            {errors.email && <p className="error">{errors.email}</p>}
-          </div>
-
-          <div className="form-group">
+          <div className="form-group-signup">
             <label htmlFor="username">Username</label>
             <input
               id="username"
@@ -98,11 +106,26 @@ function SignupFormPage() {
               onChange={(e) => setUsername(e.target.value)}
               required
               placeholder="Choose a username"
+              className={errors.username ? "error-input" : ""}
             />
             {errors.username && <p className="error">{errors.username}</p>}
           </div>
 
-          <div className="form-group">
+          <div className="form-group-signup">
+            <label htmlFor="email">Email</label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              placeholder="Enter your email"
+              className={errors.email ? "error-input" : ""}
+            />
+            {errors.email && <p className="error">{errors.email}</p>}
+          </div>
+
+          <div className="form-group-signup">
             <label htmlFor="password">Password</label>
             <input
               id="password"
@@ -111,11 +134,12 @@ function SignupFormPage() {
               onChange={(e) => setPassword(e.target.value)}
               required
               placeholder="Create a password"
+              className={errors.password ? "error-input" : ""}
             />
             {errors.password && <p className="error">{errors.password}</p>}
           </div>
 
-          <div className="form-group">
+          <div className="form-group-signup">
             <label htmlFor="confirmPassword">Confirm Password</label>
             <input
               id="confirmPassword"
@@ -124,6 +148,7 @@ function SignupFormPage() {
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
               placeholder="Confirm your password"
+              className={errors.confirmPassword ? "error-input" : ""}
             />
             {errors.confirmPassword && (
               <p className="error">{errors.confirmPassword}</p>
@@ -141,7 +166,7 @@ function SignupFormPage() {
               onClick={() => navigate("/")}
               className="login-link"
             >
-              Log in to SimpleTrade
+              Log in to TradeEasyUS
             </button>
           </div>
         </form>

@@ -9,12 +9,16 @@ import sessionReducer from "./session";
 import watchlistReducer from "./watchlist";
 import symbolsReducer from "./symbols";
 import transactionsReducer from './transactions';
+import ordersReducer from './orders';
+import portfolioReducer from './portfolio';
 
 const rootReducer = combineReducers({
   session: sessionReducer,
   watchlist: watchlistReducer,
   symbols: symbolsReducer,
-  transactions: transactionsReducer
+  transactions: transactionsReducer,
+  orders: ordersReducer,
+  portfolio: portfolioReducer
 });
 
 let enhancer;

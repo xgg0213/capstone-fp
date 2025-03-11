@@ -3,14 +3,8 @@ from sqlalchemy.sql import text
 from app.models.db import SCHEMA, environment
 
 def seed_symbols():
-    # Clear existing symbols
-    if environment == "production":
-        db.session.execute(f"TRUNCATE table {SCHEMA}.symbols RESTART IDENTITY CASCADE;")
-    else:
-        db.session.execute(text("DELETE FROM symbols"))
-    db.session.commit()
 
-    # Sample symbols data
+    # List of popular stock symbols with realistic data
     symbols = [
         {
             'symbol': 'AAPL',
@@ -38,20 +32,61 @@ def seed_symbols():
             'daily_low': 329.80,
             'daily_volume': 18000000,
             'price_change_pct': 1.20
+        },
+        {
+            'symbol': 'AMZN',
+            'company_name': 'Amazon.com Inc.',
+            'current_price': 142.75,
+            'daily_high': 143.80,
+            'daily_low': 141.90,
+            'daily_volume': 30500000,
+            'price_change_pct': 0.45
+        },
+        {
+            'symbol': 'TSLA',
+            'company_name': 'Tesla Inc.',
+            'current_price': 238.45,
+            'daily_high': 242.10,
+            'daily_low': 236.80,
+            'daily_volume': 42300000,
+            'price_change_pct': -1.20
+        },
+        {
+            'symbol': 'NVDA',
+            'company_name': 'NVIDIA Corporation',
+            'current_price': 445.20,
+            'daily_high': 448.75,
+            'daily_low': 442.30,
+            'daily_volume': 22500000,
+            'price_change_pct': 2.35
+        },
+        {
+            'symbol': 'META',
+            'company_name': 'Meta Platforms Inc.',
+            'current_price': 325.80,
+            'daily_high': 328.50,
+            'daily_low': 323.20,
+            'daily_volume': 15800000,
+            'price_change_pct': 1.85
+        },
+        {
+            'symbol': 'NFLX',
+            'company_name': 'Netflix Inc.',
+            'current_price': 485.30,
+            'daily_high': 488.50,
+            'daily_low': 482.70,
+            'daily_volume': 4200000,
+            'price_change_pct': 1.45
         }
     ]
 
-    try:
-        # Create Symbol instances
-        for symbol_data in symbols:
-            symbol = Symbol(**symbol_data)
-            db.session.add(symbol)
-        db.session.commit()
-        print('Symbols seeded successfully!')
-    except Exception as e:
-        db.session.rollback()
-        print('Error seeding symbols:', str(e))
-        raise e
+    # Create Symbol instances
+    for symbol_data in symbols:
+        symbol = Symbol(**symbol_data)
+        db.session.add(symbol)
+    
+    db.session.commit()
+    print('Symbols seeded successfully!')
 
 def undo_symbols():
     if environment == "production":

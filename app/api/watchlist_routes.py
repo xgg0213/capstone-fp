@@ -91,21 +91,34 @@ def add_symbol_to_watchlist(id):
 @login_required
 def remove_symbol(id, symbol):
     """Remove a symbol from watchlist"""
-    watchlist = Watchlist.query.get(id)
-    
-    if not watchlist or watchlist.user_id != current_user.id:
-        return {'error': 'Watchlist not found'}, 404
+    try:
+        watchlist = Watchlist.query.get(id)
         
-    symbol_to_remove = WatchlistSymbol.query.filter_by(
-        watchlist_id=id,
-        symbol=symbol.upper()
-    ).first()
-    
-    if symbol_to_remove:
+        if not watchlist or watchlist.user_id != current_user.id:
+            return {'error': 'Watchlist not found'}, 404
+            
+        # First, find the Symbol object by its symbol string
+        symbol_obj = Symbol.query.filter_by(symbol=symbol.upper()).first()
+        
+        if not symbol_obj:
+            return {'error': 'Symbol not found'}, 404
+            
+        # Then find the WatchlistSymbol entry using watchlist_id and symbol_id
+        symbol_to_remove = WatchlistSymbol.query.filter_by(
+            watchlist_id=id,
+            symbol_id=symbol_obj.id
+        ).first()
+        
+        if not symbol_to_remove:
+            return {'error': 'Symbol not in watchlist'}, 404
+            
         db.session.delete(symbol_to_remove)
         db.session.commit()
-        
-    return watchlist.to_dict()
+            
+        return watchlist.to_dict()
+    except Exception as e:
+        db.session.rollback()
+        return {'error': str(e)}, 500
 
 @watchlist_routes.route('/<symbol>', methods=['GET'])
 @login_required
@@ -126,35 +139,63 @@ def check_watchlist(symbol):
 @login_required
 def add_to_watchlist():
     """
-    Add a symbol to user's watchlist
+    Add a symbol to user's default watchlist or create one if it doesn't exist
     """
     data = request.json
-    symbol = data.get('symbol')
+    symbol_str = data.get('symbol')
     
-    if not symbol:
+    if not symbol_str:
         return jsonify({'errors': ['Symbol is required']}), 400
+    
+    symbol_str = symbol_str.upper()
+    
+    try:
+        # Get the symbol from the database
+        symbol = Symbol.query.filter_by(symbol=symbol_str).first()
+        if not symbol:
+            return jsonify({'errors': ['Symbol not found']}), 404
         
-    # Check if already in watchlist
-    existing = Watchlist.query.filter_by(
-        user_id=current_user.id,
-        symbol=symbol.upper()
-    ).first()
-    
-    if existing:
-        return jsonify({'errors': ['Symbol already in watchlist']}), 400
+        # Get or create default watchlist
+        default_watchlist = Watchlist.query.filter_by(
+            user_id=current_user.id,
+            name='Default'
+        ).first()
         
-    watchlist_item = Watchlist(
-        user_id=current_user.id,
-        symbol=symbol.upper()
-    )
-    
-    db.session.add(watchlist_item)
-    db.session.commit()
-    
-    return jsonify({
-        'message': 'Added to watchlist',
-        'symbol': symbol.upper()
-    })
+        if not default_watchlist:
+            default_watchlist = Watchlist(
+                user_id=current_user.id,
+                name='Default'
+            )
+            db.session.add(default_watchlist)
+            db.session.commit()
+        
+        # Check if symbol already exists in watchlist
+        existing = WatchlistSymbol.query.filter_by(
+            watchlist_id=default_watchlist.id,
+            symbol_id=symbol.id
+        ).first()
+        
+        if existing:
+            return jsonify({'message': 'Symbol already in watchlist'}), 200
+        
+        # Add new symbol to watchlist
+        watchlist_symbol = WatchlistSymbol(
+            watchlist_id=default_watchlist.id,
+            symbol_id=symbol.id
+        )
+        
+        db.session.add(watchlist_symbol)
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Added to watchlist',
+            'symbol': symbol_str,
+            'watchlist': default_watchlist.to_dict()
+        })
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error adding to watchlist: {str(e)}")
+        return jsonify({'errors': [str(e)]}), 500
 
 @watchlist_routes.route('/<symbol>', methods=['DELETE'])
 @login_required

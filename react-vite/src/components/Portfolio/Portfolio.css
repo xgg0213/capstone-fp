@@ -11,7 +11,7 @@
 
 /* Portfolio Header */
 .portfolio-container h2 {
-  width: 50%;
+  width: 60%;
   font-size: 1rem;
   color: var(--text-color);
   margin-bottom: 0;
@@ -21,7 +21,7 @@
 }
 
 .portfolio-container h1 {
-  width: 50%;
+  width: 60%;
   font-size: 1.5rem;
   font-weight: 500;
   color: var(--text-color);
@@ -34,16 +34,16 @@
 
 /* Portfolio Summary */
 .portfolio-summary {
-  background: var(--card-background);
+  /* background: var(--card-background); */
   /* border-top: 1px solid var(--border-color);
   border-radius: 8px; */
   overflow: hidden;
-  width: 50%;
+  width: 60%;
   font-size: 1rem;
   margin-bottom: 1rem;
 }
 
-.summary-row {
+.summary-row-portfolio {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -54,7 +54,7 @@
   border-radius: 8px;
 }
 
-.summary-row:last-child {
+.summary-row-portfolio:last-child {
   margin-bottom: 0;
 }
 
@@ -65,7 +65,7 @@
   border-top: 1px solid var(--border-color); */
   /* border-radius: 8px; */
   overflow: hidden;
-  width: 50%;
+  width: 60%;
   font-size: 1rem;
   /* margin-bottom: 2rem; */
 }
@@ -103,6 +103,12 @@
   align-items: center;
   padding-bottom: 0.7rem;
   padding-top: 0.7rem;
+}
+
+.position-row .symbol, .position-row .price, .position-row .shares, .position-row .avg-cost {
+  font-size: 1rem;
+  color: var(--text-color);
+  font-weight: 400;
 }
 
 .position-row:hover {

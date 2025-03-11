@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { thunkLogin } from "../../redux/session";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate, useNavigate } from "react-router-dom";
@@ -7,28 +7,45 @@ import "./LoginForm.css";
 function LoginFormPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const sessionUser = useSelector((state) => state.session.user);
+  const user = useSelector(state => state.session.user);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
 
-  if (sessionUser) return <Navigate to="/" replace={true} />;
+  if (user) return <Navigate to="/" replace={true} />;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const serverResponse = await dispatch(
-      thunkLogin({
-        email,
-        password,
-      })
-    );
+    setErrors([]);
 
-    if (serverResponse) {
-      setErrors(serverResponse);
+    const response = await dispatch(thunkLogin({ email, password }));
+    
+    if (response === null) {  // Login was successful
+      navigate('/dashboard');
     } else {
-      navigate("/");
+      setErrors(response.errors || ['An error occurred during login.']);
     }
   };
+
+  // For demo user login
+  const handleDemoLogin = async () => {
+    const response = await dispatch(
+      thunkLogin({ email: "demo@aa.io", password: "password" })
+    );
+    
+    if (response === null) {  // Login was successful
+      navigate('/dashboard');
+    } else {
+      setErrors(response.errors || ['An error occurred during login.']);
+    }
+  };
+
+  // If user is already logged in, redirect to dashboard
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
 
   return (
     <>
