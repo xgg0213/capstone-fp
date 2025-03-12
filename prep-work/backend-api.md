@@ -12,7 +12,8 @@
   "username": "Demo",
   "first_name": "Demo",
   "last_name": "User",
-  "email": "demo@aa.io"
+  "email": "demo@aa.io",
+  "balance": 10000.00
 }
 ```
 
@@ -35,23 +36,44 @@
   "username": "newuser",
   "first_name": "New",
   "last_name": "User",
-  "email": "new@user.io"
+  "email": "new@user.io",
+  "balance": 10000.00
+}
+```
+- Error Response (400):
+```json
+{
+  "errors": {
+    "email": ["Email address already in use"],
+    "username": ["Username already in use"]
+  }
+}
+```
+
+### Login
+- Endpoint: `POST /api/auth/login`
+- Request Body:
+```json
+{
+  "credential": "demo@aa.io",
+  "password": "password"
+}
+```
+- Success Response:
+```json
+{
+  "id": 1,
+  "username": "Demo",
+  "first_name": "Demo",
+  "last_name": "User",
+  "email": "demo@aa.io",
+  "balance": 10000.00
 }
 ```
 - Error Response (401):
 ```json
 {
   "errors": ["Invalid credentials"]
-}
-```
-
-- Error Response (400):
-```json
-{
-  "errors": {
-    "email": "Email already exists",
-    "username": "Username already exists"
-  }
 }
 ```
 
@@ -63,36 +85,137 @@
 {
   "message": "User logged out"
 }
-``` 
+```
 
-## Orders
+## Symbols
 
-### Get User's Orders
-- Endpoint: `GET /api/orders`
+### Get All Symbols
+- Endpoint: `GET /api/symbols`
 - Authentication: Required
-- Query Parameters:
-  - `status`: Filter orders by status (optional)
-- Response: List of orders
+- Response:
 ```json
 {
-  "orders": [
+  "symbols": [
     {
       "id": 1,
-      "user_id": 1,
       "symbol": "AAPL",
-      "order_type": "market",
-      "side": "buy",
-      "shares": 10.0,
-      "price": 175.50,
-      "status": "filled",
-      "filled_price": 175.50,
-      "filled_at": "2024-01-20T15:30:00Z",
-      "created_at": "2024-01-20T15:30:00Z",
-      "updated_at": "2024-01-20T15:30:00Z"
+      "company_name": "Apple Inc.",
+      "current_price": 175.50,
+      "daily_high": 178.20,
+      "daily_low": 174.80,
+      "daily_volume": 75000000,
+      "price_change_pct": 1.25,
+      "created_at": "2023-01-01T00:00:00Z",
+      "updated_at": "2023-01-01T00:00:00Z",
+      "price_history": [
+        {
+          "id": 1,
+          "date": "2023-01-01",
+          "open_price": 174.50,
+          "close_price": 175.50,
+          "high_price": 178.20,
+          "low_price": 174.80,
+          "volume": 75000000
+        }
+      ]
     }
   ]
 }
 ```
+
+### Get Symbol Details
+- Endpoint: `GET /api/symbols/:symbol`
+- Authentication: Required
+- Response:
+```json
+{
+  "id": 1,
+  "symbol": "AAPL",
+  "company_name": "Apple Inc.",
+  "current_price": 175.50,
+  "daily_high": 178.20,
+  "daily_low": 174.80,
+  "daily_volume": 75000000,
+  "price_change_pct": 1.25,
+  "created_at": "2023-01-01T00:00:00Z",
+  "updated_at": "2023-01-01T00:00:00Z",
+  "price_history": [
+    {
+      "id": 1,
+      "date": "2023-01-01",
+      "open_price": 174.50,
+      "close_price": 175.50,
+      "high_price": 178.20,
+      "low_price": 174.80,
+      "volume": 75000000
+    }
+  ]
+}
+```
+
+### Get Symbol Price History
+- Endpoint: `GET /api/symbols/:symbol/prices`
+- Authentication: Required
+- Response:
+```json
+[
+  {
+    "id": 1,
+    "date": "2023-01-01",
+    "open_price": 174.50,
+    "close_price": 175.50,
+    "high_price": 178.20,
+    "low_price": 174.80,
+    "volume": 75000000
+  }
+]
+```
+
+## Portfolio
+
+### Get User Portfolio
+- Endpoint: `GET /api/portfolio`
+- Authentication: Required
+- Response:
+```json
+{
+  "portfolios": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "symbol": "AAPL",
+      "company_name": "Apple Inc.",
+      "shares": 10.0,
+      "average_price": 150.00,
+      "current_price": 175.50,
+      "market_value": 1755.00,
+      "total_cost": 1500.00,
+      "total_return": 17.00,
+      "day_change": 1.25,
+      "unrealized_gain": 255.00,
+      "created_at": "2023-01-01T00:00:00Z",
+      "updated_at": "2023-01-01T00:00:00Z"
+    }
+  ]
+}
+```
+
+### Get Portfolio History
+- Endpoint: `GET /api/portfolio/history`
+- Authentication: Required
+- Response:
+```json
+{
+  "history": [
+    {
+      "timestamp": "2023-01-01T00:00:00Z",
+      "value": 1500.00
+    }
+  ]
+}
+```
+
+## Orders
 
 ### Place Order
 - Endpoint: `POST /api/orders`
@@ -101,174 +224,114 @@
 ```json
 {
   "symbol": "AAPL",
-  "order_type": "market",  // "market" or "limit"
-  "side": "buy",          // "buy" or "sell"
-  "shares": 10,
-  "price": 175.50        // Required for limit orders
+  "shares": 5.0,
+  "type": "buy",
+  "price": 175.50
 }
 ```
-- Response: Created order object
-
-### Process Order (Demo)
-- Endpoint: `POST /api/orders/<order_id>/process`
-- Authentication: Required
-- Description: Processes a pending order, updates portfolio, creates transaction
-- Response: Updated order object
-
-### Cancel Order
-- Endpoint: `POST /api/orders/<order_id>/cancel`
-- Authentication: Required
-- Description: Cancels a pending order
-- Response: Updated order object
-
-## Watchlists
-
-### Get User's Watchlists
-- Endpoint: `GET /api/watchlists`
-- Authentication: Required
-- Response: List of watchlists
-
-### Create Watchlist
-- Endpoint: `POST /api/watchlists`
-- Authentication: Required
-- Request Body:
+- Success Response:
 ```json
 {
-  "name": "Tech Stocks",
-  "symbols": "AAPL,GOOGL,MSFT"
+  "id": 1,
+  "user_id": 1,
+  "symbol": "AAPL",
+  "company_name": "Apple Inc.",
+  "shares": 5.0,
+  "type": "buy",
+  "status": "completed",
+  "current_price": 175.50,
+  "created_at": "2023-01-01T00:00:00Z",
+  "updated_at": "2023-01-01T00:00:00Z",
+  "transactions": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "order_id": 1,
+      "symbol": "AAPL",
+      "company_name": "Apple Inc.",
+      "shares": 5.0,
+      "price": 175.50,
+      "type": "buy",
+      "total": 877.50,
+      "created_at": "2023-01-01T00:00:00Z"
+    }
+  ]
+}
+```
+- Error Response (400):
+```json
+{
+  "error": "Insufficient funds"
 }
 ```
 
-### Update Watchlist
-- Endpoint: `PUT /api/watchlists/<int:id>`
+### Get User Orders
+- Endpoint: `GET /api/orders`
 - Authentication: Required
-- Request Body: Same as create
-
-### Delete Watchlist
-- Endpoint: `DELETE /api/watchlists/<int:id>`
-- Authentication: Required
-
-## PORTFOLIO
-
-### Get User's Portfolio
-
-Returns the current user's portfolio positions.
-
-* Require Authentication: true
-* Request
-  * Method: GET
-  * URL: /api/portfolio
-  * Body: none
-
-* Successful Response
-  * Status Code: 200
-  * Headers:
-    * Content-Type: application/json
-  * Body:
-
-    ```json
+- Query Parameters:
+  - `status`: Filter by status (pending, completed, cancelled)
+- Response:
+```json
+{
+  "orders": [
     {
-      "positions": [
+      "id": 1,
+      "user_id": 1,
+      "symbol": "AAPL",
+      "company_name": "Apple Inc.",
+      "shares": 5.0,
+      "type": "buy",
+      "status": "completed",
+      "current_price": 175.50,
+      "created_at": "2023-01-01T00:00:00Z",
+      "updated_at": "2023-01-01T00:00:00Z",
+      "transactions": [
         {
           "id": 1,
+          "user_id": 1,
+          "order_id": 1,
           "symbol": "AAPL",
-          "shares": 10,
-          "average_price": 150.00
+          "company_name": "Apple Inc.",
+          "shares": 5.0,
+          "price": 175.50,
+          "type": "buy",
+          "total": 877.50,
+          "created_at": "2023-01-01T00:00:00Z"
         }
       ]
     }
-    ```
+  ]
+}
+```
 
-### Update User's Balance
-
-Updates the current user's cash balance.
-
-* Require Authentication: true
-* Request
-  * Method: POST
-  * URL: /api/portfolio
-  * Headers:
-    * Content-Type: application/json
-  * Body:
-
-    ```json
-    {
-      "amount": 1000.00
-    }
-    ```
-
-* Successful Response
-  * Status Code: 200
-  * Headers:
-    * Content-Type: application/json
-  * Body:
-
-    ```json
-    {
-      "balance": 5000.00
-    }
-    ```
-
-* Error Response: Invalid amount
-  * Status Code: 400
-  * Headers:
-    * Content-Type: application/json
-  * Body:
-
-    ```json
-    {
-      "errors": {
-        "amount": "Amount must be positive"
-      }
-    }
-    ```
-
-* Error Response: Invalid format
-  * Status Code: 400
-  * Headers:
-    * Content-Type: application/json
-  * Body:
-
-    ```json
-    {
-      "errors": {
-        "amount": "Invalid amount format"
-      }
-    }
-    ```
-
-### Get Portfolio History
-
-Returns the history of portfolio value over time.
-
-* Require Authentication: true
-* Request
-  * Method: GET
-  * URL: /api/portfolio/history
-  * Body: none
-
-* Successful Response
-  * Status Code: 200
-  * Headers:
-    * Content-Type: application/json
-  * Body:
-
-    ```json
-    {
-      "history": [
-        {
-          "timestamp": "2023-01-01T12:00:00",
-          "value": 5000.00
-        }
-      ]
-    }
-    ```
+### Cancel Order
+- Endpoint: `POST /api/orders/:id/cancel`
+- Authentication: Required
+- Response:
+```json
+{
+  "id": 1,
+  "user_id": 1,
+  "symbol": "AAPL",
+  "company_name": "Apple Inc.",
+  "shares": 5.0,
+  "type": "buy",
+  "status": "cancelled",
+  "current_price": 175.50,
+  "created_at": "2023-01-01T00:00:00Z",
+  "updated_at": "2023-01-01T00:00:00Z",
+  "transactions": []
+}
+```
 
 ## Transactions
 
-### Get User's Transactions
+### Get User Transactions
 - Endpoint: `GET /api/transactions`
 - Authentication: Required
+- Query Parameters:
+  - `symbol`: Filter by symbol
+  - `type`: Filter by type (buy, sell)
 - Response:
 ```json
 {
@@ -278,12 +341,138 @@ Returns the history of portfolio value over time.
       "user_id": 1,
       "order_id": 1,
       "symbol": "AAPL",
-      "shares": 10.0,
+      "company_name": "Apple Inc.",
+      "shares": 5.0,
       "price": 175.50,
+      "current_price": 180.00,
       "type": "buy",
-      "created_at": "2024-01-20T15:30:00Z"
+      "total": 877.50,
+      "gain_loss": null,
+      "created_at": "2023-01-01T00:00:00Z"
     }
   ]
+}
+```
+
+### Get Transaction Statistics
+- Endpoint: `GET /api/transactions/stats`
+- Authentication: Required
+- Query Parameters:
+  - `symbol`: Required, filter by symbol
+- Response:
+```json
+{
+  "total_bought": 10.0,
+  "total_sold": 5.0,
+  "average_buy_price": 170.00,
+  "average_sell_price": 180.00,
+  "total_spent": 1700.00,
+  "total_received": 900.00,
+  "realized_gain_loss": 50.00
+}
+```
+
+## Watchlists
+
+### Get User Watchlists
+- Endpoint: `GET /api/watchlist`
+- Authentication: Required
+- Response:
+```json
+{
+  "watchlists": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "name": "Tech Stocks",
+      "symbols": [
+        {
+          "id": 1,
+          "symbol": "AAPL",
+          "company_name": "Apple Inc.",
+          "current_price": 175.50,
+          "price_change": 1.25
+        }
+      ],
+      "created_at": "2023-01-01T00:00:00Z",
+      "updated_at": "2023-01-01T00:00:00Z"
+    }
+  ]
+}
+```
+
+### Create Watchlist
+- Endpoint: `POST /api/watchlist`
+- Authentication: Required
+- Request Body:
+```json
+{
+  "name": "Tech Stocks"
+}
+```
+- Response:
+```json
+{
+  "id": 1,
+  "user_id": 1,
+  "name": "Tech Stocks",
+  "symbols": [],
+  "created_at": "2023-01-01T00:00:00Z",
+  "updated_at": "2023-01-01T00:00:00Z"
+}
+```
+
+### Add Symbol to Watchlist
+- Endpoint: `POST /api/watchlist/:id/symbols`
+- Authentication: Required
+- Request Body:
+```json
+{
+  "symbol": "AAPL"
+}
+```
+- Response:
+```json
+{
+  "id": 1,
+  "user_id": 1,
+  "name": "Tech Stocks",
+  "symbols": [
+    {
+      "id": 1,
+      "symbol": "AAPL",
+      "company_name": "Apple Inc.",
+      "current_price": 175.50,
+      "price_change": 1.25
+    }
+  ],
+  "created_at": "2023-01-01T00:00:00Z",
+  "updated_at": "2023-01-01T00:00:00Z"
+}
+```
+
+### Remove Symbol from Watchlist
+- Endpoint: `DELETE /api/watchlist/:id/symbols/:symbol`
+- Authentication: Required
+- Response:
+```json
+{
+  "id": 1,
+  "user_id": 1,
+  "name": "Tech Stocks",
+  "symbols": [],
+  "created_at": "2023-01-01T00:00:00Z",
+  "updated_at": "2023-01-01T00:00:00Z"
+}
+```
+
+### Delete Watchlist
+- Endpoint: `DELETE /api/watchlist/:id`
+- Authentication: Required
+- Response:
+```json
+{
+  "message": "Watchlist deleted successfully"
 }
 ```
 

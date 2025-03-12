@@ -6,12 +6,14 @@
 * As a user, I can view my portfolio
 * As a user, I can see my current positions and their values
 * As a user, I can view my portfolio's performance
+* As a user, I can see my unrealized gains/losses for each position
 
 ### Trading
 * As a user, I can place market orders to buy stocks
 * As a user, I can place limit orders to buy stocks at a specific price
 * As a user, I can sell stocks from my portfolio
 * As a user, I can specify the quantity of shares to trade
+* As a user, I can see my available balance before placing an order
 
 ## Stock Research
 
@@ -19,6 +21,7 @@
 * As a user, I can view detailed information about stocks
 * As a user, I can see current price and basic metrics
 * As a user, I can view stock performance history
+
 
 ### Search
 * As a user, I can search for stocks by symbol
@@ -38,13 +41,13 @@
 
 ### View Orders
 * As a user, I can view all my orders
-* As a user, I can see order status (pending, filled, cancelled)
+* As a user, I can see order status (pending, completed, cancelled)
 * As a user, I can filter orders by status
 
 ### Manage Orders
-* As a user, I can place new orders (market/limit)
+* As a user, I can place new market orders
 * As a user, I can cancel pending orders
-* As a user, I can view order details including fill price and time
+* As a user, I can view order details including price and time
 
 ## Transactions
 
@@ -56,6 +59,6 @@
 ## Demo Features
 
 ### Order Processing
-* As a user, I can process pending orders (demo functionality)
-* As a user, I can see orders update my portfolio when filled
-* As a user, I can track order status changes
+* As a user, I can see orders processed immediately (demo functionality)
+* As a user, I can see orders update my portfolio when completed
+* As a user, I can track my balance changes after orders are processed
