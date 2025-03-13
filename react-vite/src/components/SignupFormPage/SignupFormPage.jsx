@@ -33,26 +33,37 @@ function SignupFormPage() {
 
     const response = await dispatch(thunkSignup(userData));
 
-    if (response === null) {
-      navigate("/dashboard");
-    } else if (response.errors) {
-      // Handle array of error messages
-      if (Array.isArray(response.errors)) {
-        const formattedErrors = {};
-        response.errors.forEach(error => {
-          const [field, message] = error.split(" : ");
-          formattedErrors[field] = message;
-        });
-        setErrors(formattedErrors);
-      } 
-      // Handle object of error messages
-      else if (typeof response.errors === 'object') {
+    // if (response === null) {
+    //   navigate("/dashboard");
+    // } else if (response.errors) {
+    //   // Handle array of error messages
+    //   if (Array.isArray(response.errors)) {
+    //     const formattedErrors = {};
+    //     response.errors.forEach(error => {
+    //       const [field, message] = error.split(" : ");
+    //       formattedErrors[field] = message;
+    //     });
+    //     setErrors(formattedErrors);
+    //   } 
+    //   // Handle object of error messages
+    //   else if (typeof response.errors === 'object') {
+    //     setErrors(response.errors);
+    //   }
+    //   // Handle single error message
+    //   else {
+    //     setErrors({ general: response.errors });
+    //   }
+    // }
+    if (response) {
+      if (response.errors) {
         setErrors(response.errors);
+      } else if (typeof response === 'object') {
+        setErrors(response);
+      } else {
+        setErrors({ general: response });
       }
-      // Handle single error message
-      else {
-        setErrors({ general: response.errors });
-      }
+    } else {
+      navigate("/dashboard");
     }
   };
 

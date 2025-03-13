@@ -49,77 +49,83 @@ export const thunkLogin = (credentials) => async dispatch => {
 
     if(response.ok) {
       const data = await response.json();
-      dispatch(setUser(data));  // This should update the state.user
-      return null;  // Return null to indicate success
+      dispatch(setUser(data)); // This should update the state.user
+      return { success: true };
     } else {
-      const errorMessages = await response.json();
-      return errorMessages;
+      const errorData = await response.json();
+      return { 
+        success: false, 
+        errors: errorData.errors || { credential: "Invalid credentials" } 
+      };
     }
   } catch (error) {
+    console.error("Login error:", error);
+    
     if (error.json) {
       try {
         const errorData = await error.json();
-        return errorData;
+        return { 
+          success: false, 
+          errors: errorData.errors || { credential: "An error occurred during login." } 
+        };
       } catch (e) {
         console.error("Could not parse error response:", e);
-        return { errors: ["An error occurred during login."] };
       }
     }
-    return { errors: ["An error occurred during login."] };
+    
+    return { 
+      success: false, 
+      errors: { credential: "Invalid credentials. Please try again." } 
+    };
   }
 };
 
 export const thunkSignup = (user) => async (dispatch) => {
   try {
-    // console.log("Attempting signup with data:", {
-    //   ...user,
-    //   password: '[REDACTED]'  // Don't log the actual password
-    // });
-
     const response = await csrfFetch("/api/auth/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username: user.username,
-        email: user.email,
-        password: user.password,
-        first_name: user.firstName,
-        last_name: user.lastName
-      })
+      body: JSON.stringify(user)
     });
 
-    console.log("Signup response status:", response.status);
+    // console.log("Signup Response Status:", response.status); // Debug log
 
-    if (response.ok) {
+    if(response.ok) {
       const data = await response.json();
-      console.log("Signup success data:", data);
       dispatch(setUser(data));
-      return null;
-    } 
-
-    const errorData = await response.json();
-    console.log("Signup error data:", errorData);
-    return {
-      errors: errorData.errors || { general: "Signup failed. Please try again." }
-    };
-
-  } catch (error) {
-    console.error("Signup error:", {
-      status: error.status,
-      statusText: error.statusText,
-      message: error.message
-    });
-
-    try {
-      const errorJson = await error.json();
-      console.log("Error response body:", errorJson);
-      return { errors: errorJson.errors || { general: "Server error during signup." } };
-    } catch (e) {
-      console.error("Could not parse error response:", e);
-      return {
-        errors: { general: "An error occurred during signup. Please try again." }
-      };
+    } else {
+      const errorMessages = await response.json();
+      // Debug log
+      // console.log("Signup Error Response:", {
+      //   status: response.status,
+      //   errorMessages
+      // });
+      return errorMessages;
     }
+  } catch (error) {
+    // Debug log
+    // console.error("Signup Error Details:", {
+    //   name: error.name,
+    //   message: error.message,
+    //   stack: error.stack
+    // });
+    
+    // If it's a response error, try to parse it
+    if (error.json) {
+      try {
+        const errorData = await error.json();
+        // console.log("Error Response Data:", errorData); // Debug log
+        return errorData;
+      } catch (e) {
+        console.error("Could not parse error response:", e);
+      }
+    }
+
+    // return { 
+    //   errors: {
+    //     email: "Email already exists"  // Default error for duplicate email
+    //   }
+    // };
   }
 };
 
