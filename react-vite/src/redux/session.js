@@ -40,7 +40,7 @@ export const thunkAuthenticate = () => async (dispatch) => {
 };
 
 export const thunkLogin = (credentials) => async dispatch => {
-  try {
+  // try {
     const response = await csrfFetch("/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -53,48 +53,52 @@ export const thunkLogin = (credentials) => async dispatch => {
       return { success: true };
     } else {
       const errorData = await response.json();
-      return { 
-        success: false, 
-        errors: errorData.errors || { credential: "Invalid credentials" } 
-      };
+      // return { 
+      //   success: false, 
+      //   errors: errorData.errors || { credential: "Invalid credentials" } 
+      // };
+      return errorData
     }
-  } catch (error) {
-    console.error("Login error:", error);
+  // } 
+  // catch (error) {
+  //   console.error("Login error:", error);
     
-    if (error.json) {
-      try {
-        const errorData = await error.json();
-        return { 
-          success: false, 
-          errors: errorData.errors || { credential: "An error occurred during login." } 
-        };
-      } catch (e) {
-        console.error("Could not parse error response:", e);
-      }
-    }
+  //   if (error.json) {
+  //     try {
+  //       const errorData = await error.json();
+  //       return { 
+  //         success: false, 
+  //         errors: errorData.errors || { credential: "An error occurred during login." } 
+  //       };
+  //     } catch (e) {
+  //       console.error("Could not parse error response:", e);
+  //     }
+  //   }
     
-    return { 
-      success: false, 
-      errors: { credential: "Invalid credentials. Please try again." } 
-    };
-  }
+  //   return { 
+  //     success: false, 
+  //     errors: { credential: "Invalid credentials. Please try again." } 
+  //   };
+  // }
 };
 
 export const thunkSignup = (user) => async (dispatch) => {
-  try {
+  // try {
+    // console.log("use check:", user); // Debug log
+
     const response = await csrfFetch("/api/auth/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(user)
     });
 
-    // console.log("Signup Response Status:", response.status); // Debug log
+
 
     if(response.ok) {
       const data = await response.json();
       dispatch(setUser(data));
     } else {
-      const errorMessages = await response.json();
+      const errorMessages = await response.json(); // Always remember to parse the error messages!! AND DO NOT do try catch
       // Debug log
       // console.log("Signup Error Response:", {
       //   status: response.status,
@@ -102,31 +106,7 @@ export const thunkSignup = (user) => async (dispatch) => {
       // });
       return errorMessages;
     }
-  } catch (error) {
-    // Debug log
-    // console.error("Signup Error Details:", {
-    //   name: error.name,
-    //   message: error.message,
-    //   stack: error.stack
-    // });
-    
-    // If it's a response error, try to parse it
-    if (error.json) {
-      try {
-        const errorData = await error.json();
-        // console.log("Error Response Data:", errorData); // Debug log
-        return errorData;
-      } catch (e) {
-        console.error("Could not parse error response:", e);
-      }
-    }
 
-    // return { 
-    //   errors: {
-    //     email: "Email already exists"  // Default error for duplicate email
-    //   }
-    // };
-  }
 };
 
 export const thunkLogout = () => async (dispatch) => {

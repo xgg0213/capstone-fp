@@ -68,6 +68,7 @@ def sign_up():
     
     if not form.validate_on_submit():
         print("Form validation errors:", form.errors)  # Debug print
+        print("check firstName: ", form.data)
         return form.errors, 401
     
     user = User(

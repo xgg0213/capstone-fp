@@ -26,42 +26,25 @@ function SignupFormPage() {
     const userData = {
       username,
       email,
-      firstName,
-      lastName,
+      first_name: firstName, // conventionally, camel case in JS, but can also do snake case (similar in Python)
+      last_name: lastName, // the name of the variable need to match the backend routes/form (auth_routes.py, signup_form.py)
       password
     };
 
-    const response = await dispatch(thunkSignup(userData));
+    // console.log("check firstName: ", firstName)
 
-    // if (response === null) {
-    //   navigate("/dashboard");
-    // } else if (response.errors) {
-    //   // Handle array of error messages
-    //   if (Array.isArray(response.errors)) {
-    //     const formattedErrors = {};
-    //     response.errors.forEach(error => {
-    //       const [field, message] = error.split(" : ");
-    //       formattedErrors[field] = message;
-    //     });
-    //     setErrors(formattedErrors);
-    //   } 
-    //   // Handle object of error messages
-    //   else if (typeof response.errors === 'object') {
-    //     setErrors(response.errors);
-    //   }
-    //   // Handle single error message
-    //   else {
-    //     setErrors({ general: response.errors });
-    //   }
-    // }
+    const response = await dispatch(thunkSignup(userData));
     if (response) {
       if (response.errors) {
         setErrors(response.errors);
+        console.log("response.errors", response.errors);
       } else if (typeof response === 'object') {
         setErrors(response);
+        console.log("response", response);
       } else {
         setErrors({ general: response });
       }
+  
     } else {
       navigate("/dashboard");
     }
@@ -83,12 +66,13 @@ function SignupFormPage() {
               <label htmlFor="firstName">First Name</label>
               <input
                 id="firstName"
+                name="firstName"
                 type="text"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 required
                 placeholder="Enter your first name"
-                className={errors.first_name ? "error-input" : ""}
+                // className={errors.first_name ? "error-input" : ""}
               />
               {errors.first_name && <p className="error">{errors.first_name}</p>}
             </div>
@@ -97,12 +81,13 @@ function SignupFormPage() {
               <label htmlFor="lastName">Last Name</label>
               <input
                 id="lastName"
+                name="lastName"
                 type="text"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 required
                 placeholder="Enter your last name"
-                className={errors.last_name ? "error-input" : ""}
+                // className={errors.last_name ? "error-input" : ""}
               />
               {errors.last_name && <p className="error">{errors.last_name}</p>}
             </div>
@@ -112,12 +97,13 @@ function SignupFormPage() {
             <label htmlFor="username">Username</label>
             <input
               id="username"
+              name="username"
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
               placeholder="Choose a username"
-              className={errors.username ? "error-input" : ""}
+              // className={errors.username ? "error-input" : ""}
             />
             {errors.username && <p className="error">{errors.username}</p>}
           </div>
@@ -126,12 +112,13 @@ function SignupFormPage() {
             <label htmlFor="email">Email</label>
             <input
               id="email"
+              name="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
               placeholder="Enter your email"
-              className={errors.email ? "error-input" : ""}
+              // className={errors.email ? "error-input" : ""}
             />
             {errors.email && <p className="error">{errors.email}</p>}
           </div>
@@ -140,12 +127,13 @@ function SignupFormPage() {
             <label htmlFor="password">Password</label>
             <input
               id="password"
+              name="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
               placeholder="Create a password"
-              className={errors.password ? "error-input" : ""}
+              // className={errors.password ? "error-input" : ""}
             />
             {errors.password && <p className="error">{errors.password}</p>}
           </div>
@@ -154,12 +142,13 @@ function SignupFormPage() {
             <label htmlFor="confirmPassword">Confirm Password</label>
             <input
               id="confirmPassword"
+              name="confirmPassword"
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
               placeholder="Confirm your password"
-              className={errors.confirmPassword ? "error-input" : ""}
+              // className={errors.confirmPassword ? "error-input" : ""}
             />
             {errors.confirmPassword && (
               <p className="error">{errors.confirmPassword}</p>
