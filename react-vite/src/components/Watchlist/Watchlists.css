@@ -1,9 +1,11 @@
 /* Container Layout */
 .watchlists-container {
   /* background: #1a1a1a; */
-  border-radius: 12px;
-  padding: 1rem;
-  margin-left: 17rem;
+  max-width: 1200px;
+  /* border-radius: 12px; */
+  padding: 0 2rem;
+  margin-left: 15rem;
+  margin-right: 17rem;
   height: 100%;
   width: 60%;
   display: flex;
@@ -156,29 +158,32 @@
 .edit-watchlist-btn,
 .delete-watchlist-btn {
   background-color: transparent;
-  border: 1px solid #666;
-  color: #ccc;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid #ccc;
+  color: var(--text-color);
   padding: 0.5rem;
   border-radius: 4px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
 }
 
 .edit-watchlist-btn:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: var(--background-color);
   color: #fff;
 }
 
 .delete-watchlist-btn {
-  border-color: #ff4444;
-  color: #ff4444;
+  /* border-color: #ff4444;
+  color: #ff4444; */
+  border-color: black;
+  color: black;
 }
 
 .delete-watchlist-btn:hover {
-  background-color: rgba(255, 68, 68, 0.1);
+  background-color: var(--background-color);
 }
 
 .edit-watchlist-btn:disabled,
@@ -189,8 +194,8 @@
 
 .remove-symbol-btn {
   background-color: transparent;
-  border: 1px solid #ff4444;
-  color: #ff4444;
+  border: 1px solid black;
+  color: black;
   padding: 0.5rem;
   border-radius: 4px;
   cursor: pointer;
@@ -201,7 +206,7 @@
 }
 
 .remove-symbol-btn:hover {
-  background-color: rgba(255, 68, 68, 0.1);
+  background-color: var(--background-color);
 }
 
 /* Empty State */

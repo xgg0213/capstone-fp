@@ -78,7 +78,7 @@
 .watchlist-button,
 .order-button {
     padding: 6px 10px;
-    border-radius: 8px;
+    border-radius: 4px;
     font-size: 0.7rem;
     font-weight: 600;
     cursor: pointer;

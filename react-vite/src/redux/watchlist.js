@@ -124,17 +124,12 @@ export const addSymbolToWatchlist = (watchlistId, symbol) => async (dispatch) =>
 };
 
 export const checkSymbolInWatchlist = (symbol) => async (dispatch) => {
-  try {
     const response = await csrfFetch(`/api/watchlist/${symbol}/check`);
     if (response.ok) {
       const data = await response.json();
       return data.isWatched;
     }
     return false;
-  } catch (error) {
-    console.error('Error checking if symbol is in watchlist:', error);
-    return false;
-  }
 };
 
 export const removeSymbolFromWatchlist = (watchlistId, symbol) => async (dispatch) => {
@@ -189,7 +184,7 @@ export const updateWatchlistName = (watchlistId, name) => async (dispatch) => {
 };
 
 export const deleteWatchlist = (watchlistId) => async (dispatch) => {
-  try {
+  
     const response = await csrfFetch(`/api/watchlist/${watchlistId}`, {
       method: 'DELETE'
     });
@@ -202,11 +197,6 @@ export const deleteWatchlist = (watchlistId) => async (dispatch) => {
       dispatch(setError(errorData.errors || 'Failed to delete watchlist'));
       return { success: false, errors: errorData.errors };
     }
-  } catch (error) {
-    console.error('Error deleting watchlist:', error);
-    dispatch(setError(error.toString()));
-    return { success: false, errors: [error.toString()] };
-  }
 };
 
 // Reducer

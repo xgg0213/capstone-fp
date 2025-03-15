@@ -68,7 +68,7 @@ function AddToWatchlistModal({ symbol, onAdd }) {
   };
 
   return (
-    <div className="place-order-modal">
+    <div className="add-watchlist-modal">
       <h2>Add {symbol} to Watchlist</h2>
       
       {error && (
@@ -79,7 +79,7 @@ function AddToWatchlistModal({ symbol, onAdd }) {
 
       <form onSubmit={handleSubmit}>
         {isCreatingNew ? (
-          <div className="form-group">
+          <div className="form-group-watchlist">
             <label>New Watchlist Name</label>
             <input
               type="text"
@@ -89,11 +89,11 @@ function AddToWatchlistModal({ symbol, onAdd }) {
               className="modal-input"
               autoFocus
             />
-            <div className="modal-buttons">
+            <div className="modal-buttons-watchlist">
               <button
                 type="button"
                 onClick={() => setIsCreatingNew(false)}
-                className="cancel-btn"
+                className="cancel-btn-watchlist"
                 disabled={isSubmitting}
               >
                 Cancel
@@ -101,7 +101,7 @@ function AddToWatchlistModal({ symbol, onAdd }) {
               <button
                 type="button"
                 onClick={handleCreateNewWatchlist}
-                className="submit-btn"
+                className="submit-btn-watchlist"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? 'Creating...' : 'Create Watchlist'}
@@ -110,7 +110,7 @@ function AddToWatchlistModal({ symbol, onAdd }) {
           </div>
         ) : (
           <>
-            <div className="form-group">
+            <div className="form-group-watchlist">
               <label>Select Watchlist</label>
               <select
                 value={selectedWatchlist}
@@ -134,18 +134,18 @@ function AddToWatchlistModal({ symbol, onAdd }) {
               <FaPlus /> Create New Watchlist
             </button>
 
-            <div className="modal-buttons">
+            <div className="modal-buttons-watchlist">
               <button
                 type="button"
                 onClick={closeModal}
-                className="cancel-btn"
+                className="cancel-btn-watchlist"
                 disabled={isSubmitting}
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="submit-btn"
+                className="submit-btn-watchlist"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? 'Adding...' : 'Add to Watchlist'}

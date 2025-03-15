@@ -20,13 +20,8 @@ function Watchlists({ onSelectStock: handleStockClick }) {
 
   useEffect(() => {
     const loadWatchlists = async () => {
-      try {
         await dispatch(getWatchlists());
         setIsLoading(false);
-      } catch (error) {
-        console.error('Error loading watchlists:', error);
-        setIsLoading(false);
-      }
     };
 
     loadWatchlists();
@@ -43,7 +38,6 @@ function Watchlists({ onSelectStock: handleStockClick }) {
   const closeMenu = () => setShowMenu(false);
 
   const handleRemoveSymbol = async (watchlistId, symbol) => {
-    try {
       const success = await dispatch(removeSymbolFromWatchlist(watchlistId, symbol));
       
       if (success) {
@@ -51,9 +45,6 @@ function Watchlists({ onSelectStock: handleStockClick }) {
       } else {
         console.error('Failed to remove symbol from watchlist');
       }
-    } catch (error) {
-      console.error('Error removing symbol:', error);
-    }
     closeMenu();
   };
 
