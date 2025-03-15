@@ -7,6 +7,7 @@ import { fetchPortfolio } from '../../redux/portfolio';
 import { Line } from 'react-chartjs-2';
 import OpenModalButton from '../OpenModalButton';
 import PlaceOrderModal from '../Modals/PlaceOrderModal';
+import AddToWatchlistModal from '../Modals/AddToWatchlistModal';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -169,9 +170,9 @@ const SymbolDetails = () => {
         }
     };
 
-    const handleAddToWatchlist = async () => {
+    const handleAddToWatchlist = async (watchlistId) => {
         try {
-            const result = await dispatch(addSymbolToWatchlist(symbol));
+            const result = await dispatch(addSymbolToWatchlist(watchlistId, symbol));
             
             if (result.success) {
                 setIsInWatchlist(true);
@@ -199,12 +200,16 @@ const SymbolDetails = () => {
                 </div>
                 <div className="action-buttons">
                     {!isInWatchlist && (
-                        <button 
+                        <OpenModalButton
+                            buttonText="Add to Watchlist"
                             className="watchlist-button"
-                            onClick={handleAddToWatchlist}
-                        >
-                            Add to Watchlist
-                        </button>
+                            modalComponent={
+                                <AddToWatchlistModal
+                                    symbol={symbol}
+                                    onAdd={handleAddToWatchlist}
+                                />
+                            }
+                        />
                     )}
                     <OpenModalButton
                         buttonText="Place Order"

@@ -238,4 +238,60 @@ def check_watchlist_status(symbol):
         
         return jsonify({'isWatched': exists is not None})
     except Exception as e:
-        return jsonify({'error': str(e)}), 500 
+        return jsonify({'error': str(e)}), 500
+
+@watchlist_routes.route('/<int:id>', methods=['PUT'])
+@login_required
+def update_watchlist(id):
+    """Update watchlist name"""
+    try:
+        watchlist = Watchlist.query.get(id)
+        
+        if not watchlist or watchlist.user_id != current_user.id:
+            return jsonify({'errors': ['Watchlist not found']}), 404
+            
+        data = request.json
+        if not data or 'name' not in data:
+            return jsonify({'errors': ['Name is required']}), 400
+            
+        name = data['name'].strip()
+        if not name:
+            return jsonify({'errors': ['Name cannot be empty']}), 400
+            
+        # Check if another watchlist with this name exists for the user
+        existing_watchlist = Watchlist.query.filter(
+            Watchlist.user_id == current_user.id,
+            Watchlist.name == name,
+            Watchlist.id != id
+        ).first()
+        
+        if existing_watchlist:
+            return jsonify({'errors': ['A watchlist with this name already exists']}), 400
+            
+        watchlist.name = name
+        watchlist.updated_at = db.func.now()
+        
+        db.session.commit()
+        return jsonify(watchlist.to_dict())
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'errors': [str(e)]}), 500
+
+@watchlist_routes.route('/<int:id>', methods=['DELETE'])
+@login_required
+def delete_watchlist(id):
+    """Delete a watchlist"""
+    try:
+        watchlist = Watchlist.query.get(id)
+        
+        if not watchlist or watchlist.user_id != current_user.id:
+            return jsonify({'errors': ['Watchlist not found']}), 404
+            
+        db.session.delete(watchlist)
+        db.session.commit()
+        
+        return jsonify({'message': 'Watchlist deleted successfully'})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'errors': [str(e)]}), 500 

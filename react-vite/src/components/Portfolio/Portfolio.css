@@ -103,6 +103,8 @@
   align-items: center;
   padding-bottom: 0.7rem;
   padding-top: 0.7rem;
+  flex-grow: 1;
+  cursor: pointer;
 }
 
 .position-row .symbol, .position-row .price, .position-row .shares, .position-row .avg-cost {

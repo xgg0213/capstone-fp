@@ -1,0 +1,188 @@
+.place-order-modal {
+  background-color: #1e2124;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 500px;
+  color: #fff;
+}
+
+.place-order-modal h2 {
+  margin: 0 0 1.5rem;
+  font-size: 1.5rem;
+  color: #fff;
+}
+
+.errors {
+  background-color: rgba(255, 0, 0, 0.1);
+  border: 1px solid #ff4444;
+  border-radius: 4px;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.error {
+  color: #ff4444;
+  font-size: 0.9rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #ccc;
+  font-size: 0.9rem;
+}
+
+.modal-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #444;
+  border-radius: 4px;
+  background-color: #2a2d31;
+  color: #fff;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+.modal-input:focus {
+  outline: none;
+  border-color: #00C805;
+}
+
+.new-watchlist-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: transparent;
+  border: 1px solid #00C805;
+  color: #00C805;
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.new-watchlist-button:hover {
+  background-color: rgba(0, 200, 5, 0.1);
+}
+
+.new-watchlist-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.modal-buttons button {
+  flex: 1;
+  padding: 0.75rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancel-btn {
+  background-color: transparent;
+  border: 1px solid #666;
+  color: #fff;
+}
+
+.cancel-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.submit-btn {
+  background-color: #00C805;
+  border: none;
+  color: #fff;
+}
+
+.submit-btn:hover {
+  background-color: #00a604;
+}
+
+.submit-btn:disabled,
+.cancel-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+select.modal-input {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1em;
+  padding-right: 2.5rem;
+}
+
+.watchlist-select-group {
+  position: relative;
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-end;
+}
+
+.watchlist-select-group .modal-input {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.delete-watchlist-button {
+  background-color: transparent;
+  border: 1px solid #ff4444;
+  color: #ff4444;
+  padding: 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.delete-watchlist-button:hover {
+  background-color: rgba(255, 68, 68, 0.1);
+}
+
+.delete-watchlist-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.delete-confirm {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.delete-confirm p {
+  margin: 0 0 0.5rem;
+}
+
+.delete-warning {
+  color: #ff4444;
+  font-size: 0.9rem;
+}
+
+.delete-btn {
+  background-color: #ff4444 !important;
+  border: none !important;
+  color: #fff !important;
+}
+
+.delete-btn:hover {
+  background-color: #ff2222 !important;
+} 

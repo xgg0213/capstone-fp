@@ -1,21 +1,27 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import Portfolio from '../Portfolio/Portfolio';
 import Watchlists from '../Watchlist/Watchlists';
-import OrderForm from '../Orders/OrderForm';
 import './Dashboard.css';
 
 function Dashboard() {
   const user = useSelector(state => state.session.user);
-  const [selectedStock, setSelectedStock] = useState(null);
+  const navigate = useNavigate();
+
+  const handleStockClick = (stock) => {
+    if (stock && stock.symbol) {
+      navigate(`/symbols/${stock.symbol}`);
+    }
+  };
 
   return (
     <div className="dashboard">
       <div className="dashboard-left">
-        <Portfolio />
+        <Portfolio onSelectStock={handleStockClick} />
       </div>
       <div className="dashboard-right">
-        <Watchlists onSelectStock={setSelectedStock} />
+        <Watchlists onSelectStock={handleStockClick} />
       </div>
     </div>
   );

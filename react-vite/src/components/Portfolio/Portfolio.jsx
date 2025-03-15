@@ -5,7 +5,7 @@ import OpenModalButton from '../OpenModalButton';
 import PlaceOrderModal from '../Modals/PlaceOrderModal';
 import './Portfolio.css';
 
-function Portfolio() {
+function Portfolio({ onSelectStock: handleStockClick }) {
     const dispatch = useDispatch();
     const [isLoading, setIsLoading] = useState(true);
     const user = useSelector(state => state.session.user);
@@ -73,7 +73,7 @@ function Portfolio() {
                     ) : (
                         <div className="table-body">
                             {positions.map(position => (
-                                <div key={position.id} className="position-row">
+                                <div key={position.id} className="position-row" onClick={() => handleStockClick(position)}  >
                                     <div className="symbol">{position.symbol}</div>
                                     <div className="shares">{position.shares}</div>
                                     <div className="price">${position.average_price?.toFixed(2)}</div>

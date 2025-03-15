@@ -2,7 +2,7 @@
 .watchlists-container {
   /* background: #1a1a1a; */
   border-radius: 12px;
-  padding: 0rem;
+  padding: 1rem;
   margin-left: 17rem;
   height: 100%;
   width: 60%;
@@ -19,47 +19,71 @@
 }
 
 .watchlists-header h2 {
-  color: white;
+  color: #fff;
   margin: 0;
-  font-size: 1.5rem;
 }
 
-/* Tabs */
-.watchlist-tabs {
+/* Nested Watchlists */
+.watchlists-nested {
   display: flex;
+  flex-direction: column;
   gap: 0.5rem;
-  margin-bottom: 0.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding-bottom: 0.5rem;
 }
 
-.watchlist-tab {
-  background: none;
-  border: none;
-  color: rgba(255, 255, 255, 0.7);
-  padding: 0.5rem 1rem;
-  cursor: pointer;
+.watchlist-item {
+  background-color: #2a2d31;
   border-radius: 4px;
-  transition: all 0.2s;
+  overflow: hidden;
+}
+
+.watchlist-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background-color: #2a2d31;
+  border: 1px solid #444;
+  border-radius: 4px;
+}
+
+.watchlist-toggle {
+  flex: 1;
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  color: #fff;
+  padding: 0.5rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  text-align: left;
 }
 
-.watchlist-tab:hover {
-  background: rgba(255, 255, 255, 0.05);
-  color: white;
-}
-
-.watchlist-tab.active {
-  background: rgba(0, 200, 5, 0.1);
+.watchlist-toggle:hover {
   color: #00C805;
 }
 
+.watchlist-toggle.expanded {
+  color: #00C805;
+}
+
+.watchlist-name {
+  flex: 1;
+}
+
 .symbol-count {
+  color: #ccc;
   font-size: 0.8rem;
-  opacity: 0.7;
-  margin-left: 0.5rem;
+}
+
+.watchlist-content {
+  padding: 0.5rem;
+  background-color: #1e2124;
+  border: 1px solid #444;
+  border-top: none;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
 }
 
 /* Stock Items */
@@ -67,53 +91,53 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top:0;
-  margin-top:0;
-  font-size: 0.8rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1rem;
+  background-color: #2a2d31;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.stock-item:hover {
+  background-color: #3a3d41;
 }
 
 .stock-info {
-  flex-grow: 1;
-  cursor: pointer;
-}
-
-.stock-symbol {
-  color: white;
-  font-weight: 500;
+  flex: 1;
 }
 
 .company-name {
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 0.8rem;
+  color: #fff;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
 }
 
-.stock-shares {
-  color: rgba(255, 255, 255, 0.7);
+.stock-symbol {
+  color: #ccc;
   font-size: 0.9rem;
 }
 
 /* Price Display */
 .stock-price {
   text-align: right;
-  font-size: 0.8rem;
 }
 
 .current-price {
-  color: white;
-  font-weight: 500;
+  color: #fff;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
 }
 
 .price-change {
   font-size: 0.9rem;
-  margin-top: 0.25rem;
 }
 
-.gain {
+.price-change.gain {
   color: #00C805;
 }
 
-.loss {
+.price-change.loss {
   color: #ff4444;
 }
 
@@ -121,48 +145,86 @@
 .stock-actions {
   display: flex;
   align-items: center;
-  /* gap: 1rem; */
-  padding-bottom: 0.5rem;
-  font-size: 0.8rem;
+  gap: 1rem;
 }
 
-.remove-symbol-btn {
-  background: none;
-  border: none;
-  color: rgba(255, 255, 255, 0.5);
-  cursor: pointer;
+.watchlist-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.edit-watchlist-btn,
+.delete-watchlist-btn {
+  background-color: transparent;
+  border: 1px solid #666;
+  color: #ccc;
   padding: 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.2s;
+  transition: all 0.2s ease;
+}
+
+.edit-watchlist-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.delete-watchlist-btn {
+  border-color: #ff4444;
+  color: #ff4444;
+}
+
+.delete-watchlist-btn:hover {
+  background-color: rgba(255, 68, 68, 0.1);
+}
+
+.edit-watchlist-btn:disabled,
+.delete-watchlist-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.remove-symbol-btn {
+  background-color: transparent;
+  border: 1px solid #ff4444;
+  color: #ff4444;
+  padding: 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
 }
 
 .remove-symbol-btn:hover {
-  color: #ff4444;
+  background-color: rgba(255, 68, 68, 0.1);
 }
 
 /* Empty State */
 .no-watchlists {
   text-align: center;
+  color: #ccc;
   padding: 2rem;
-  color: rgba(255, 255, 255, 0.7);
 }
 
 .create-watchlist-btn {
-  background: #00C805;
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-weight: 500;
   margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  background-color: #00C805;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
   cursor: pointer;
-  transition: background-color 0.2s;
+  font-size: 1rem;
+  transition: all 0.2s ease;
 }
 
 .create-watchlist-btn:hover {
-  background: #00b300;
+  background-color: #00a604;
 }
 
 /* Loading State */
@@ -170,4 +232,76 @@
   text-align: center;
   padding: 2rem;
   color: white;
+}
+
+/* Watchlist Editing */
+.watchlist-edit-container {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem;
+}
+
+.watchlist-name-input {
+  flex: 1;
+  padding: 0.75rem;
+  background-color: #2a2d31;
+  border: 1px solid #444;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+.watchlist-name-input:focus {
+  outline: none;
+  border-color: #00C805;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.edit-action-btn {
+  padding: 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.edit-action-btn.save {
+  background-color: #00C805;
+  border: none;
+  color: #fff;
+}
+
+.edit-action-btn.save:hover {
+  background-color: #00a604;
+}
+
+.edit-action-btn.cancel {
+  background-color: transparent;
+  border: 1px solid #666;
+  color: #ccc;
+}
+
+.edit-action-btn.cancel:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.edit-action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.error-message {
+  color: #ff4444;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background-color: rgba(255, 68, 68, 0.1);
+  border-radius: 4px;
 } 

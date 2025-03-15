@@ -8,6 +8,7 @@ const REMOVE_SYMBOL = 'watchlists/REMOVE_SYMBOL';
 const ADD_SYMBOL = 'watchlists/ADD_SYMBOL';
 const SET_WATCHED_SYMBOLS = 'watchlists/SET_WATCHED_SYMBOLS';
 const SET_ERROR = 'watchlists/SET_ERROR';
+const UPDATE_WATCHLIST = 'watchlists/UPDATE_WATCHLIST';
 
 // Action Creators
 const loadWatchlists = (watchlists) => ({
@@ -43,6 +44,11 @@ const setWatchedSymbols = (symbols) => ({
 const setError = (error) => ({
   type: SET_ERROR,
   payload: error
+});
+
+const updateWatchlist = (watchlist) => ({
+  type: UPDATE_WATCHLIST,
+  payload: watchlist
 });
 
 // Thunks
@@ -90,9 +96,9 @@ export const createWatchlist = (name) => async (dispatch) => {
   }
 };
 
-export const addSymbolToWatchlist = (symbol) => async (dispatch) => {
+export const addSymbolToWatchlist = (watchlistId, symbol) => async (dispatch) => {
   try {
-    const response = await csrfFetch('/api/watchlist', {
+    const response = await csrfFetch(`/api/watchlist/${watchlistId}/symbols`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -103,6 +109,7 @@ export const addSymbolToWatchlist = (symbol) => async (dispatch) => {
     if (response.ok) {
       const data = await response.json();
       dispatch(addSymbol(symbol.toUpperCase()));
+      await dispatch(getWatchlists()); // Refresh watchlists to get updated data
       return { success: true, data };
     } else {
       const errorData = await response.json();
@@ -131,7 +138,7 @@ export const checkSymbolInWatchlist = (symbol) => async (dispatch) => {
 };
 
 export const removeSymbolFromWatchlist = (watchlistId, symbol) => async (dispatch) => {
-  try {
+  // try {
     const response = await csrfFetch(`/api/watchlist/${watchlistId}/symbols/${symbol}`, {
       method: 'DELETE',
       headers: {
@@ -151,10 +158,54 @@ export const removeSymbolFromWatchlist = (watchlistId, symbol) => async (dispatc
       dispatch(setError(errorData.error));
       return false;
     }
+  // } 
+};
+
+export const updateWatchlistName = (watchlistId, name) => async (dispatch) => {
+  // try {
+    const response = await csrfFetch(`/api/watchlist/${watchlistId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ name })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      dispatch(updateWatchlist(data));
+      return { success: true };
+    } else {
+      const errorData = await response.json();
+      dispatch(setError(errorData.errors || 'Failed to update watchlist name'));
+      return errorData;
+    }
+  // } 
+  // catch (error) {
+  //   console.error('Error updating watchlist name:', error);
+  //   dispatch(setError(error.toString()));
+  //   return { success: false, errors: [error.toString()] };
+  // }
+};
+
+export const deleteWatchlist = (watchlistId) => async (dispatch) => {
+  try {
+    const response = await csrfFetch(`/api/watchlist/${watchlistId}`, {
+      method: 'DELETE'
+    });
+
+    if (response.ok) {
+      dispatch(removeWatchlist(watchlistId));
+      return { success: true };
+    } else {
+      const errorData = await response.json();
+      dispatch(setError(errorData.errors || 'Failed to delete watchlist'));
+      return { success: false, errors: errorData.errors };
+    }
   } catch (error) {
-    console.error('Error removing symbol from watchlist:', error);
+    console.error('Error deleting watchlist:', error);
     dispatch(setError(error.toString()));
-    return false;
+    return { success: false, errors: [error.toString()] };
   }
 };
 
@@ -207,6 +258,14 @@ const watchlistReducer = (state = initialState, action) => {
       return {
         ...state,
         error: action.payload
+      };
+    case UPDATE_WATCHLIST:
+      return {
+        ...state,
+        watchlists: state.watchlists.map(list =>
+          list.id === action.payload.id ? action.payload : list
+        ),
+        error: null
       };
     default:
       return state;
