@@ -39,10 +39,15 @@ const SymbolDetails = () => {
     const [priceHistory, setPriceHistory] = useState([]);
     const [isInWatchlist, setIsInWatchlist] = useState(false);
     
-    const symbolData = useSelector(state => 
-        state.symbols.allSymbols[symbol?.toUpperCase()]
-    );
+    const symbolData = useSelector(state => state.symbols.symbol);
     const user = useSelector(state => state.session.user);
+    
+    // Debug log
+    // console.log("SymbolDetails rendering with state:", {
+    //     symbol: useSelector(state => state.symbols.symbol),
+    //     isLoading: useSelector(state => state.symbols.isLoading),
+    //     error: useSelector(state => state.symbols.symbolError)
+    // });
 
     useEffect(() => {
         if (symbol) {
@@ -74,6 +79,14 @@ const SymbolDetails = () => {
     }, [dispatch, symbol, navigate]);
 
     if (!symbolData) return <div>Loading...</div>;
+
+    // Debug log
+    // console.log("SymbolDetails debug:", {
+    //     symbolParam: symbol,
+    //     symbolData,
+    //     priceHistory,
+    //     isLoading: useSelector(state => state.symbols.isLoading)
+    // });
 
     // Prepare chart data with reversed dates
     const chartData = {

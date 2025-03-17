@@ -4,6 +4,8 @@ import { csrfFetch } from './csrf';
 const LOAD_SYMBOLS = 'symbols/LOAD';
 const LOAD_SYMBOL = 'symbols/LOAD_SYMBOL';
 const UPDATE_SYMBOL_PRICE = 'symbols/UPDATE_SYMBOL_PRICE';
+export const SET_ALL_SYMBOLS = 'symbols/SET_ALL_SYMBOLS';
+export const FETCH_ALL_SYMBOLS_ERROR = 'symbols/FETCH_ALL_SYMBOLS_ERROR';
 
 // Action Creators
 const loadSymbols = (symbols) => ({
@@ -93,13 +95,52 @@ export const updateSymbolPrices = (symbols = []) => async (dispatch) => {
     }
 };
 
+export const fetchAllSymbols = () => async (dispatch) => {
+    try {
+        const response = await fetch('/api/symbols');
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            dispatch({
+                type: FETCH_ALL_SYMBOLS_ERROR,
+                payload: errorData.error || 'Failed to fetch symbols'
+            });
+            return false;
+        }
+        
+        const data = await response.json();
+        
+        // // Convert array to object indexed by symbol
+        // const symbolsObject = {};
+        // data.symbols.forEach(symbol => {
+        //     symbolsObject[symbol.symbol] = symbol;
+        // });
+        
+        dispatch({
+            type: SET_ALL_SYMBOLS,
+            payload: data.symbols
+            // payload: symbolsObject
+        });
+        
+        return true;
+    } catch (error) {
+        console.error('Error fetching symbols:', error);
+        dispatch({
+            type: FETCH_ALL_SYMBOLS_ERROR,
+            payload: error.message
+        });
+        return false;
+    }
+};
+
 // Initial State
 const initialState = {
-    symbols: [],
-    allSymbols: {},
-    currentSymbol: null,
+    symbol: null,
+    symbolPrices: [],
+    symbolError: null,
     isLoading: false,
-    error: null
+    allSymbols: [],
+    allSymbolsError: null
 };
 
 // Reducer
@@ -110,13 +151,9 @@ const symbolsReducer = (state = initialState, action) => {
         case LOAD_SYMBOL:
             return {
                 ...state,
-                currentSymbol: action.payload,
-                allSymbols: {
-                    ...state.allSymbols,
-                    [action.payload.symbol]: action.payload
-                },
+                symbol: action.payload,
                 isLoading: false,
-                error: null
+                symbolError: null
             };
         case UPDATE_SYMBOL_PRICE:
             return {
@@ -128,6 +165,17 @@ const symbolsReducer = (state = initialState, action) => {
                         ...action.payload
                     }
                 }
+            };
+        case SET_ALL_SYMBOLS:
+            return {
+                ...state,
+                allSymbols: action.payload,
+                allSymbolsError: null
+            };
+        case FETCH_ALL_SYMBOLS_ERROR:
+            return {
+                ...state,
+                allSymbolsError: action.payload
             };
         default:
             return state;
