@@ -30,8 +30,12 @@ function Watchlists({ onSelectStock: handleStockClick }) {
   useEffect(() => {
     if (watchlists.length > 0 && !activeWatchlist) {
       setActiveWatchlist(watchlists[0].id);
-      // Initialize expanded state for the first watchlist
-      setExpandedWatchlists({ [watchlists[0].id]: true });
+      // Initialize all watchlists as collapsed
+      const collapsedState = {};
+      watchlists.forEach(list => {
+        collapsedState[list.id] = false;
+      });
+      setExpandedWatchlists(collapsedState);
     }
   }, [watchlists, activeWatchlist]);
 
