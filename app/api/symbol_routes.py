@@ -9,7 +9,7 @@ symbol_routes = Blueprint('symbols', __name__)
 @login_required
 def get_symbols():
     symbols = Symbol.query.all()
-    return {'symbols': [symbol.to_dict() for symbol in symbols]}
+    return jsonify({'symbols': [symbol.to_dict() for symbol in symbols]})
 
 @symbol_routes.route('/<symbol>')
 @login_required

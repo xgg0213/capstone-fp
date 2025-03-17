@@ -87,6 +87,7 @@
 
 .form-group label {
   white-space: nowrap;
+  margin-top: 6px;
 }
 
 .input-group {

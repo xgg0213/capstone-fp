@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Portfolio from '../Portfolio/Portfolio';
 import Watchlists from '../Watchlist/Watchlists';
+// import StockTicker from '../StockTicker/StockTicker';
 import './Dashboard.css';
 
 function Dashboard() {
@@ -17,6 +18,7 @@ function Dashboard() {
 
   return (
     <div className="dashboard">
+      {/* <StockTicker /> */}
       <div className="dashboard-left">
         <Portfolio onSelectStock={handleStockClick} />
       </div>

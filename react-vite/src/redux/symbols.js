@@ -4,8 +4,8 @@ import { csrfFetch } from './csrf';
 const LOAD_SYMBOLS = 'symbols/LOAD';
 const LOAD_SYMBOL = 'symbols/LOAD_SYMBOL';
 const UPDATE_SYMBOL_PRICE = 'symbols/UPDATE_SYMBOL_PRICE';
-export const SET_ALL_SYMBOLS = 'symbols/SET_ALL_SYMBOLS';
-export const FETCH_ALL_SYMBOLS_ERROR = 'symbols/FETCH_ALL_SYMBOLS_ERROR';
+const SET_ALL_SYMBOLS = 'symbols/SET_ALL_SYMBOLS';
+const FETCH_ALL_SYMBOLS_ERROR = 'symbols/FETCH_ALL_SYMBOLS_ERROR';
 
 // Action Creators
 const loadSymbols = (symbols) => ({
@@ -97,37 +97,58 @@ export const updateSymbolPrices = (symbols = []) => async (dispatch) => {
 
 export const fetchAllSymbols = () => async (dispatch) => {
     try {
+        console.log("Fetching all symbols from /api/symbols");
         const response = await fetch('/api/symbols');
         
+        console.log("Response status:", response.status);
+        
         if (!response.ok) {
-            const errorData = await response.json();
+            const errorData = await response.json().catch(e => ({ error: "Could not parse error response" }));
+            console.error("Error response:", errorData);
             dispatch({
                 type: FETCH_ALL_SYMBOLS_ERROR,
-                payload: errorData.error || 'Failed to fetch symbols'
+                payload: errorData.error || `Failed to fetch symbols: ${response.status}`
             });
             return false;
         }
         
-        const data = await response.json();
+        const data = await response.json().catch(e => {
+            console.error("Error parsing response:", e);
+            throw new Error("Could not parse response");
+        });
         
-        // // Convert array to object indexed by symbol
-        // const symbolsObject = {};
-        // data.symbols.forEach(symbol => {
-        //     symbolsObject[symbol.symbol] = symbol;
-        // });
+        console.log("Symbols data received:", data);
+        
+        // Check if data has the expected structure
+        if (!data.symbols || !Array.isArray(data.symbols)) {
+            console.error("Unexpected data format:", data);
+            dispatch({
+                type: FETCH_ALL_SYMBOLS_ERROR,
+                payload: "Invalid data format from server"
+            });
+            return false;
+        }
+        
+        // Store both formats - object for lookups and array for the ticker
+        const symbolsObject = {};
+        data.symbols.forEach(symbol => {
+            symbolsObject[symbol.symbol] = symbol;
+        });
         
         dispatch({
             type: SET_ALL_SYMBOLS,
-            payload: data.symbols
-            // payload: symbolsObject
+            payload: {
+                list: data.symbols,
+                object: symbolsObject
+            }
         });
         
         return true;
     } catch (error) {
-        console.error('Error fetching symbols:', error);
+        console.error("Error fetching symbols:", error);
         dispatch({
             type: FETCH_ALL_SYMBOLS_ERROR,
-            payload: error.message
+            payload: error.message || "Unknown error fetching symbols"
         });
         return false;
     }
@@ -169,7 +190,9 @@ const symbolsReducer = (state = initialState, action) => {
         case SET_ALL_SYMBOLS:
             return {
                 ...state,
-                allSymbols: action.payload,
+                allSymbols: action.paylod,
+                // allSymbols: action.payload.object,
+                // allSymbolsList: action.payload.list,
                 allSymbolsError: null
             };
         case FETCH_ALL_SYMBOLS_ERROR:
