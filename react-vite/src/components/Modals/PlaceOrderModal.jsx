@@ -242,14 +242,14 @@ function PlaceOrderModal({ symbol = '', currentPrice: initialPrice = 0, initialO
           <div className="modal-buttons">
             <button 
               type="button" 
-              className="cancel-btn" 
+              className="cancel-btn-order" 
               onClick={closeModal}
             >
               Cancel
             </button>
             <button 
               type="submit" 
-              className="submit-btn"
+              className="submit-btn-order"
               disabled={!isSymbolProvided || !currentPrice || isSubmitting || (orderType === 'sell' && ownedShares === 0)}
             >
               {isSubmitting ? 'Processing...' : 'Place Order'}

@@ -21,7 +21,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
-  padding: 12px;
+  /* padding: 12px; */
   background-color: var(--background-color);
   color: var(--text-color);
   border-radius: 6px;
@@ -40,16 +40,18 @@
 
 .order-type {
   display: flex;
+  gap: 10px;
   margin-bottom: 20px;
-  /* border-radius: 6px;
+  /* border-radius: 6px; */
   overflow: hidden;
-  border: 1px solid #e0e0e0; */
+  /* border: 1px solid #e0e0e0; */
 }
 
 .type-btn {
   flex: 1;
   padding: 10px;
-  border: none;
+  border: 1px solid black;
+  border-radius: 4px;
   background-color: var(--sell-background);
   color: #333;
   cursor: pointer;
@@ -111,7 +113,7 @@
   margin-top: 24px;
 }
 
-.cancel-btn, .submit-btn {
+.cancel-btn-order, .submit-btn-order {
   padding: 10px 20px;
   border-radius: 4px;
   font-weight: 500;
@@ -119,27 +121,29 @@
   transition: all 0.2s;
 }
 
-.cancel-btn {
+.cancel-btn-order {
   background-color: #f5f5f5;
   border: 1px solid #ddd;
   color: #555;
+  width: 48%;
 }
 
-.cancel-btn:hover {
+.cancel-btn-order:hover {
   background-color: #eee;
 }
 
-.submit-btn {
+.submit-btn-order {
   background-color: #00C805;
   border: none;
   color: white;
+  width: 48%;
 }
 
-.submit-btn:hover {
+.submit-btn-order:hover {
   background-color: #00a804;
 }
 
-.submit-btn:disabled {
+.submit-btn-order:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
 }
